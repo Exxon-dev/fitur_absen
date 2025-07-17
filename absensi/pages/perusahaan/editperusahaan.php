@@ -42,10 +42,6 @@
 				   echo '<div class="alert alert-warning">Gagal melakukan proses tambah data.</div>';
 			   }
 	        }
- 
-	         else {
-	            echo 'You should select a file to upload !!';
-	        }
 		
 		?>
 		

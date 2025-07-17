@@ -1,5 +1,4 @@
 <?php
-session_start();
 include('koneksi.php');
 if (isset($_GET['id_guru'])) {
     $id_guru = $_GET['id_guru'];
