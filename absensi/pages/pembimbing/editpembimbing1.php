@@ -1,7 +1,6 @@
 <?php
 include('koneksi.php');
-session_start();
-if (!isset($_SESSION['id_pembimbing'])) {
+if (isset($_SESSION['id_pembimbing'])) {
     header("Location: sign-in.php");
     exit();
 }
