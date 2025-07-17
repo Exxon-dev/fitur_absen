@@ -5,10 +5,10 @@ $search = isset($_GET['search']) ? mysqli_real_escape_string($coneksi, $_GET['se
 
 // Query dengan JOIN tabel siswa untuk mendapatkan nama_siswa
 $query = "
-    SELECT jurnal.*, siswa.nama_siswa
-    FROM jurnal
-    LEFT JOIN siswa ON jurnal.id_siswa = siswa.id_siswa";
-
+    SELECT jurnal.*, siswa.nama_siswa 
+    FROM jurnal 
+    LEFT JOIN siswa ON jurnal.id_siswa = siswa.id_siswa
+";
 
 if ($search) {
     $query .= " WHERE jurnal.tanggal LIKE '%$search%' 
@@ -90,10 +90,10 @@ $result = mysqli_query($coneksi, $query);
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo '<tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editjurnal&id_jurnal=' . $row['id_jurnal'] . '\'">';
-                        echo '<td>' . $no++ . '</td>'; // nomor urut
-                        echo '<td>' . htmlspecialchars($row['nama_siswa'] ?? '') . '</td>';
-                        echo '<td>' . htmlspecialchars($row['keterangan'] ?? '') . '</td>';
-                        echo '<td>' . htmlspecialchars($row['tanggal'] ?? '') . '</td>';
+                        echo '<td>' . $no++ . '</td>';
+                        echo '<td>' . htmlspecialchars($row['nama_siswa']) . '</td>';
+                        echo '<td>' . htmlspecialchars($row['keterangan']) . '</td>';
+                        echo '<td>' . htmlspecialchars($row['tanggal']) . '</td>';
                         echo '</tr>';
                     }
                 } else {
