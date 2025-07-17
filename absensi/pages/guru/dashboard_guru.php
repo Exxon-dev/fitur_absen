@@ -3,8 +3,8 @@ include('koneksi.php');
 
 // Cek apakah guru udah login
 if (!isset($_SESSION['id_guru'])) {
-    header("Location: sign-in.php");
-    exit();
+  header("Location: sign-in.php");
+  exit();
 }
 
 $id_guru = $_SESSION['id_guru'];
@@ -14,8 +14,8 @@ $getGuru = mysqli_query($coneksi, "SELECT id_sekolah, nama_guru FROM guru WHERE 
 $dataGuru = mysqli_fetch_assoc($getGuru);
 
 if (!$dataGuru) {
-    echo "Data guru tidak ditemukan.";
-    exit();
+  echo "Data guru tidak ditemukan.";
+  exit();
 }
 
 $id_sekolah = $dataGuru['id_sekolah'];
@@ -179,28 +179,61 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   <!-- Tambahkan SweetAlert2 JS -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
   <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
+    document.addEventListener('DOMContentLoaded', function() {
+      // Notifikasi login sukses (hanya muncul sekali)
+      if (!localStorage.getItem('guruWelcomeShown')) {
+        const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
 
-            Swal.fire({
-                title: `Selamat datang ${namaGuru}!`,
-                text: "Anda berhasil login ke sistem",
-                icon: 'success',
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                toast: true,
-                background: '#f8f9fa',
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
-                }
-            });
+        Swal.fire({
+          title: `Selamat datang ${namaGuru}!`,
+          text: "Anda berhasil login ke sistem",
+          icon: 'success',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          toast: true,
+          background: '#f8f9fa',
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
         });
-    </script>
+
+        // Set flag bahwa alert sudah ditampilkan
+        localStorage.setItem('guruWelcomeShown', 'true');
+      }
+
+      // Untuk notifikasi lainnya (jika ada)
+      <?php if (isset($_GET['pesan'])): ?>
+        <?php if ($_GET['pesan'] == 'sukses'): ?>
+          Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Operasi berhasil dilakukan',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 2000,
+            toast: true
+          });
+        <?php elseif ($_GET['pesan'] == 'gagal'): ?>
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+          });
+        <?php endif; ?>
+      <?php endif; ?>
+    });
+
+    // Tambahkan ini di halaman logout guru Anda
+    // localStorage.removeItem('guruWelcomeShown');
+  </script>
 
 </body>
 

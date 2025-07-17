@@ -100,12 +100,13 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
         <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const nama = "<?php echo !empty($nama) ? htmlspecialchars($nama, ENT_QUOTES) : 'Admin'; ?>";
+          document.addEventListener('DOMContentLoaded', function() {
+            // Cek apakah alert welcome sudah pernah ditampilkan
+            if (!localStorage.getItem('adminWelcomeShown')) {
+              const nama = "<?php echo !empty($nama) ? htmlspecialchars($nama, ENT_QUOTES) : 'Admin'; ?>";
 
-            Swal.fire({
+              Swal.fire({
                 title: `Selamat datang ${nama}!`,
                 text: "Anda berhasil login ke sistem",
                 icon: 'success',
@@ -116,12 +117,44 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                 toast: true,
                 background: '#f8f9fa',
                 didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                  toast.addEventListener('mouseenter', Swal.stopTimer);
+                  toast.addEventListener('mouseleave', Swal.resumeTimer);
                 }
-            });
-        });
-    </script>
+              });
+
+              // Set flag bahwa alert sudah ditampilkan
+              localStorage.setItem('adminWelcomeShown', 'true');
+            }
+
+            // Untuk notifikasi lainnya (jika ada) bisa ditambahkan di sini
+            <?php if (isset($_GET['pesan'])): ?>
+              <?php if ($_GET['pesan'] == 'sukses'): ?>
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Sukses!',
+                  text: 'Operasi berhasil dilakukan',
+                  position: 'top',
+                  showConfirmButton: false,
+                  timer: 2000,
+                  toast: true
+                });
+              <?php elseif ($_GET['pesan'] == 'gagal'): ?>
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Gagal!',
+                  text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
+                  position: 'top',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  toast: true
+                });
+              <?php endif; ?>
+            <?php endif; ?>
+          });
+
+          // Tambahkan ini di halaman logout admin Anda
+          // localStorage.removeItem('adminWelcomeShown');
+        </script>
 </body>
 
 </html>

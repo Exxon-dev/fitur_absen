@@ -166,13 +166,13 @@ $_SESSION['status_absen'] = $status;
 
         function kirimDataAbsensi(aksi) {
             fetch('pages/siswa/proses_absen.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Cache-Control': 'no-cache'
-                },
-                body: `action=${aksi}`
-            })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Cache-Control': 'no-cache'
+                    },
+                    body: `action=${aksi}`
+                })
                 .then(async res => {
                     const text = await res.text();
                     try {
@@ -184,7 +184,11 @@ $_SESSION['status_absen'] = $status;
                     }
                 })
                 .then(data => {
-                    Swal.fire({ icon: 'success', title: 'Berhasil', text: data.message });
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: data.message
+                    });
 
                     const btn = document.getElementById('btnAbsensi');
                     if (aksi === 'simpan_masuk') {
@@ -202,14 +206,18 @@ $_SESSION['status_absen'] = $status;
                     }
                 })
                 .catch(err => {
-                    Swal.fire({ icon: 'error', title: 'Gagal', text: err.message });
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: err.message
+                    });
                 });
         }
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Notifikasi SweetAlert2 dari proses tambxah siswa
+        document.addEventListener('DOMContentLoaded', function() {
+            // Notifikasi SweetAlert2 dari proses tambah siswa
             <?php if (isset($_GET['pesan'])): ?>
                 <?php if ($_GET['pesan'] == 'sukses'): ?>
                     Swal.fire({
@@ -243,25 +251,32 @@ $_SESSION['status_absen'] = $status;
                     });
                 <?php endif; ?>
             <?php else: ?>
-                // Notifikasi login sukses (default)
-                const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
-                Swal.fire({
-                    title: `Selamat datang ${namaSiswa}!`,
-                    text: "Anda berhasil login ke sistem",
-                    icon: 'success',
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    toast: true,
-                    background: '#f8f9fa',
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer);
-                        toast.addEventListener('mouseleave', Swal.resumeTimer);
-                    }
-                });
+                // Notifikasi login sukses (default) - hanya muncul sekali
+                if (!localStorage.getItem('welcomeAlertShown')) {
+                    const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
+                    Swal.fire({
+                        title: `Selamat datang ${namaSiswa}!`,
+                        text: "Anda berhasil login ke sistem",
+                        icon: 'success',
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        toast: true,
+                        background: '#f8f9fa',
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer);
+                            toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        }
+                    });
+                    localStorage.setItem('welcomeAlertShown', 'true');
+                }
             <?php endif; ?>
         });
+
+        // Tambahkan ini untuk menghapus localStorage saat logout
+        // Pastikan ini ada di halaman logout Anda
+        // localStorage.removeItem('welcomeAlertShown');
     </script>
 
 </body>
