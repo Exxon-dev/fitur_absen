@@ -1,6 +1,12 @@
 <?php
 include('koneksi.php');
 session_start();
+
+if (isset($_SESSION['level']) && $_SESSION['level'] === 'pembimbing') {
+    $id_pembimbing = $_SESSION['id_pembimbing'];
+} else {
+    $id_pembimbing = null; // Atau bisa redirect ke halaman login jika perlu
+}
 $tanggal_hari_ini = date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 if (!$id_jurnal) {
@@ -16,7 +22,7 @@ if (!$jurnal_data) {
 $catatan_result = mysqli_query($coneksi, "SELECT * FROM catatan WHERE id_jurnal = '$id_jurnal'");
 $catatan_data = mysqli_fetch_assoc($catatan_result);
 $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
-$role = $_SESSION['role'] ?? '';
+$level = $_SESSION['level'] ?? '';
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 ?>
 <!-- HTML Form -->
@@ -49,22 +55,22 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Tanggal</label>
-                <div class="col-sm-10">
+                <div class="col-sm-15">
                     <input type="text" class="form-control" value="<?= htmlspecialchars($tanggal_hari_ini) ?>" readonly>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Jurnal</label>
-                <div class="col-sm-10">
+                <div class="col-sm-15">
                     <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($keterangan) ?></textarea>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Catatan</label>
-                <div class="col-sm-10">
-                    <?php if ($role === 'pembimbing'): ?>
+                <div class="col-sm-15">
+                    <?php if ($level === 'pembimbing'): ?>
                         <textarea name="catatan" class="form-control" rows="4"
                             required><?= htmlspecialchars($catatan_data['catatan'] ?? '') ?></textarea>
                     <?php else: ?>
@@ -74,7 +80,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                 </div>
             </div>
 
-            <?php if ($role === 'pembimbing'): ?>
+            <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
                         <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
@@ -84,13 +90,13 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                         <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="btn btn-danger" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
-                    <div class="col text-center">
+                    <div class="col text-right">
                         <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
                     </div>
                 </div>
             <?php else: ?>
                 <div class="form-group row">
-                    <div class="col text-left">
+                    <div class="col text-right">
                         <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
                     </div>
                 </div>
