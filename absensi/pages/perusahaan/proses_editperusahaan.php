@@ -1,0 +1,40 @@
+<?php include('../../koneksi.php'); ?>
+<?php
+if (isset($_GET['id_perusahaan'])) {
+    $id_perusahaan = $_GET['id_perusahaan'];
+
+    $select = mysqli_query($coneksi, "SELECT * FROM perusahaan WHERE id_perusahaan='$id_perusahaan'") or die(mysqli_error($coneksi));
+
+    if (mysqli_num_rows($select) == 0) {
+        echo '<div class="alert alert-warning">id_perusahaan tidak ada dalam database.</div>';
+        exit();
+    } else {
+        $data = mysqli_fetch_assoc($select);
+    }
+}
+?>
+
+<?php
+if (isset($_POST['submit'])) {
+    $id_perusahaan = $_POST['id_perusahaan'];
+    $nama_perusahaan = $_POST['nama_perusahaan'];
+    $alamat_perusahaan = $_POST['alamat_perusahaan'];
+
+
+    $sql = mysqli_query($coneksi, "UPDATE perusahaan SET nama_perusahaan='$nama_perusahaan',alamat_perusahaan='$alamat_perusahaan' WHERE id_perusahaan='$id_perusahaan'") or die(mysqli_error($coneksi));
+    if ($sql) {
+        // Sukses insert, redirect ke halaman perusahaan.php dengan pesan sukses
+        header('Location: ../../index.php?page=perusahaan&pesan=sukses_edit');
+        exit();
+    } else {
+        // Gagal insert, redirect ke halaman perusahaan.php dengan pesan gagal
+        $err = urlencode(mysqli_error($coneksi));
+        header('Location: ../../index.php?page=perusahaan&pesan=gagal&error=' . $err);
+        exit();
+    }
+} else {
+    // Data sudah ada, redirect ke halaman perusahaan.php dengan pesan duplikat
+    header('Location: ../../index.php?page=perusahaan&pesan=duplikat');
+    exit();
+}
+?>

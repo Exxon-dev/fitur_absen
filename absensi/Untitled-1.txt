@@ -1,0 +1,442 @@
+
+Oke, ini dia tebak-tebakan pertama:
+
+Aku bisa terbang tanpa sayap, aku bisa menangis tanpa mata. Apa aku?
+
+Apa jawabanmu?
+
+
+
+You said:
+ikan
+ChatGPT said:
+ChatGPT
+Bagus! Tapi bukan itu jawabannya. Jawaban yang benar adalah awan. Awan bisa "terbang" di langit dan "menangis" saat hujan.
+
+Mau coba lagi?
+
+
+
+You said:
+iyahh lahh
+ChatGPT said:
+ChatGPT
+Oke, ini tebak-tebakan lain:
+
+Apa yang bisa kamu pecahkan, meskipun tidak pernah dipegang?
+
+Apa jawabannya?
+
+
+
+You said:
+hati
+ChatGPT said:
+ChatGPT
+Keren! Itu jawabannya benar! Hati memang bisa "diperbaiki" tapi tidak secara fisik.
+
+Mau lanjut dengan tebak-tebakan lain?
+
+
+
+You said:
+iyahh
+ChatGPT said:
+ChatGPT
+Oke, tebak-tebakan selanjutnya:
+
+Aku punya banyak huruf, tapi tidak bisa berbicara. Apa aku?
+
+Apa jawabanmu?
+
+
+
+You said:
+buku
+ChatGPT said:
+ChatGPT
+Betul! Jawabannya adalah buku. Buku memang penuh huruf tapi tidak bisa berbicara.
+
+Mau coba satu lagi?
+
+
+
+You said:
+iya
+ChatGPT said:
+ChatGPT
+Oke, ini dia:
+
+Apa yang semakin banyak diambil, semakin besar?
+
+Apa jawabannya?
+
+
+
+You said:
+balon
+ChatGPT said:
+ChatGPT
+Jawaban yang bagus, tapi bukan itu! Jawabannya adalah lubang. Semakin banyak diambil, semakin besar lubangnya.
+
+Mau coba lagi?
+
+
+
+You said:
+iyahh
+ChatGPT said:
+ChatGPT
+Oke, ini tebak-tebakan selanjutnya:
+
+Aku memiliki kota, tetapi tidak ada rumah. Aku memiliki gunung, tetapi tidak ada pohon. Apa aku?
+
+Apa jawabanmu?
+
+
+
+You said:
+kotak surat
+ChatGPT said:
+ChatGPT
+Jawaban yang kreatif! Tapi yang benar adalah peta. Peta punya kota dan gunung, tapi tidak ada rumah atau pohon.
+
+Mau coba lagi atau ada yang lain yang ingin dibahas?
+
+
+
+You said:
+lanjut
+ChatGPT said:
+ChatGPT
+Oke, tebak-tebakan berikutnya:
+
+Apa yang tidak hidup, tetapi bisa tumbuh; tidak punya paru-paru, tetapi bisa bernapas?
+
+Apa jawabanmu?
+
+
+
+You said:
+pohon
+ChatGPT said:
+ChatGPT
+Bagus, tapi bukan itu! Jawabannya adalah api. Api tidak hidup, tetapi bisa "tumbuh" dan "bernapas" dengan oksigen.
+
+Mau lanjut lagi?
+
+
+
+You said:
+lanjut
+ChatGPT said:
+ChatGPT
+Oke, tebak-tebakan selanjutnya:
+
+Apa yang selalu datang, tetapi tidak pernah tiba?
+
+Apa jawabanmu?
+
+
+
+You said:
+bulan
+ChatGPT said:
+ChatGPT
+Itu jawaban yang menarik, tapi yang benar adalah besok. Besok selalu datang, tapi ketika tiba, ia menjadi hari ini.
+
+Mau coba lagi?
+
+
+<?php
+include('koneksi.php');
+
+// Pastikan ID siswa ada dalam session
+if (!isset($_SESSION['id_siswa'])) {
+    header("Location: sign-in.php"); // Arahkan ke halaman login jika belum login
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buka Laporan Siswa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color:#007bff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+        }
+    </style>
+    <script>
+        function openTab(event) {
+            event.preventDefault(); // Mencegah pengiriman form default
+
+            // Ambil data dari form
+            const form = document.getElementById('myForm');
+            const formData = new FormData(form);
+            
+            // Buat URL untuk pengiriman data
+            const url = form.action;
+
+            // Membuka tab baru
+            const newTab = window.open(); // Membuka tab baru kosong
+
+            // Kirim data POST menggunakan fetch
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text(); // Ambil respons sebagai teks
+            })
+            .then(data => {
+                // Menuliskan respons ke tab baru
+                newTab.document.write(data);
+                newTab.document.close(); // Menutup dokumen untuk memproses konten
+            })
+            .catch(error => {
+                console.error('Terjadi kesalahan saat mengirim data:', error);
+                newTab.close(); // Tutup tab jika ada kesalahan
+            });
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Buka Laporan Siswa</h1>
+
+    <form id="myForm" action="pages/laporan/preview.php" method="POST" onsubmit="openTab(event)">
+        <label for="id_siswa">ID Siswa:</label>
+        <input type="text" id="id_siswa" name="id_siswa" value="<?php echo htmlspecialchars($_SESSION['id_siswa']); ?>" readonly required>
+
+        <label for="reportSelect">Pilih Laporan:</label>
+        <select id="reportSelect" name="page" required>
+            <option value="">-- Pilih Laporan --</option>
+            <option value="cover">Cover</option>
+            <option value="df">Daftar Hadir</option>
+            <option value="jr">Laporan Jurnal</option>
+            <option value="catatan">Lembar Catatan Kegiatan</option>
+            <option value="dn">Lembar Daftar Nilai</option>
+            <option value="sk">Lembar Surat Keterangan</option>
+            <option value="nkp">Lembar Nilai Kepuasan Pelanggan</option>
+            <option value="lp">Lembar Pengesahan</option>
+            <option value="bl">Lembar Bimbingan Laporan</option>
+        </select>
+
+        <button type="submit">Unduh Laporan</button>
+    </form>
+</div>
+
+</body>
+</html>
+
+
+
+bl
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABSENSI BIMBINGAN LAPORAN PKL</title>
+    <style >
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        .printable {
+            margin: 20px;
+        }
+        @media print {
+            .no-print {
+                display: none; 
+            }
+        }
+    </style>
+    <script>
+        function printReport() {
+            window.print();
+        }
+        
+        window.onload = function() {
+            printReport();
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div>
+        <h1 class="text-center text-xl font-bold mb-4">ABSENSI BIMBINGAN LAPORAN PKL</h1>
+        <table class="w-full border-collapse border border-black">
+            <thead>
+                <tr>
+                    <th class="border border-black p-2">No</th>
+                    <th class="border border-black p-2">Tanggal</th>
+                    <th class="border border-black p-2">Nama siswa Bimbingan</th>
+                    <th class="border border-black p-2">Materi Bimbingan</th>
+                    <th class="border border-black p-2">Paraf siswa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Repeat this row as needed -->
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+                <tr>
+                    <td class="border border-black p-2 h-12"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                    <td class="border border-black p-2"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="mt-4">
+            <p class="font-bold">Catatan pembimbing :</p>
+            <div class="border border-black h-24"></div>
+        </div>
+        <div class="flex justify-end items-center mb-8">
+            <div class="text-center">
+                <div class="mb-2">.........................202...</div>
+                <div class="text-gray-700">PEMBIMBING SEKOLAH</div>
+            <div class=""></div><br><br><br>
+            <div class="text-gray-700">(.............................................)</div>
+        </div>
+    </div>
+</body>
+</html>
