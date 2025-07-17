@@ -1,5 +1,6 @@
 <?php
 include('koneksi.php');
+session_start();
 
 $id = isset($_GET['id_jurnal']) ? mysqli_real_escape_string($coneksi, $_GET['id_jurnal']) : '';
 
