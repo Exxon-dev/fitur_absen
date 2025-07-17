@@ -217,6 +217,10 @@ include('koneksi.php');
                     <input type="password" name="password" class="form-control"
                         value="<?php echo htmlspecialchars($data['password']); ?>" required>
                 </div>
+                <div class="form-group col-md-3">
+                    <label>Nomor WhatsApp:</label>
+                    <input type="text" name="no_wa" class="form-control" value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
+                </div>
             </div>
 
             <div class="form-group row">
