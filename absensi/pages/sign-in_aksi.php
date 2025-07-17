@@ -40,7 +40,7 @@ if ($cek > 0) {
         header("location:../index.php?page=dashboard&login=berhasil&username=$username");
         exit;
     } else {
-        header("location:../index.php?pesan=gagal");
+        header("location: sign-in.php");
         exit;
     }
 } elseif ($cek_siswa > 0) {
@@ -69,7 +69,7 @@ if ($cek > 0) {
     header("location:../index.php?page=dashboard_pembimbing&login=berhasil&username=$username");
     exit;
 } else {
-    header("location:../index.php?pesan=gagal");
+    header("location: sign-in.php?login=gagal");
     exit;
 }
 

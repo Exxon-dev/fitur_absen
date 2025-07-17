@@ -1,9 +1,8 @@
 <?php
+  session_start();
 include 'koneksi.php';
 
-// Periksa apakah pengguna sudah login
 if (!isset($_SESSION['level'])) {
-  // Jika tidak, alihkan ke halaman login
   header("Location: pages/sign-in.php");
   exit();
 }
