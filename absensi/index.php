@@ -1,9 +1,8 @@
 <?php
-session_start();
 include 'koneksi.php';
 
 // Periksa apakah pengguna sudah login
-if (!$_SESSION['level']) {
+if (!isset($_SESSION['level'])) {
   // Jika tidak, alihkan ke halaman login
   header("Location: pages/sign-in.php");
   exit();
@@ -14,29 +13,12 @@ if (!$_SESSION['level']) {
 <html lang="en">
 
 <head>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>
     Absensi | SMK N TEMBARAK
   </title>
-
-
-
-  <!--     Fonts and icons     -->
+  <!-- Fonts and icons     -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
 
   <!-- Nucleo Icons -->
@@ -50,9 +32,6 @@ if (!$_SESSION['level']) {
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
   <!-- CSS Files -->
-
-
-
   <link id="pagestyle" href="./assets/css/material-dashboard.css?v=3.1.0" rel="stylesheet" />
 
 
