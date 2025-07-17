@@ -138,7 +138,7 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
                 $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
                 $index = 1; // Inisialisasi nomor urut
                 $today = date('Y-m-d'); // Tanggal hari ini
-                
+
                 while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
                   // Cek status kehadiran siswa hari ini
                   $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
@@ -195,7 +195,7 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
         $tanggal = date('Y-m-d');
         $jamKeluar = date('H:i:s');
         $jamMasuk = date('H:i:s'); // Jam keluar saat tombol disimpan
-    
+
         // Cek jika data sudah ada di database
         $checkQuery = mysqli_query($coneksi, "SELECT * FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'");
 
@@ -230,28 +230,37 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const namaPembimbing = "<?php echo !empty($nama_pembimbing) ? htmlspecialchars($nama_pembimbing, ENT_QUOTES) : 'Pembimbing'; ?>";
-
-            Swal.fire({
-                title: `Selamat datang ${namaPembimbing}!`,
-                text: "Anda berhasil login ke sistem",
-                icon: 'success',
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                toast: true,
-                background: '#f8f9fa',
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
-                }
-            });
-        });
-    </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const namaPembimbing = "<?php echo !empty($nama_pembimbing) ? htmlspecialchars($nama_pembimbing, ENT_QUOTES) : 'Pembimbing'; ?>";
+  
+  // Cek apakah alert sudah pernah ditampilkan
+  if (!localStorage.getItem('welcomeAlertShown')) {
+    Swal.fire({
+      title: `Selamat datang ${namaPembimbing}!`,
+      text: "Anda berhasil login ke sistem",
+      icon: 'success',
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      toast: true,
+      background: '#f8f9fa',
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+    
+    // Set flag di localStorage bahwa alert sudah ditampilkan
+    localStorage.setItem('welcomeAlertShown', 'true');
+    
+    // Hapus flag saat logout (opsional)
+    // Tambahkan ini di halaman logout Anda:
+    // localStorage.removeItem('welcomeAlertShown');
+  }
+});
+</script>
 </body>
 
 </html>

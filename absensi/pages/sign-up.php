@@ -96,6 +96,13 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
+  <!-- Tambahkan sebelum </body> -->
+<script>
+  document.querySelector('form[action="sign-up_aksi.php"]').addEventListener('submit', function() {
+    // Hapus item localStorage saat tombol logout diklik
+    localStorage.removeItem('welcomeAlertShown');
+  });
+</script>
 </body>
 
 </html>
