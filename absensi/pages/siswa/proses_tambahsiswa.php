@@ -17,7 +17,8 @@ if (isset($_POST['submit'])) {
     $id_perusahaan = $_POST['id_perusahaan'];
     $tanggal_mulai = $_POST['tanggal_mulai'];
     $tanggal_selesai = $_POST['tanggal_selesai'];
-    $id_pembimbing = $_POST['id_pembimbing'];
+    $id_pembimbing = $_POST['id_pembimbing'];   
+    $id_guru = $_POST['id_guru'];
     $username = $_POST['username'];
     $password = $_POST['password']; // Sebaiknya di-hash
 
@@ -30,9 +31,6 @@ if (isset($_POST['submit'])) {
     }
     
     if(mysqli_num_rows($cek) == 0){
-        // Debug: cek data yang akan diinsert
-        // echo '<pre>'; var_dump($_POST); echo '</pre>'; exit();
-        // 2. Jika belum ada, insert data baru
         $sql = mysqli_query($coneksi, "INSERT INTO siswa (
         nisn,
         nama_siswa,
@@ -45,6 +43,7 @@ if (isset($_POST['submit'])) {
         tanggal_mulai,
         tanggal_selesai,
         id_pembimbing,
+        id_guru,
         username, 
         password)
         VALUES (
@@ -59,6 +58,7 @@ if (isset($_POST['submit'])) {
         '$tanggal_mulai',
         '$tanggal_selesai',
         '$id_pembimbing',
+        '$id_guru',
         '$username',
         '$password')");
         

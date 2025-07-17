@@ -196,6 +196,18 @@ include('koneksi.php');
                     </select>
                 </div>
                 <div class="form-group col-md-3">
+                    <label>Guru</label>
+                    <select name="id_guru" class="form-control" required>
+                        <?php
+                        $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
+                        while ($row = mysqli_fetch_array($data_guru)) {
+                            ?>
+                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>" <?php echo ($row['id_guru'] == $data['id_guru']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($row['nama_guru']); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
                     <label>Username</label>
                     <input type="text" name="username" class="form-control"
                         value="<?php echo htmlspecialchars($data['username']); ?>" required>

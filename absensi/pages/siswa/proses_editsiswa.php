@@ -27,10 +27,11 @@ if (isset($_POST['submit'])) {
 	$tanggal_mulai = $_POST['tanggal_mulai'];
 	$tanggal_selesai = $_POST['tanggal_selesai'];
 	$id_pembimbing = $_POST['id_pembimbing'];
+	$id_guru = $_POST['id_guru'];
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 
-	$sql = mysqli_query($coneksi, "UPDATE siswa SET nisn='$nisn', nama_siswa='$nama_siswa', kelas='$kelas', pro_keahlian='$pro_keahlian', TTL='$TTL', id_sekolah='$id_sekolah',id_perusahaan='$id_perusahaan', tanggal_mulai='$tanggal_mulai', tanggal_selesai='$tanggal_selesai', id_pembimbing='$id_pembimbing',username='$username', password='$password' WHERE id_siswa='$id_siswa'");
+	$sql = mysqli_query($coneksi, "UPDATE siswa SET nisn='$nisn', nama_siswa='$nama_siswa', kelas='$kelas', pro_keahlian='$pro_keahlian', TTL='$TTL', id_sekolah='$id_sekolah',id_perusahaan='$id_perusahaan', tanggal_mulai='$tanggal_mulai', tanggal_selesai='$tanggal_selesai', id_pembimbing='$id_pembimbing', id_guru='$id_guru', username='$username', password='$password' WHERE id_siswa='$id_siswa'");
 	if ($sql) {
 		// Sukses update, redirect ke halaman siswa.php dengan pesan sukses
 		header('Location: ../../index.php?page=siswa&pesan=sukses');

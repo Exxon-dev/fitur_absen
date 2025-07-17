@@ -74,7 +74,7 @@
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-10">
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" value="<?php echo $data['logo_sekolah'] ?>" required>
+					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" value="<?php echo $data['logo_sekolah'] ?>" >
 				</div>
 			</div>
 			<div class="form-row">

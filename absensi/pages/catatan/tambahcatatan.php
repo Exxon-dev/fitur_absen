@@ -64,7 +64,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Catatan</label>
                 <div class="col-sm-10">
-                    <?php if ($role === 'id_pembimbing'): ?>
+                    <?php if ($role === 'pembimbing'): ?>
                         <textarea name="catatan" class="form-control" rows="4"
                             required><?= htmlspecialchars($catatan_data['catatan'] ?? '') ?></textarea>
                     <?php else: ?>
@@ -74,7 +74,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                 </div>
             </div>
 
-            <?php if ($role === 'id_pembimbing'): ?>
+            <?php if ($role === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
                         <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">

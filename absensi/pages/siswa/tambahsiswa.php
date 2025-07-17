@@ -104,6 +104,7 @@
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
+                        <option value="">Pilih Sekolah</option>
                         <?php
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {
@@ -115,6 +116,7 @@
                 <div class="form-group col-md-3">
                     <label>Perusahaan</label>
                     <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Pilih Perusahaan</option>
                         <?php
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
@@ -137,11 +139,24 @@
                 <div class="form-group col-md-3">
                     <label>Pembimbing</label>
                     <select name="id_pembimbing" class="form-control" required>
+                        <option value="">Pilih Pembimbing</option>
                         <?php
                         $data_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
                         ?>
                             <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>"><?php echo htmlspecialchars($row['nama_pembimbing']); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Guru</label>
+                    <select name="id_guru" class="form-control" required>
+                        <option value="">Pilih Guru</option>
+                        <?php
+                        $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
+                        while ($row = mysqli_fetch_array($data_guru)) {
+                        ?>
+                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>"><?php echo htmlspecialchars($row['nama_guru']); ?></option>
                         <?php } ?>
                     </select>
                 </div>

@@ -97,6 +97,7 @@ if (!isset($_SESSION['id_siswa'])) {
             $tanggal_mulai      = $_POST['tanggal_mulai'];
             $tanggal_selesai    = $_POST['tanggal_selesai'];
             $id_pembimbing      = $_POST['id_pembimbing'];
+            $id_guru            = $_POST['id_guru'];
             $username           = $_POST['username'];
             $password           = $_POST['password'];
 
@@ -207,6 +208,17 @@ WHERE id_siswa='$id_siswa'");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
                         ?>
                             <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>" <?php echo ($row['id_pembimbing'] == $data['id_pembimbing']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($row['nama_pembimbing']); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Guru</label>
+                    <select name="id_guru" class="form-control" required>
+                        <?php
+                        $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
+                        while ($row = mysqli_fetch_array($data_guru)) {
+                        ?>
+                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>" <?php echo ($row['id_guru'] == $data['id_guru']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($row['nama_guru']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
