@@ -1,4 +1,5 @@
 <?php
+
 session_start(); // Pastikan session_start() ada di awal
 unset($_SESSION['username']);
 unset($_SESSION['login']);
@@ -11,3 +12,7 @@ echo '<script>
 </script>';
 exit();
 ?>
+
+session_destroy();
+header("Location: sign-in.php");
+exit;

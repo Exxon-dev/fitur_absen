@@ -1,20 +1,10 @@
-<!--
-=========================================================
-* Material Dashboard 2 - v3.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
 <?php
-
 include 'koneksi.php';
+
+if (!isset($_SESSION['level'])) {
+    header("Location: sign-in.php");
+    exit();
+}
 
 $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
 $query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
