@@ -10,46 +10,63 @@
   <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'dashboard_siswa') ? 'active' : ''; ?>" href="index.php?page=dashboard_siswa">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'dashboard_siswa') ? 'active' : ''; ?>" href="index.php?page=dashboard_siswa">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">dashboard</i>
           </div>
           <span class="nav-link-text ms-1">Dashboard</span>
         </a>
       </li>
+
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'editsiswa') ? 'active' : ''; ?>" href="index.php?page=editsiswa&id_siswa=<?php echo $_SESSION['id_siswa'] ?>">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'editsiswa') ? 'active' : ''; ?>" href="index.php?page=editsiswa&id_siswa=<?php echo $_SESSION['id_siswa'] ?>">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
           </div>
           <span class="nav-link-text ms-1">Data Siswa</span>
         </a>
       </li>
+
+      <!-- Submenu Jurnal -->
       <li class="nav-item">
-        <a class="nav-link text-white dropdown-toggle <?php echo (strpos($_GET['page'], 'jurnal') !== false) ? 'active' : ''; ?>" data-bs-toggle="dropdown">
-          <i class="material-icons opacity-10">assignment</i> Jurnal
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && strpos($_GET['page'], 'jurnal') !== false || $_GET['page'] == 'catatan') ? 'active' : ''; ?>" data-bs-toggle="collapse" href="#submenu-jurnal" role="button" aria-expanded="false" aria-controls="submenu-jurnal">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">assignment</i>
+          </div>
+          <span class="nav-link-text ms-1">Jurnal</span>
         </a>
-        <div class="dropdown-menu bg-transparent border-0">
-          <a href="index.php?page=tambahjurnal" class="dropdown-item text-white ">Isi Jurnal</a>
-          <a href="index.php?page=jurnal" class="dropdown-item text-white">Data Jurnal</a>
-          <a href="index.php?page=catatan" class="dropdown-item text-white">Catatan Siswa</a>
+        <div class="collapse <?php echo (isset($_GET['page']) && (strpos($_GET['page'], 'jurnal') !== false || $_GET['page'] == 'catatan')) ? 'show' : ''; ?>" id="submenu-jurnal">
+          <ul class="navbar-nav ps-3">
+            <li class="nav-item">
+              <a href="index.php?page=tambahjurnal" class="nav-link text-white ps-4">Isi Jurnal</a>
+            </li>
+            <li class="nav-item">
+              <a href="index.php?page=jurnal" class="nav-link text-white ps-4">Data Jurnal</a>
+            </li>
+            <li class="nav-item">
+              <a href="index.php?page=catatan" class="nav-link text-white ps-4">Catatan Siswa</a>
+            </li>
+          </ul>
         </div>
       </li>
+
       <li class="nav-item mt-3">
         <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
       </li>
+
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'laporan') ? 'active' : ''; ?>" href="index.php?page=laporan">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'laporan') ? 'active' : ''; ?>" href="index.php?page=laporan">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">table_view</i>
           </div>
           <span class="nav-link-text ms-1">Laporan</span>
         </a>
       </li>
+
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'sign-up_aksi') ? 'active' : ''; ?>" href="./pages/sign-up_aksi.php">
+        <a class="nav-link text-white" href="logout.php">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">login</i>
+            <i class="material-icons opacity-10">logout</i>
           </div>
           <span class="nav-link-text ms-1">Sign Out</span>
         </a>

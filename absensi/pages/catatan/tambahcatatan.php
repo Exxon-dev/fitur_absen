@@ -1,6 +1,5 @@
 <?php
 include('koneksi.php');
-session_start();
 
 if (isset($_SESSION['level']) && $_SESSION['level'] === 'pembimbing') {
     $id_pembimbing = $_SESSION['id_pembimbing'];
