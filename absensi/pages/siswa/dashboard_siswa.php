@@ -1,6 +1,5 @@
 <?php
 include('koneksi.php');
-session_start();
 
 // Cek apakah siswa sudah login
 if (!isset($_SESSION['id_siswa'])) {

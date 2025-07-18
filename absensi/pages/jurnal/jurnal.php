@@ -107,6 +107,34 @@ $result = mysqli_query($coneksi, $query);
     <script src="https://code.jquery.com/jquery-3.5.2.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if (isset($_GET['pesan'])): ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                <?php if ($_GET['pesan'] == 'sukses_hapus'): ?>
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Sukses!',
+                        text: 'Data jurnal berhasil dihapus',
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true
+                    });
+                <?php elseif ($_GET['pesan'] == 'gagal'): ?>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        toast: true
+                    });
+                <?php endif; ?>
+            });
+            <?php endif; ?>
+        </script>
 </body>
 
 </html>
