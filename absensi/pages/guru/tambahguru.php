@@ -64,38 +64,38 @@
     <div class="container">
         <h2>Tambah Guru</h2>
         <form action="pages/guru/proses_tambahguru.php" method="post">
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label>ID Guru</label>
-                <input type="text" name="id_guru" class="form-control" required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>ID Guru</label>
+                    <input type="text" name="id_guru" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Nama Guru</label>
+                    <input type="text" name="nama_guru" class="form-control" required>
+                </div>
             </div>
-            <div class="form-group col-md-6">
-                <label>Nama Guru</label>
-                <input type="text" name="nama_guru" class="form-control" required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>ID Sekolah</label>
+                    <input type="text" name="id_sekolah" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label>ID Sekolah</label>
-                <input type="text" name="id_sekolah" class="form-control" required>
+            <div class="form-row">
+                <div class="col text-left">
+                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                </div>
+                <div class="col-md-8 text-right">
+                    <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
+                </div>
             </div>
-            <div class="form-group col-md-6">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" required>
-            </div>
-            <div class="form-group col-md-6">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="col-md-4">
-                <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-            </div>
-            <div class="col-md-8 text-right">
-                <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
-            </div>
-        </div>
         </form>
     </div>
 

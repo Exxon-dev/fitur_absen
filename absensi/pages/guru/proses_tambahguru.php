@@ -32,19 +32,18 @@ if(isset($_POST['submit'])){
             '$password'
         )");
         
-        if($sql){
-            // Sukses insert, redirect ke halaman guru.php dengan pesan sukses
-            header('Location: ../../index.php?page=guru&pesan=sukses');
+        if ($sql) {
+            $_SESSION['flash_tambah'] = 'sukses';
+            header('Location: ../../index.php?page=guru');
             exit();
         } else {
-            // Gagal insert, redirect ke halaman guru.php dengan pesan gagal
-            $err = urlencode(mysqli_error($coneksi));
-            header('Location: ../../index.php?page=guru&pesan=gagal&error='.$err);
+            $_SESSION['flash_error'] = mysqli_error($coneksi);
+            header('Location: ../../index.php?page=guru');
             exit();
         }
     } else {
-        // Data sudah ada, redirect ke halaman guru.php dengan pesan duplikat
-        header('Location: ../../index.php?page=guru&pesan=duplikat');
+        $_SESSION['flash_duplikat'] = true;
+        header('Location: ../../index.php?page=guru');
         exit();
     }
 }

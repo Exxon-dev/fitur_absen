@@ -105,19 +105,19 @@ if (isset($_GET['id_guru'])) {
         <form action="" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
             <div class="form-row">
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-6">
                     <label>Nama Guru</label>
                     <input type="text" name="nama_guru" class="form-control" value="<?php echo htmlspecialchars($data['nama_guru'] ?? ''); ?>" required>
                 </div>
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-6">
                     <label>ID Sekolah</label>
                     <input type="text" name="id_sekolah" class="form-control" value="<?php echo htmlspecialchars($data['id_sekolah'] ?? ''); ?>" required>
                 </div>
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-6">
                     <label>Username</label>
                     <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username'] ?? ''); ?>" required>
                 </div>
-                <div class="form-group col-md-5">
+                <div class="form-group col-md-6">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password'] ?? ''); ?>" required>
                 </div>

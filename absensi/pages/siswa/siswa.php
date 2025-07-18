@@ -122,49 +122,62 @@ include('koneksi.php');
     }
     ?>
 
-    <?php if (isset($_GET['pesan'])): ?>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                <?php if (isset($_GET['pesan']) && $_GET['pesan'] == 'sukses'): ?>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Sukses!',
-                        text: <?php
-                                if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'editsiswa1') !== false) {
-                                    echo "'Data siswa berhasil diupdate'";
-                                } else {
-                                    echo "'Data siswa berhasil ditambahkan'";
-                                }
-                                ?>,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        toast: true
-                    });
-                <?php elseif (isset($_GET['pesan']) && $_GET['pesan'] == 'gagal'): ?>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        toast: true
-                    });
-                <?php elseif (isset($_GET['pesan']) && $_GET['pesan'] == 'duplikat'): ?>
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Peringatan!',
-                        text: 'ID siswa atau Username sudah terdaftar',
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        toast: true
-                    });
-                <?php endif; ?>
-            });
-        </script>
-    <?php endif; ?>
+    <?php
+    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data siswa berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+        unset($_SESSION['flash_edit']);
+    }
+    ?>
+
+    <?php
+    // Notifikasi flash message tambah
+    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Data siswa berhasil ditambahkan',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_tambah']);
+    }
+
+    // Notifikasi error
+    if (isset($_SESSION['flash_error'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '" . addslashes($_SESSION['flash_error']) . "',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_error']);
+    }
+
+    // Notifikasi duplikat
+    if (isset($_SESSION['flash_duplikat'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan!',
+            text: 'ID siswa atau Username sudah terdaftar',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_duplikat']);
+    }
+    ?>
 
 </body>
 

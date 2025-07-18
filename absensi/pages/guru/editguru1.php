@@ -81,78 +81,107 @@ if (isset($_GET['id_guru'])) {
         <hr>
 
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<?php if (isset($_GET['pesan'])): ?>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    <?php if ($_GET['pesan'] == 'sukses'): ?>
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Data guru berhasil diupdate',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 2000,
-            toast: true
-        });
-    <?php elseif ($_GET['pesan'] == 'gagal'): ?>
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    <?php elseif ($_GET['pesan'] == 'duplikat'): ?>
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan!',
-            text: 'Username sudah terdaftar',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    <?php endif; ?>
-});
-</script>
-<?php endif; ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <?php if (isset($_GET['pesan'])): ?>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    <?php if ($_GET['pesan'] == 'sukses'): ?>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses!',
+                            text: 'Data guru berhasil diupdate',
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            toast: true
+                        });
+                    <?php elseif ($_GET['pesan'] == 'gagal'): ?>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            toast: true
+                        });
+                    <?php elseif ($_GET['pesan'] == 'duplikat'): ?>
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Peringatan!',
+                            text: 'Username sudah terdaftar',
+                            position: 'top',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            toast: true
+                        });
+                    <?php endif; ?>
+                });
+            </script>
+        <?php endif; ?>
 
         <?php if ($data): ?>
-        <form action="pages/guru/proses_editguru.php" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
-            <div class="form-row">
-                <div class="form-group col-md-5">
-                    <label>Nama Guru</label>
-                    <input type="text" name="nama_guru" class="form-control" value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+            <form action="pages/guru/proses_editguru.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Nama Guru</label>
+                        <input type="text" name="nama_guru" class="form-control" value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>ID Sekolah</label>
+                        <input type="text" name="id_sekolah" class="form-control" value="<?php echo htmlspecialchars($data['id_sekolah']); ?>" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username']); ?>" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                    </div>
                 </div>
-                <div class="form-group col-md-5">
-                    <label>ID Sekolah</label>
-                    <input type="text" name="id_sekolah" class="form-control" value="<?php echo htmlspecialchars($data['id_sekolah']); ?>" required>
-                </div>
-                <div class="form-group col-md-5">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                </div>
-                <div class="form-group col-md-5">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password']); ?>" required>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col text-left">
-                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-                </div>
-                <div class="col text-center">
-                    <a href="index.php?page=hapusguru&id_guru=<?php echo $data['id_guru'] ?>" class="btn btn-danger" id="btnHapusguru">Hapus</a>
-                </div>
-            </div>
-        </form>
+                <div class="form-group row">
+                    <div class="col text-left">
+                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                    </div>
+                    <div class="col text-center">
+                        <button type="button" class="btn btn-danger" id="btnHapus"
+                            data-id="<?php echo $data['id_guru']; ?>">Hapus</button>
+                    </div>
+                    <div class="col text-right">
+                        <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
+                    </div>
+            </form>
         <?php else: ?>
-        <div class="alert alert-warning">Data guru tidak ditemukan.</div>
+            <div class="alert alert-warning">Data guru tidak ditemukan.</div>
         <?php endif; ?>
+        <script>
+            // SweetAlert untuk konfirmasi hapus
+            document.addEventListener('DOMContentLoaded', function() {
+                const deleteBtn = document.getElementById('btnHapus');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const id = this.getAttribute('data-id');
+                        Swal.fire({
+                            title: "Apakah Anda yakin?",
+                            text: "Data yang dihapus tidak dapat dikembalikan!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#d33",
+                            cancelButtonColor: "#3085d6",
+                            confirmButtonText: "Ya, hapus!",
+                            cancelButtonText: "Batal"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = `index.php?page=hapusguru&id_guru=${id}`;
+                            }
+                        });
+                    });
+                }
+            });
+        </script>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

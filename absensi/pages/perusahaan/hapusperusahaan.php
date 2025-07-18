@@ -11,10 +11,10 @@ if (isset($_GET['id_perusahaan'])) {
         if ($hapus) {
             $_SESSION['flash_hapus'] = 'sukses';
         }
-        echo '<script>window.location.href = "index.php?page=perusahaan&pesan=sukses_hapus";</script>';
+        echo '<script>window.location.href = "index.php?page=perusahaan";</script>';
         exit();
     } else {
-        echo '<script>window.location.href = "index.php?page=perusahaan&pesan=gagal_hapus";</script>';
+        echo '<script>window.location.href = "index.php?page=perusahaan";</script>';
         exit();
     }
 }

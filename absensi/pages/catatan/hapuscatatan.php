@@ -18,14 +18,12 @@ if ($id_catatan) {
 	}
 	$del = mysqli_query($coneksi, "DELETE FROM catatan WHERE id_catatan='$id_catatan'");
 	if ($del) {
-		header('Location: ../../index.php?page=catatan&pesan=sukses_hapus');
-		exit();
-	} else {
-		$err = urlencode(mysqli_error($coneksi));
-		header('Location: ../../index.php?page=catatan&pesan=gagal_hapus&error='.$err);
-		exit();
-	}
+        $_SESSION['flash_hapus'] = 'sukses';
+    }
+    echo '<script>window.location.href = "../../index.php?page=catatan";</script>';
+    exit();
 } else {
-	header('Location: ../../index.php?page=catatan&pesan=gagal_hapus&error='.urlencode('ID Catatan tidak ditemukan'));
-	exit();
+    echo '<script>window.location.href = "../../index.php?page=catatan";</script>';
+    exit();
 }
+?>

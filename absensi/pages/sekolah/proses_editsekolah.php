@@ -25,19 +25,14 @@ if (isset($_POST['submit'])) {
 
 	$sql = mysqli_query($coneksi, "UPDATE sekolah SET nama_sekolah='$nama_sekolah',alamat_sekolah='$alamat_sekolah', kepala_sekolah='$kepala_sekolah', logo_sekolah='$logo_sekolah' WHERE id_sekolah='$id_sekolah'") or die(mysqli_error($coneksi));
 	if ($sql) {
-		// Sukses update, redirect ke halaman sekolah.php dengan pesan sukses
-		header('Location: ../../index.php?page=sekolah&pesan=sukses_edit');
-		exit();
-	} else {
-		// Gagal update, redirect ke halaman sekolah.php dengan pesan gagal
-		$err = urlencode(mysqli_error($coneksi));
-		header('Location: ../../index.php?page=sekolah&pesan=gagal&error=' . $err);
-		exit();
-	}
+        $_SESSION['flash_edit'] = 'sukses';
+    }
+    
+    header("Location: ../../index.php?page=sekolah");
+    exit();
 } else {
-	// Data sudah ada, redirect ke halaman sekolah.php dengan pesan duplikat
-	header('Location: ../../index.php?page=sekolah&pesan=duplikat');
-	exit();
+    header("Location: ../../index.php?page=sekolah");
+    exit();
 }
 
 ?>
