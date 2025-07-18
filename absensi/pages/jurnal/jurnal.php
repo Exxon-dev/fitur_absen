@@ -3,6 +3,7 @@ include('koneksi.php');
 
 $search = isset($_GET['search']) ? mysqli_real_escape_string($coneksi, $_GET['search']) : '';
 
+
 // Query dengan JOIN tabel siswa untuk mendapatkan nama_siswa
 $query = "
     SELECT jurnal.*, siswa.nama_siswa 
@@ -11,7 +12,7 @@ $query = "
 ";
 
 if ($search) {
-    $query .= " WHERE jurnal.tanggal LIKE '%$search%' 
+    $query .= " WHERE jurnal.tanggal LIKE '%$search%'
                 OR jurnal.keterangan LIKE '%$search%' 
                 OR siswa.nama_siswa LIKE '%$search%'";
 }
@@ -69,10 +70,12 @@ $result = mysqli_query($coneksi, $query);
         <hr />
 
         <!-- Form pencarian -->
-        <form method="get" class="search-bar">
-            <input type="text" name="search" class="form-control w-25" placeholder="Cari..." value="<?php echo htmlspecialchars($search); ?>" />
-            <button type="submit" class="btn btn-primary ml-2">Cari</button>
-        </form>
+ <form method="GET" class="search-bar" action="index.php">
+  <input type="hidden" name="page" value="jurnal" />
+  <input type="text" name="search" class="form-control w-25" placeholder="Cari..." value="<?php echo htmlspecialchars($search); ?>" />
+  <button type="submit" class="btn btn-primary ml-2">Cari</button>
+</form>
+
 
         <!-- Tabel Jurnal -->
         <table class="table table-bordered table-hover">
