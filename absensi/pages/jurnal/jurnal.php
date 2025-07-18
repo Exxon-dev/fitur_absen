@@ -91,7 +91,7 @@ $result = mysqli_query($coneksi, $query);
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo '<tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editjurnal&id_jurnal=' . $row['id_jurnal'] . '\'">';
                         echo '<td>' . $no++ . '</td>';
-                        echo '<td>' . htmlspecialchars($row['nama_siswa']) . '</td>';
+                        echo '<td>' . htmlspecialchars($row['nama_siswa']?? '') . '</td>';
                         echo '<td>' . htmlspecialchars($row['keterangan']) . '</td>';
                         echo '<td>' . htmlspecialchars($row['tanggal']) . '</td>';
                         echo '</tr>';
