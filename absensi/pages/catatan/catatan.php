@@ -4,23 +4,35 @@ include('koneksi.php');
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Data Siswa, Jurnal, dan Catatan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .clickable-row { cursor: pointer; }
+        .clickable-row {
+            cursor: pointer;
+        }
+
         .container {
             margin-top: 20px;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
-        .table thead th { background-color: #007bff; color: white; }
-        .table tbody tr:hover { background-color: #e9ecef; }
+
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2 class="text-center text-primary">Data Siswa, Jurnal, dan Catatan Terbaru</h2>
@@ -69,11 +81,11 @@ include('koneksi.php');
                         $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
                         $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Tidak ada jurnal';
 
-                        echo '<tr class="clickable-row" data-href="index.php?page=tambahcatatan&id_jurnal='.$id_jurnal.'">';
-                        echo '<td>'.$no.'</td>';
-                        echo '<td>'.htmlspecialchars($row['nama_siswa']).'</td>';
-                        echo '<td>'.htmlspecialchars($keterangan).'</td>';
-                        echo '<td>'.htmlspecialchars($catatan).'</td>';
+                        echo '<tr class="clickable-row" data-href="index.php?page=tambahcatatan&id_jurnal=' . $id_jurnal . '">';
+                        echo '<td>' . $no . '</td>';
+                        echo '<td>' . htmlspecialchars($row['nama_siswa']) . '</td>';
+                        echo '<td>' . htmlspecialchars($keterangan) . '</td>';
+                        echo '<td>' . htmlspecialchars($catatan) . '</td>';
                         echo '</tr>';
                         $no++;
                     }
@@ -84,63 +96,86 @@ include('koneksi.php');
             </tbody>
         </table>
     </div>
+
+    <?php
+    // Notifikasi flash message hapus
+    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data catatan berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+        unset($_SESSION['flash_hapus']);
+    }
+    ?>
+    <?php
+    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data catatan berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+        unset($_SESSION['flash_edit']);
+    }
+    ?>
     <?php if (isset($_GET['pesan'])): ?>
         <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                <?php if ($_GET['pesan'] == 'sukses'): ?>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Catatan berhasil ditambahkan',
-                        text: '',
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        toast: true
-                    });
-                <?php elseif ($_GET['pesan'] == 'duplikat'): ?>
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Peringatan!',
-                        text: 'Catatan sudah terdaftar',
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        toast: true
-                    });
-                <?php elseif ($_GET['pesan'] == 'gagal'): ?>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        toast: true
-                    });
-                <?php elseif ($_GET['pesan'] == 'sukses_hapus'): ?>
+            document.addEventListener("DOMContentLoaded", function() {
+                <?php if ($_GET['pesan'] == 'duplikat'): ?>
                     Swal.fire({
                         icon: 'info',
-                        title: 'Catatan berhasil dihapus',
-                        text: '',
+                        title: 'Catatan sudah terdaftar',
                         position: 'top',
                         showConfirmButton: false,
                         timer: 2000,
-                        toast: true
-                    });
-                <?php elseif ($_GET['pesan'] == 'gagal_hapus'): ?>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal hapus!',
-                        text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan saat menghapus'; ?>',
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
                         toast: true
                     });
                 <?php endif; ?>
             });
         </script>
     <?php endif; ?>
+
+    <?php
+    // Notifikasi flash message tambah
+    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Data catatan berhasil ditambahkan',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_tambah']);
+    }
+
+    // Notifikasi error
+    if (isset($_SESSION['flash_error'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '" . addslashes($_SESSION['flash_error']) . "',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_error']);
+    }
+
+    // Notifikasi duplikat
+    if (isset($_SESSION['flash_duplikat']) && $_SESSION['flash_duplikat'] == 'duplikat') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan!',
+            text: 'Catatan sudah terdaftar!',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_duplikat']);
+    }
+    ?>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script>
@@ -151,4 +186,5 @@ include('koneksi.php');
         });
     </script>
 </body>
+
 </html>

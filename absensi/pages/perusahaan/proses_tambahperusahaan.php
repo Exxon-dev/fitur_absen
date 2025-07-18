@@ -12,18 +12,17 @@ if (isset($_POST['submit'])) {
         $sql = mysqli_query($coneksi, "INSERT INTO perusahaan(id_perusahaan, nama_perusahaan, alamat_perusahaan) VALUES('$id_perusahaan', '$nama_perusahaan', '$alamat_perusahaan')") or die(mysqli_error($coneksi));
 
         if ($sql) {
-            // Sukses insert, redirect ke halaman perusahaan.php dengan pesan sukses
-            header('Location: ../../index.php?page=perusahaan&pesan=sukses');
+            $_SESSION['flash_tambah'] = 'sukses';
+            header('Location: ../../index.php?page=perusahaan');
             exit();
         } else {
-            // Gagal insert, redirect ke halaman siswa.php dengan pesan gagal
-            $err = urlencode(mysqli_error($coneksi));
-            header('Location: ../../index.php?page=perusahaan&pesan=gagal&error=' . $err);
+            $_SESSION['flash_error'] = mysqli_error($coneksi);
+            header('Location: ../../index.php?page=perusahaan');
             exit();
         }
     } else {
-        // Data sudah ada, redirect ke halaman perusahaan.php dengan pesan duplikat
-        header('Location: ../../index.php?page=perusahaan&pesan=duplikat');
+        $_SESSION['flash_duplikat'] = true;
+        header('Location: ../../index.php?page=perusahaan');
         exit();
     }
 }

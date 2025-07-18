@@ -20,18 +20,13 @@ if (isset($_POST['submit'])) {
 
 	$sql = mysqli_query($coneksi, "UPDATE guru SET nama_guru='$nama_guru', id_sekolah='$id_sekolah', username='$username', password='$password' WHERE id_guru='$id_guru'");
 	if ($sql) {
-		// Sukses update, redirect ke halaman guru.php dengan pesan sukses
-		header('Location: ../../index.php?page=guru&id_guru=' . $id_guru . '&pesan=sukses');
-		exit();
-	} else {
-		// Gagal update, redirect ke halaman guru.php dengan pesan gagal
-		$err = urlencode(mysqli_error($coneksi));
-		header('Location: ../../index.php?page=guru&id_guru=' . $id_guru . '&pesan=gagal&error=' . $err);
-		exit();
-	}
+        $_SESSION['flash_edit'] = 'sukses';
+    }
+    
+    header("Location: ../../index.php?page=guru");
+    exit();
 } else {
-	// Data sudah ada, redirect ke halaman guru.php dengan pesan duplikat
-	header('Location: ../../index.php?page=guru&id_guru=' . (isset($_POST['id_guru']) ? $_POST['id_guru'] : '') . '&pesan=duplikat');
-	exit();
+    header("Location: ../../index.php?page=guru");
+    exit();
 }
 ?>
