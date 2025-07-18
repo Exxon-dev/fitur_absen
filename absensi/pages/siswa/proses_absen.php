@@ -3,7 +3,6 @@
 if (ob_get_level()) ob_clean();
 
 include '../../koneksi.php';
-session_start();
 
 // Set header pertama kali
 header('Content-Type: application/json');
