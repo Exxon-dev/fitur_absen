@@ -101,6 +101,7 @@
   document.querySelector('form[action="sign-up_aksi.php"]').addEventListener('submit', function() {
     // Hapus item localStorage saat tombol logout diklik
     localStorage.removeItem('welcomeAlertShown');
+    localStorage.removeItem("adminWelcomeShown");
   });
 </script>
 </body>

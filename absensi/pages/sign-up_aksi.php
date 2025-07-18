@@ -8,11 +8,8 @@ session_destroy();
 // Hapus localStorage dan redirect
 echo '<script>
     localStorage.removeItem("welcomeAlertShown");
+    localStorage.removeItem("adminWelcomeShown");
     window.location.href = "sign-in.php";
 </script>';
 exit();
 ?>
-
-session_destroy();
-header("Location: sign-in.php");
-exit;

@@ -32,7 +32,6 @@ $id_siswa = $_SESSION['id_siswa'] ?? null;
             width: 150px;
             /* Adjust this value to make the input smaller */
         }
-        
     </style>
 </head>
 
@@ -52,7 +51,8 @@ $id_siswa = $_SESSION['id_siswa'] ?? null;
         </div>
         <div class="row">
             <div class="col text-left">
-                <a href="index.php?page=hapusjurnal&id_jurnal=<?php echo $row['id_jurnal']; ?>" class="btn btn-danger">Hapus</a>
+                <button type="button" class="btn btn-danger" id="btnHapus"
+                    data-id="<?php echo $row['id_jurnal']; ?>">Hapus</button>
             </div>
             <div class="col text-right">
                 <a href="index.php?page=jurnal" class="btn btn-warning">KEMBALI</a>
@@ -62,6 +62,35 @@ $id_siswa = $_SESSION['id_siswa'] ?? null;
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        // SweetAlert untuk konfirmasi hapus
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteBtn = document.getElementById('btnHapus');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const id = this.getAttribute('data-id');
+                    Swal.fire({
+                        title: "Apakah Anda yakin?",
+                        text: "Data yang dihapus tidak dapat dikembalikan!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Ya, hapus!",
+                        cancelButtonText: "Batal"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'index.php?page=hapusjurnal&id_jurnal=<?php echo $id; ?>';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
