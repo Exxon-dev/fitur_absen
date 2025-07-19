@@ -11,12 +11,10 @@ if (isset($_GET['id_sekolah'])) {
 		if ($hapus) {
 			$_SESSION['flash_hapus'] = 'sukses';
 		}
-		echo '<script>window.location.href = "index.php?page=sekolah&pesan=sukses_hapus";</script>';
+		echo '<script>window.location.href = "index.php?page=sekolah";</script>';
 		exit();
 	} else {
-		echo '<script>window.location.href = "index.php?page=sekolah&pesan=gagal_hapus";</script>';
+		echo '<script>window.location.href = "index.php?page=sekolah";</script>';
 		exit();
 	}
 }
-
-?>

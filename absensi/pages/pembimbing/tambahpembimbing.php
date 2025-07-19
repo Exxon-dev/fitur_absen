@@ -1,6 +1,7 @@
 <?php include('koneksi.php'); ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
         body {
             background-color: #f8f9fa;
         }
+
         .container {
             margin-top: 20px;
             padding: 20px;
@@ -17,36 +19,44 @@
             background-color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
+
         h2 {
             margin-bottom: 20px;
             color: #007bff;
         }
+
         .form-control {
             border: none;
             border-bottom: 2px solid #007bff;
             border-radius: 0;
             box-shadow: none;
         }
+
         .form-control:focus {
             border-color: #0056b3;
             box-shadow: none;
         }
+
         .btn-primary {
             background-color: #007bff;
             border: none;
         }
+
         .btn-primary:hover {
             background-color: #0056b3;
         }
+
         .btn-warning {
             background-color: #ffc107;
             border: none;
         }
+
         .btn-warning:hover {
             background-color: #e0a800;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Tambah Pembimbing</h2>
@@ -79,6 +89,7 @@
                 <div class="col text-right">
                     <a href="index.php?page=pembimbing" class="btn btn-warning">KEMBALI</a>
                 </div>
+            </div>
         </form>
     </div>
 
@@ -86,4 +97,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 </body>
+
 </html>

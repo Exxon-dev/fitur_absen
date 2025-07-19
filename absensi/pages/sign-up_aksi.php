@@ -9,6 +9,7 @@ session_destroy();
 echo '<script>
     localStorage.removeItem("welcomeAlertShown");
     localStorage.removeItem("adminWelcomeShown");
+    localStorage.removeItem("guruWelcomeShown");
     window.location.href = "sign-in.php";
 </script>';
 exit();

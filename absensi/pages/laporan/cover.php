@@ -12,7 +12,7 @@ if (!$id_siswa || !is_numeric($id_siswa)) {
 }
 
 // Pengecekan session (sesuaikan dengan kebutuhan)
-if (!isset($_SESSION['id_siswa'])) {
+if (isset($_SESSION['id_siswa'])) {
     header("Location: ../../sign-in.php");
     exit();
 }

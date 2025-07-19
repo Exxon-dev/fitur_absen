@@ -7,10 +7,10 @@ if (isset($_GET['id_guru'])) {
     if ($hapus) {
         $_SESSION['flash_hapus'] = 'sukses';
     }
-    echo '<script>window.location.href = "index.php?page=guru&pesan=sukses_hapus";</script>';
+    echo '<script>window.location.href = "index.php?page=guru";</script>';
     exit();
 } else {
-    echo '<script>window.location.href = "index.php?page=guru&pesan=gagal_hapus";</script>';
+    echo '<script>window.location.href = "index.php?page=guru";</script>';
     exit();
 }
 ?>

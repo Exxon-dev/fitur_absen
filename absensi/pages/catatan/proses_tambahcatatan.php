@@ -24,14 +24,17 @@ if (isset($_POST['submit'])) {
     // Insert
     $sql = mysqli_query($coneksi, "INSERT INTO catatan (id_jurnal, tanggal, catatan, id_pembimbing) VALUES ('$id_jurnal', '$tanggal_hari_ini', '$catatan', '$id_pembimbing')");
     if ($sql) {
-        header('Location: ../../index.php?page=catatan&pesan=sukses');
-        exit();
+            $_SESSION['flash_tambah'] = 'sukses';
+            header('Location: ../../index.php?page=catatan');
+            exit();
+        } else {
+            $_SESSION['flash_error'] = mysqli_error($coneksi);
+            header('Location: ../../index.php?page=catatan');
+            exit();
+        }
     } else {
-        $err = urlencode(mysqli_error($coneksi));
-        header('Location: ../../index.php?page=catatan&pesan=gagal&error='.$err);
+        $_SESSION['flash_duplikat'] = 'duplikat';
+        header('Location: ../../index.php?page=catatan');
         exit();
     }
-}
-// Jika tidak ada aksi, redirect
-header('Location: ../../index.php?page=catatan');
-exit();
+?>

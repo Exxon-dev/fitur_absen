@@ -1,37 +1,51 @@
-<?php include('../../koneksi.php'); ?>
-<?php
-		if(isset($_GET['id_catatan'])){
-			$id_catatan = $_GET['id_catatan'];
+<?php 
+session_start();
+include('../../koneksi.php');
 
-			$select = mysqli_query($coneksi, "SELECT * FROM catatan WHERE id_catatan='$id_catatan'") or die(mysqli_error($coneksi));
-			
-			if(mysqli_num_rows($select) == 0){
-				echo '<div class="alert alert-warning">id_sekolah tidak ada dalam database.</div>';
-				exit();
-			}else{
-				$data = mysqli_fetch_assoc($select);
-			}
-		}
-		?>
-		
-		<?php
-		if(isset($_POST['submit'])){
-			$id_catatan	     = $_POST['id_catatan'];
-			$id_pembimbing	 = $_POST['id_pembimbing'];
-			$catatan	     = $_POST['catatan'];
-            $id_jurnal   	 = $_POST['id_jurnal'];
-			
-			
-			$sql = mysqli_query($coneksi, "UPDATE catatan SET id_pembimbing='$id_pembimbing',catatan='$catatan', id_jurnal='$id_jurnal' WHERE id_catatan='$id_catatan'") or die(mysqli_error($coneksi));
-			if($sql){
-				   echo '<script>alert("Berhasil menambahkan data."); document.location="../../index.php?page=catatan";</script>';
-			   }else{
-				   echo '<div class="alert alert-warning">Gagal melakukan proses tambah data.</div>';
-			   }
-	        }
- 
-	         else {
-	            echo 'You should select a file to upload !!';
-	        }
-		
-		?>
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id_catatan = mysqli_real_escape_string($coneksi, $_POST['id_catatan']);
+    $id_pembimbing = mysqli_real_escape_string($coneksi, $_POST['id_pembimbing']);
+    $catatan = mysqli_real_escape_string($coneksi, $_POST['catatan']);
+    $id_jurnal = mysqli_real_escape_string($coneksi, $_POST['id_jurnal']);
+
+    // Validasi data
+    if (empty($id_catatan) || empty($id_pembimbing) || empty($catatan) || empty($id_jurnal)) {
+        $_SESSION['flash_error'] = "Semua field harus diisi";
+        header("Location: ../../index.php?page=catatan");
+        exit();
+    }
+
+    // Cek apakah data benar-benar berubah
+    $check_query = "SELECT * FROM catatan WHERE id_catatan='$id_catatan'";
+    $result = mysqli_query($coneksi, $check_query);
+    $old_data = mysqli_fetch_assoc($result);
+
+    if ($old_data['id_pembimbing'] == $id_pembimbing && 
+        $old_data['catatan'] == $catatan && 
+        $old_data['id_jurnal'] == $id_jurnal) {
+        $_SESSION['flash_error'] = "Tidak ada perubahan data";
+        header("Location: ../../index.php?page=catatan");
+        exit();
+    }
+
+    // Lakukan update
+    $sql = "UPDATE catatan SET 
+            id_pembimbing='$id_pembimbing',
+            catatan='$catatan', 
+            id_jurnal='$id_jurnal' 
+            WHERE id_catatan='$id_catatan'";
+
+    if (mysqli_query($coneksi, $sql)) {
+        $_SESSION['flash_edit'] = 'sukses';
+    } else {
+        $_SESSION['flash_error'] = "Gagal update: " . mysqli_error($coneksi);
+    }
+
+    header("Location: ../../index.php?page=catatan");
+    exit();
+} else {
+    $_SESSION['flash_duplikat'] = "duplikat";
+    header("Location: ../../index.php?page=catatan");
+    exit();
+}
+?>

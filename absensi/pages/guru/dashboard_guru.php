@@ -232,7 +232,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     });
 
     // Tambahkan ini di halaman logout guru Anda
-    // localStorage.removeItem('guruWelcomeShown');
+    
   </script>
 
 </body>

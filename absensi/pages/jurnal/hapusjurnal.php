@@ -11,10 +11,10 @@ if (isset($_GET['id_jurnal'])) {
 		if ($hapus) {
 			$_SESSION['flash_hapus'] = 'sukses';
 		}
-		echo '<script>window.location.href = "index.php?page=jurnal&pesan=sukses_hapus";</script>';
+		echo '<script>window.location.href = "index.php?page=jurnal";</script>';
 		exit();
 	} else {
-		echo '<script>window.location.href = "index.php?page=jurnal&pesan=gagal";</script>';
+		echo '<script>window.location.href = "index.php?page=jurnal";</script>';
 		exit();
 	}
 }

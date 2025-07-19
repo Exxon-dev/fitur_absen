@@ -33,18 +33,13 @@ if (isset($_POST['submit'])) {
 
 	$sql = mysqli_query($coneksi, "UPDATE siswa SET nisn='$nisn', nama_siswa='$nama_siswa', kelas='$kelas', pro_keahlian='$pro_keahlian', TTL='$TTL', id_sekolah='$id_sekolah',id_perusahaan='$id_perusahaan', tanggal_mulai='$tanggal_mulai', tanggal_selesai='$tanggal_selesai', id_pembimbing='$id_pembimbing', id_guru='$id_guru', username='$username', password='$password' WHERE id_siswa='$id_siswa'");
 	if ($sql) {
-		// Sukses update, redirect ke halaman siswa.php dengan pesan sukses
-		header('Location: ../../index.php?page=siswa&pesan=sukses');
-		exit();
-	} else {
-		// Gagal update, redirect ke halaman siswa.php dengan pesan gagal
-		$err = urlencode(mysqli_error($coneksi));
-		header('Location: ../../index.php?page=siswa&pesan=gagal&error=' . $err);
-		exit();
+		$_SESSION['flash_edit'] = 'sukses';
 	}
+
+	header("Location: ../../index.php?page=siswa");
+	exit();
 } else {
-	// Data sudah ada, redirect ke halaman siswa.php dengan pesan duplikat
-	header('Location: ../../index.php?page=siswa&pesan=duplikat');
+	header("Location: ../../index.php?page=siswa");
 	exit();
 }
 ?>
