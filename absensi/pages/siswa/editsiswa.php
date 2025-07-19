@@ -86,6 +86,7 @@ if (!isset($_SESSION['id_siswa'])) {
         }
 
         if (isset($_POST['submit'])) {
+            $nis               = $_POST['nis'];
             $nisn               = $_POST['nisn'];
             $nama_siswa         = $_POST['nama_siswa'];
             $no_wa              = $_POST['no_wa'];
@@ -102,6 +103,7 @@ if (!isset($_SESSION['id_siswa'])) {
             $password           = $_POST['password'];
 
             $sql = mysqli_query($coneksi, "UPDATE siswa SET 
+    nis='$nis',
     nisn='$nisn', 
     nama_siswa='$nama_siswa', 
     no_wa='$no_wa',
@@ -128,6 +130,10 @@ WHERE id_siswa='$id_siswa'");
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
 
             <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label>NIS</label>
+                    <input type="text" name="nis" class="form-control" value="<?php echo htmlspecialchars($data['nis']); ?>" required>
+                </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
                     <input type="text" name="nisn" class="form-control" value="<?php echo htmlspecialchars($data['nisn']); ?>" required>

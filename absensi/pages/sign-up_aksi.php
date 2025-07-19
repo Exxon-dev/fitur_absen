@@ -7,7 +7,8 @@ session_destroy();
 
 // Hapus localStorage dan redirect
 echo '<script>
-    localStorage.removeItem("welcomeAlertShown");
+    localStorage.removeItem("siswaWelcomeShown");
+    localStorage.removeItem("pembimbingAlertShown");
     localStorage.removeItem("adminWelcomeShown");
     localStorage.removeItem("guruWelcomeShown");
     window.location.href = "sign-in.php";

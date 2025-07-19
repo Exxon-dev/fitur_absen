@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const namaPembimbing = "<?php echo !empty($nama_pembimbing) ? htmlspecialchars($nama_pembimbing, ENT_QUOTES) : 'Pembimbing'; ?>";
   
   // Cek apakah alert sudah pernah ditampilkan
-  if (!localStorage.getItem('welcomeAlertShown')) {
+  if (!localStorage.getItem('pembimbingAlertShown')) {
     Swal.fire({
       title: `Selamat datang ${namaPembimbing}!`,
       text: "Anda berhasil login ke sistem",
@@ -253,11 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Set flag di localStorage bahwa alert sudah ditampilkan
-    localStorage.setItem('welcomeAlertShown', 'true');
+    localStorage.setItem('pembimbingAlertShown', 'true');
     
     // Hapus flag saat logout (opsional)
     // Tambahkan ini di halaman logout Anda:
-    // localStorage.removeItem('welcomeAlertShown');
+    // localStorage.removeItem("pembimbingAlertShown");
   }
 });
 </script>

@@ -250,32 +250,36 @@ $_SESSION['status_absen'] = $status;
                     });
                 <?php endif; ?>
             <?php else: ?>
-                // Notifikasi login sukses (default) - hanya muncul sekali
-                if (!localStorage.getItem('welcomeAlertShown')) {
+                // Notifikasi login sukses (hanya muncul sekali)
+                if (!localStorage.getItem('siswaWelcomeShown')) {
                     const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
-                    Swal.fire({
-                        title: `Selamat datang ${namaSiswa}!`,
-                        text: "Anda berhasil login ke sistem",
-                        icon: 'success',
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true,
-                        toast: true,
-                        background: '#f8f9fa',
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer);
-                            toast.addEventListener('mouseleave', Swal.resumeTimer);
-                        }
-                    });
-                    localStorage.setItem('welcomeAlertShown', 'true');
+
+                    // Delay sedikit untuk memastikan semua element sudah loaded
+                    setTimeout(() => {
+                        Swal.fire({
+                            title: `Selamat datang ${namaSiswa}!`,
+                            text: "Anda berhasil login ke sistem",
+                            icon: 'success',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                            toast: true,
+                            background: '#f8f9fa',
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer);
+                                toast.addEventListener('mouseleave', Swal.resumeTimer);
+                            }
+                        });
+                    }, 300);
+
+                    localStorage.setItem('siswaWelcomeShown', 'true');
                 }
             <?php endif; ?>
         });
-
         // Tambahkan ini untuk menghapus localStorage saat logout
         // Pastikan ini ada di halaman logout Anda
-        // localStorage.removeItem('welcomeAlertShown');
+        // localStorage.removeItem('siswaAlertShown');
     </script>
 
 </body>

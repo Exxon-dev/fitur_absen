@@ -12,7 +12,7 @@ if (!$id_siswa || !is_numeric($id_siswa)) {
 }
 
 // Pengecekan session (sesuaikan dengan kebutuhan)
-if (isset($_SESSION['id_siswa'])) {
+if (!isset($_SESSION['id_siswa'])) {
     header("Location: ../../sign-in.php");
     exit();
 }
@@ -21,7 +21,9 @@ if (isset($_SESSION['id_siswa'])) {
 $query = "
     SELECT 
         s.nama_siswa, 
-        s.kelas, 
+        s.kelas,
+        s.nis,
+        s.nisn,
         p.nama_perusahaan AS nama_perusahaan, 
         b.nama_pembimbing AS nama_pembimbing,
         sk.nama_sekolah,
@@ -71,7 +73,7 @@ if (!file_exists($logoFile) || empty($data['logo_sekolah'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buku Kegiatan Praktik Kerja Lapangan</title>
+    <title>LAPORAN KEGIATAN PRAKTIK KERJA INDUSTRI (PRAKERIN)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function printReport() {
@@ -122,8 +124,10 @@ if (!file_exists($logoFile) || empty($data['logo_sekolah'])) {
     <table cellspacing="0" cellpadding="10">
         <tr>
             <td colspan="2" class="align-center"><br><br><br>
-                <p class="text-xl font-bold">BUKU KEGIATAN</p>
-                <p class="text-xl font-bold mt-2">PRAKTIK KERJA LAPANGAN</p>
+                <p class="text-xl font-bold">LAPORAN KEGIATAN </p>
+                <p class="text-xl font-bold mt-2">PRAKTIK KERJA INDUSTRI (PRAKERIN)</p>
+                <p class="text-lg font-bold mt-3">PENGEMBANGAN PERANGKAT LUNAK DAN GIM</p>
+                <p class="text-lg font-bold mt-4">DI PT. ASTA BRATA TEKNOLOGI</p
             </td>
         </tr>
         <tr>
@@ -133,18 +137,16 @@ if (!file_exists($logoFile) || empty($data['logo_sekolah'])) {
         </tr>
         <tr>
             <td colspan="2" class="style6 align-center"><br><br><br>
-                <p><span class="style27">Nama Peserta Didik : <?php echo htmlspecialchars($data['nama_siswa']); ?></span></p>
-                <p><span class="style27">Kelas / Program Keahlian : <?php echo htmlspecialchars($data['kelas']); ?></span></p>
-                <p><span class="style27">DUDI Tempat PKL : <?php echo htmlspecialchars($data['nama_perusahaan']); ?></span></p>
-                <p><span class="style27">Pembimbing (DUDI) : <?php echo htmlspecialchars($data['nama_pembimbing']); ?></span></p>
+                <p><span class="style27">Disusun oleh :</span></p><br>
+                <p><span class="style27">Nama :<?php echo htmlspecialchars($data['nama_siswa']); ?></span></p>
+                <p><span class="style27">NIS : <?php echo htmlspecialchars($data['nis']); ?></span></p>
+                <p><span class="style27">NISN: <?php echo htmlspecialchars($data['nisn']); ?></span></p>
             </td>
         </tr>
         <tr>
             <td colspan="2" class="style6 align-center"><br><br><br>
-                <p class="text-lg">PEMERINTAH PROPINSI JAWA TENGAH</p>
-                <p class="text-lg">DINAS PENDIDIKAN DAN KEBUDAYAAN</p>
                 <p class="text-lg"><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
-                <p class="text-lg"><?php echo htmlspecialchars($data['alamat_sekolah']); ?></p>
+                <p class="text-lg">PEMERINTAH PROPINSI JAWA TENGAH</p>
             </td>
         </tr>
     </table>

@@ -64,6 +64,10 @@
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST">
             <div class="form-row">
                 <div class="form-group col-md-3">
+                    <label>NIS</label>
+                    <input type="text" name="nis" class="form-control" required>
+                </div>
+                <div class="form-group col-md-3">
                     <label>NISN</label>
                     <input type="text" name="nisn" class="form-control" required>
                 </div>
@@ -94,9 +98,6 @@
                         <option value="Mekatronika">Mekatronika</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>Tempat Tanggal Lahir</label>
                     <input type="text" name="TTL" class="form-control" required>
@@ -129,9 +130,6 @@
                     <label>Tanggal Mulai</label>
                     <input type="date" name="tanggal_mulai" class="form-control" required>
                 </div>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>Tanggal Selesai</label>
                     <input type="date" name="tanggal_selesai" class="form-control" required>

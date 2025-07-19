@@ -100,9 +100,10 @@
 <script>
   document.querySelector('form[action="sign-up_aksi.php"]').addEventListener('submit', function() {
     // Hapus item localStorage saat tombol logout diklik
-    localStorage.removeItem('welcomeAlertShown');
-    localStorage.removeItem('adminWelcomeShown');
-    localStorage.removeItem('guruWelcomeShown');
+    localStorage.removeItem("siswaWelcomeShown");
+    localStorage.removeItem("pembimbingAlertShown");
+    localStorage.removeItem("adminWelcomeShown");
+    localStorage.removeItem("guruWelcomeShown");
   });
 </script>
 </body>

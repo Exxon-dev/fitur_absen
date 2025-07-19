@@ -17,6 +17,7 @@ if (isset($_GET['id_siswa'])) {
 <?php
 if (isset($_POST['submit'])) {
 	$id_siswa = $_POST['id_siswa'];
+	$nis = $_POST['nis'];
 	$nisn = $_POST['nisn'];
 	$nama_siswa = $_POST['nama_siswa'];
 	$kelas = $_POST['kelas'];

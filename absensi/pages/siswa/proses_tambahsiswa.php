@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 include(__DIR__.'/../../koneksi.php');
 
 if (isset($_POST['submit'])) {
+    $nis = $_POST['nis'];
     $nisn = $_POST['nisn'];
     $nama_siswa = $_POST['nama_siswa'];
     $no_wa = $_POST['no_wa'];
@@ -32,6 +33,7 @@ if (isset($_POST['submit'])) {
     
     if(mysqli_num_rows($cek) == 0){
         $sql = mysqli_query($coneksi, "INSERT INTO siswa (
+        nis,
         nisn,
         nama_siswa,
         no_wa,
@@ -47,6 +49,7 @@ if (isset($_POST['submit'])) {
         username, 
         password)
         VALUES (
+        '$nis',
         '$nisn',
         '$nama_siswa',
         '$no_wa',
