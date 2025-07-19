@@ -23,7 +23,7 @@ if (isset($_POST['submit'])) {
 
     $sql = mysqli_query($coneksi, "UPDATE perusahaan SET nama_perusahaan='$nama_perusahaan',alamat_perusahaan='$alamat_perusahaan' WHERE id_perusahaan='$id_perusahaan'") or die(mysqli_error($coneksi));
     if ($sql) {
-        $_SESSION['flash_tambah'] = 'sukses';
+        $_SESSION['flash_edit'] = 'sukses';
         header('Location: ../../index.php?page=perusahaan');
         exit();
     } else {
