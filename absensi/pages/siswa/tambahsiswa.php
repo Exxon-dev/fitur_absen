@@ -54,6 +54,12 @@
         .btn-warning:hover {
             background-color: #e0a800;
         }
+
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -61,15 +67,17 @@
     <div class="container">
         <h2>Tambah Siswa</h2>
         <hr>
-        <form action="pages/siswa/proses_tambahsiswa.php" method="POST">
+        <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
-                    <input type="text" name="nis" class="form-control" required>
+                    <input type="text" name="nis" id="nis" class="form-control" required maxlength="12" minlength="8" oninput="validateNIS()">
+                    <div id="nisError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
-                    <input type="text" name="nisn" class="form-control" required>
+                    <input type="text" name="nisn" id="nisn" class="form-control" required maxlength="10" minlength="10" oninput="validateNISN()">
+                    <div id="nisnError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
@@ -186,5 +194,50 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script>
+        function validateNIS() {
+            const nisInput = document.getElementById('nis');
+            const nisError = document.getElementById('nisError');
+            const nisValue = nisInput.value.trim();
+            
+            if (nisValue.length !== 12) {
+                nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
+                return false;
+            } else {
+                nisError.textContent = '';
+                return true;
+            }
+        }
+
+        function validateNISN() {
+            const nisnInput = document.getElementById('nisn');
+            const nisnError = document.getElementById('nisnError');
+            const nisnValue = nisnInput.value.trim();
+            
+            if (nisnValue.length !== 10) {
+                nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
+                return false;
+            } else {
+                nisnError.textContent = '';
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const isNISValid = validateNIS();
+            const isNISNValid = validateNISN();
+            
+            if (!isNISValid || !isNISNValid) {
+                if (!isNISValid) {
+                    document.getElementById('nis').focus();
+                } else {
+                    document.getElementById('nisn').focus();
+                }
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
