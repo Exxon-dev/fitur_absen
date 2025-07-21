@@ -67,7 +67,7 @@ $result = mysqli_query($coneksi, $query);
 <body>
     <div class="container">
         <h2 class="text-center">Jurnal</h2>
-        <hr />
+        <hr>
 
         <!-- Form pencarian -->
         <form method="GET" class="search-bar" action="index.php">
