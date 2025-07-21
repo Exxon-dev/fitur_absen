@@ -64,6 +64,36 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+
+    .input[type="radio"] {
+    transform: scale(1.3);
+    margin-right: 6px;
+  }
+
+  .status-hadir {
+    color: green;
+    font-weight: bold;
+  }
+
+  .status-sakit {
+    color: orange;
+    font-weight: bold;
+  }
+
+  .status-izin {
+    color: blue;
+    font-weight: bold;
+  }
+
+  .status-alpa {
+    color: red;
+    font-weight: bold;
+  }
+
+  .status-belum {
+    color: #6c757d; /* abu */
+  }
+
   </style>
 </head>
 
@@ -132,57 +162,57 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
                   <th>Aksi</th>
                 </tr>
               </thead>
-              <tbody>
-                <?php
-                // Mengambil data siswa dari database
-                $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
-                $index = 1; // Inisialisasi nomor urut
-                $today = date('Y-m-d'); // Tanggal hari ini
+                <tbody>
+                  <?php
+                  $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+                  $index = 1;
+                  $today = date('Y-m-d');
 
-                while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
-                  // Cek status kehadiran siswa hari ini
-                  $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
-                  $attendance = mysqli_fetch_assoc($attendanceQuery);
+                  while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
+                    $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
+                    $attendance = mysqli_fetch_assoc($attendanceQuery);
 
-                  $statusClass = '';
-                  $keterangan = '-'; // Default jika tidak ada keterangan
-                  $isReadOnly = false; // Flag untuk read-only
-                  if ($attendance) {
-                    // Siswa hadir
-                    $statusClass = 'present';
-                    $keterangan = $attendance['keterangan']; // Ambil keterangan dari absensi
-                    $isReadOnly = true; // Set read-only true jika siswa hadir
-                  } else {
-                    // Siswa tidak hadir
-                    $statusClass = 'absent';
-                  }
+                    $statusClass = 'status-belum';
+                    $keterangan = '-';
+                    $isReadOnly = false;
 
-                  echo '
-                    <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
-                        <td>' . $index . '</td>
-                        <td class="' . $statusClass . '">' . $siswa['nama_siswa'] . '</td>
-                        
-                        <td>
-                            <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-                            <label for="sakit_' . $siswa['id_siswa'] . '">Sakit</label>
-                        </td>
-                        <td>
-                            <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-                            <label for="izin_' . $siswa['id_siswa'] . '">Izin</label>
-                        </td>
-                        <td>
-                            <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-                            <label for="alpa_' . $siswa['id_siswa'] . '">Alpa</label>
-                        </td>
-                        <td>
-                            <button type="submit" name="simpan_' . $siswa['id_siswa'] . '" class="btn btn-primary btn-sm" ' . ($isReadOnly ? 'disabled' : '') . '>Simpan</button>
-                        </td>
-                    </tr>
+                    if ($attendance) {
+                      $keterangan = $attendance['keterangan'];
+                      $isReadOnly = true;
+
+                      // Set warna teks berdasarkan keterangan
+                      if ($keterangan === 'sakit') $statusClass = 'status-sakit';
+                      elseif ($keterangan === 'izin') $statusClass = 'status-izin';
+                      elseif ($keterangan === 'alpa') $statusClass = 'status-alpa';
+                      else $statusClass = 'status-hadir';
+                    }
+
+                    echo '
+                      <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
+                          <td>' . $index . '</td>
+                          <td class="' . $statusClass . '">' . htmlspecialchars($siswa['nama_siswa']) . '</td>
+
+                          <td>
+                              <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                              <label for="Sakit_' . $siswa['id_siswa'] . '">Sakit</label>
+                          </td>
+                          <td>
+                              <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                              <label for="Izin_' . $siswa['id_siswa'] . '">Izin</label>
+                          </td>
+                          <td>
+                              <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                              <label for="Alpa_' . $siswa['id_siswa'] . '">Alpa</label>
+                          </td>
+                          <td>
+                              <button type="submit" name="simpan_' . $siswa['id_siswa'] . '" class="btn btn-primary btn-sm" ' . ($isReadOnly ? 'disabled' : '') . '>Simpan</button>
+                          </td>
+                      </tr>
                     ';
-                  $index++;
-                }
-                ?>
-              </tbody>
+                    $index++;
+                  }
+                  ?>
+                </tbody>
       </table>
     </form>
 
