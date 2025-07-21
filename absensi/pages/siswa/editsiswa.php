@@ -165,9 +165,6 @@ WHERE id_siswa='$id_siswa'");
                         <option value="Mekatronika">Mekatronika</option>
                     </select>
                 </div>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>Tempat Tanggal Lahir</label>
                     <input type="text" name="TTL" class="form-control" value="<?php echo htmlspecialchars($data['TTL']); ?>" required>
@@ -199,9 +196,6 @@ WHERE id_siswa='$id_siswa'");
                     <label>Tanggal Mulai</label>
                     <input type="date" name="tanggal_mulai" class="form-control" value="<?php echo htmlspecialchars($data['tanggal_mulai']); ?>" required>
                 </div>
-            </div>
-
-            <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>Tanggal Selesai</label>
                     <input type="date" name="tanggal_selesai" class="form-control" value="<?php echo htmlspecialchars($data['tanggal_selesai']); ?>" required>
