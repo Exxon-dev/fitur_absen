@@ -55,7 +55,6 @@ include('koneksi.php');
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>NIS</th>
                     <th>NISN</th>
                     <th>Nama</th>
                     <th>Kelas</th>
@@ -85,7 +84,6 @@ include('koneksi.php');
                         echo '
         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
             <td>' . $no . '</td>
-            <td>' . htmlspecialchars($data['nis']) . '</td>
             <td>' . htmlspecialchars($data['nisn']) . '</td>
             <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
             <td>' . htmlspecialchars($data['kelas']) . '</td>
