@@ -71,37 +71,43 @@ header("Cache-Control: no-cache, must-revalidate");
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAPORAN KEGIATAN PRAKTIK KERJA INDUSTRI (PRAKERIN)</title>
+    <title>LAPORAN KEGIATAN PRAKTIK KERJA INDUSTRI (PRAKERIN) </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style type="text/css">
         @page {
             size: A4;
             margin: 20mm;
         }
+
         body {
             font-family: Verdana, Arial, Helvetica, sans-serif;
             font-size: 16px;
             margin: 0;
             padding: 0;
         }
+
         .table-logo {
             width: 100px;
             height: 100px;
             object-fit: contain;
             margin: 0 auto;
         }
+
         .text-center {
             text-align: center;
         }
+
         .text-lg {
             font-size: 18px;
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
     <table width="100%" border="0" cellspacing="0" cellpadding="10">
         <tr>
@@ -140,7 +146,7 @@ header("Cache-Control: no-cache, must-revalidate");
                 window.print();
             }, 500);
         };
-        
+
         // Fallback jika gambar error
         document.addEventListener('DOMContentLoaded', function() {
             var logo = document.querySelector('.table-logo');
@@ -150,4 +156,5 @@ header("Cache-Control: no-cache, must-revalidate");
         });
     </script>
 </body>
+
 </html>
