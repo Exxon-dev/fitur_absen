@@ -26,6 +26,18 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
         .table-responsive {
             margin-top: 20px;
         }
@@ -46,15 +58,20 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             background-color: #128C7E;
             color: white;
         }
-        .table th {
-            background-color: #f8f9fa;
+        .table-light th {
+            background-color: #007bff;
+            color: white;
+        }
+        .tabletbody tr:hover {
+            background-color: #e9ecef;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-            <h2><i class="bi bi-calendar-check"></i> Rekap Absensi <?= htmlspecialchars($tanggal) ?></h2>
+            <div class="text-center"></div>
+            <h2 class="text-primary"><i class="bi bi-calendar-check"></i> Rekap Absensi <?= htmlspecialchars($tanggal) ?></h2>
             <a href="javascript:window.location.reload()" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-arrow-clockwise"></i> Refresh
             </a>
