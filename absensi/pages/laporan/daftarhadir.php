@@ -139,7 +139,7 @@ $coneksi->close();
                         <td class='top bottom left text-center'>{$no}</td>
                         <td class='top bottom left text-center'>" . htmlspecialchars($record['tanggal']) . "</td>
                         <td class='top bottom left text-center'>" . htmlspecialchars($record['jam_masuk']) . "</td>
-                        <td class='top bottom left text-center'>" . htmlspecialchars($record['jam_keluar']) . "</td>
+                        <td class='top bottom left text-center'>" . htmlspecialchars($record['jam_keluar']?? '') . "</td>
                         <td class='top bottom left right text-center'>" . htmlspecialchars($record['keterangan']) . "</td>
                     </tr>";
                     $no++;
