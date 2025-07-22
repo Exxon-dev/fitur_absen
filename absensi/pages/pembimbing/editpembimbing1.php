@@ -125,9 +125,13 @@ if (isset($_POST['submit'])) {
                 <div class="col text-left">
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
-                <div class="col text-right">
+                <div class="col text-center">
                     <button type="button" class="btn btn-danger" id="btnHapus"
                         data-id="<?php echo $data['id_pembimbing']; ?>">Hapus</button>
+                </div>
+                <div class="col text-right">
+                    <a href="index.php?page=pembimbing" class="btn btn-warning">Kembali</a>
+
                 </div>
             </div>
         </form>

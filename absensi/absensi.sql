@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 17 Jul 2025 pada 03.49
--- Versi server: 10.4.28-MariaDB
--- Versi PHP: 8.2.4
+-- Generation Time: Jul 22, 2025 at 03:40 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `absen`
+-- Table structure for table `absen`
 --
 
 CREATE TABLE `absen` (
@@ -37,19 +37,24 @@ CREATE TABLE `absen` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `absen`
+-- Dumping data for table `absen`
 --
 
 INSERT INTO `absen` (`id_absen`, `id_siswa`, `jam_masuk`, `jam_keluar`, `tanggal`, `keterangan`) VALUES
 (81, 1, '08:07:24', NULL, '2025-07-14', 'Hadir'),
 (82, 2, '08:16:02', NULL, '2025-07-14', 'Hadir'),
 (84, 1, '14:15:28', NULL, '2025-07-16', 'Hadir'),
-(85, 6899, '08:20:49', NULL, '2025-07-17', 'Hadir');
+(85, 6899, '08:20:49', NULL, '2025-07-17', 'Hadir'),
+(88, 1, '14:09:38', '14:46:28', '2025-07-17', 'Hadir'),
+(89, 1, '08:44:38', '15:55:05', '2025-07-18', 'Hadir'),
+(91, 1, '07:59:26', '18:56:51', '2025-07-19', 'Hadir'),
+(92, 1, '08:37:44', NULL, '2025-07-21', 'Hadir'),
+(93, 1, '08:09:31', NULL, '2025-07-22', 'Hadir');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `catatan`
+-- Table structure for table `catatan`
 --
 
 CREATE TABLE `catatan` (
@@ -60,10 +65,25 @@ CREATE TABLE `catatan` (
   `tanggal` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `catatan`
+--
+
+INSERT INTO `catatan` (`id_catatan`, `id_pembimbing`, `catatan`, `id_jurnal`, `tanggal`) VALUES
+(62, 1, 'lomba apa', 1, '2025-07-18'),
+(76, 1, 'hai', 1, '2025-07-18'),
+(77, 1, 'hai', 1, '2025-07-18'),
+(78, 1, 'haii', 1, '2025-07-18'),
+(79, 1, 'hai', 1, '2025-07-18'),
+(80, 1, 'haiii', 1, '2025-07-18'),
+(81, 1, 'hai', 72, '2025-07-18'),
+(83, 1, 'lomba apa?', 79, '2025-07-18'),
+(84, 1, 'haii juga', 82, '2025-07-22');
+
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `guru`
+-- Table structure for table `guru`
 --
 
 CREATE TABLE `guru` (
@@ -75,20 +95,19 @@ CREATE TABLE `guru` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `guru`
+-- Dumping data for table `guru`
 --
 
 INSERT INTO `guru` (`id_guru`, `nama_guru`, `id_sekolah`, `username`, `password`) VALUES
-(1, 'Amin Wahyudi', 1, 'amin', 'a'),
+(1, 'Amin Wahyudi', 3, 'amin', 'a'),
 (2, 'Imam R Kurniawan', 0, 'imam', 'i'),
 (3, 'Sidik Waloyo', 2, 'sidik', 's'),
-(4, 'Rina Setiawati', 0, 'rina', 'r'),
-(6, 'Dewi Anisa', 3, 'dewi', 'd');
+(4, 'Rina Setiawati', 1, 'rina', 'r');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `jurnal`
+-- Table structure for table `jurnal`
 --
 
 CREATE TABLE `jurnal` (
@@ -99,81 +118,30 @@ CREATE TABLE `jurnal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `jurnal`
+-- Dumping data for table `jurnal`
 --
 
 INSERT INTO `jurnal` (`id_jurnal`, `tanggal`, `keterangan`, `id_siswa`) VALUES
-(3, '2024-09-22', 'Siswa mengikuti kegiatan pramuka.', 3),
-(4, '2024-09-23', 'Siswa tidak hadir karena sakit.', 4),
-(6, '2024-09-25', 'Siswa hadir di kelas.', 6),
-(7, '2024-09-26', 'Siswa menghadiri seminar.', 7),
-(8, '2024-09-27', 'Siswa belajar kelompok.', 8),
-(11, '2024-09-30', 'Siswa berpartisipasi dalam lomba.', 1),
-(12, '2024-09-30', 'Siswa melakukan tugas kelompok.', 2),
-(13, '2024-09-30', 'Siswa mengikuti ujian harian.', 3),
-(14, '2024-09-30', 'Siswa hadir dengan izin.', 4),
-(15, '2024-09-30', 'Siswa tidak masuk karena sakit.', 5),
-(16, '2024-09-30', 'Siswa membantu kegiatan sekolah.', 6),
-(17, '2024-09-30', 'Siswa mengikuti diskusi kelas.', 7),
-(18, '2024-09-30', 'Siswa memberikan presentasi.', 8),
-(19, '2024-09-30', 'Siswa berlatih untuk ujian.', 9),
-(20, '2024-09-30', 'Siswa mengerjakan proyek.', 10),
-(21, '2024-09-30', 'Siswa mengikuti seminar.', 1),
-(22, '2024-09-30', 'Siswa absen dengan izin.', 2),
-(23, '2024-09-30', 'Siswa menyiapkan bahan ajar.', 3),
-(24, '2024-09-30', 'Siswa menghadiri pertemuan orang tua.', 4),
-(25, '2024-09-30', 'Siswa mengikuti kunjungan industri.', 5),
-(26, '2024-09-30', 'Siswa melakukan kegiatan sosial.', 6),
-(27, '2024-09-30', 'Siswa belajar kelompok.', 7),
-(28, '2024-09-30', 'Siswa tidak hadir karena alasan pribadi.', 8),
-(29, '2024-09-30', 'Siswa berpartisipasi dalam pameran.', 9),
-(30, '2024-09-30', 'Siswa mengikuti pelatihan.', 10),
-(32, '2024-09-30', 'Siswa mengikuti pertemuan organisasi.', 2),
-(33, '2024-09-30', 'Siswa berkontribusi dalam proyek kelas.', 3),
-(34, '2024-09-30', 'Siswa mendapatkan bimbingan.', 4),
-(35, '2024-09-30', 'Siswa berpartisipasi dalam diskusi panel.', 5),
-(36, '2024-09-30', 'Siswa menghadiri acara sekolah.', 6),
-(37, '2024-09-30', 'Siswa tidak masuk karena urusan keluarga.', 7),
-(38, '2024-09-30', 'Siswa membantu di perpustakaan.', 8),
-(39, '2024-09-30', 'Siswa mengikuti kelas tambahan.', 9),
-(40, '2024-09-30', 'Siswa melakukan tugas individu.', 10),
-(41, '2024-09-30', 'Siswa berpartisipasi dalam olahraga.', 1),
-(42, '2024-09-30', 'Siswa melakukan kegiatan seni.', 2),
-(43, '2024-09-30', 'Siswa tidak hadir karena sakit.', 3),
-(44, '2024-09-30', 'Siswa belajar mandiri.', 4),
-(45, '2024-09-30', 'Siswa mengikuti acara spesial.', 5),
-(46, '2024-09-30', 'Siswa mengerjakan laporan.', 6),
-(47, '2024-09-30', 'Siswa berbagi pengalaman belajar.', 7),
-(48, '2024-09-30', 'Siswa menghadiri kursus.', 8),
-(49, '2024-10-15', 'Siswa tidak hadir karena alasan kesehatan.', 1),
-(50, '2024-10-15', 'Siswa membantu dalam kegiatan komunitas.', 2),
-(51, '2024-10-15', 'Siswa berpartisipasi dalam pameran seni.', 3),
-(52, '2024-10-15', 'Siswa mengerjakan proyek kelompok.', 4),
-(53, '2024-10-15', 'Siswa mengikuti kelas tambahan.', 5),
-(54, '2024-10-15', 'Siswa menyusun laporan tugas.', 6),
-(55, '2024-10-15', 'Siswa berkontribusi dalam proyek komunitas.', 7),
-(56, '2024-10-15', 'Siswa berpartisipasi dalam kegiatan olahraga.', 8),
-(57, '2024-10-15', 'Siswa membantu di perpustakaan sekolah.', 9),
-(58, '2024-10-15', 'Siswa mengikuti kelas persiapan ujian.', 10),
-(60, '2024-10-16', 'halooo apa kabar', 2),
-(61, '2024-10-21', 'halooo semua', 1),
-(62, '2024-10-22', 'tidak ada kegiatan di jam 8', 10),
 (63, '2024-10-23', 'seperti biasanya', 7),
 (64, '2025-07-04', 'UNQUE ', 6867),
 (65, '2025-07-05', 'oi\r\n', 6867),
 (67, '2025-07-06', 'oiii', 6867),
 (69, '2025-07-08', 'oi', 6867),
 (70, '2025-07-10', 'hallo', 6867),
-(71, '2025-07-10', 'halo', 1),
+(71, '2025-07-10', 'hello', 1),
 (72, '2025-07-11', 'hai', 1),
 (73, '2025-07-11', 'kjhbv', 6896),
-(75, '2025-07-16', 'sdfghj', 1),
-(76, '2025-07-17', 'hallo', 6899);
+(76, '2025-07-17', 'hallo', 6899),
+(77, '2025-07-17', 'oi', 6900),
+(79, '2025-07-18', 'mengikuti lomba.', 6904),
+(80, '2025-07-19', 'hallo pa kabar.', 1),
+(81, '2025-07-21', 'hallo', 1),
+(82, '2025-07-22', 'haiii', 1);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `laporan`
+-- Table structure for table `laporan`
 --
 
 CREATE TABLE `laporan` (
@@ -186,7 +154,7 @@ CREATE TABLE `laporan` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pembimbing`
+-- Table structure for table `pembimbing`
 --
 
 CREATE TABLE `pembimbing` (
@@ -197,19 +165,16 @@ CREATE TABLE `pembimbing` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `pembimbing`
+-- Dumping data for table `pembimbing`
 --
 
 INSERT INTO `pembimbing` (`id_pembimbing`, `nama_pembimbing`, `username`, `password`) VALUES
-(1, 'Maulida Nur Masruroh', 'ida', 'i'),
-(2, 'Bu Lis', 'lis', 'lis123'),
-(3, 'Fajar Hidayat', 'fajar', 'f'),
-(4, 'Siti Fatimah', 'siti', 's');
+(1, 'Maulida Nur Masruroh', 'ida', 'i');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pengaturan_notifikasi`
+-- Table structure for table `pengaturan_notifikasi`
 --
 
 CREATE TABLE `pengaturan_notifikasi` (
@@ -223,7 +188,7 @@ CREATE TABLE `pengaturan_notifikasi` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `perusahaan`
+-- Table structure for table `perusahaan`
 --
 
 CREATE TABLE `perusahaan` (
@@ -233,19 +198,18 @@ CREATE TABLE `perusahaan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `perusahaan`
+-- Dumping data for table `perusahaan`
 --
 
 INSERT INTO `perusahaan` (`id_perusahaan`, `nama_perusahaan`, `alamat_perusahaan`) VALUES
 (1, 'PT Asta Brata Teknologo', 'Banyurip,Tegalrejo,Magelang'),
 (3, 'PT Sejahtera Abadi', 'Jl. Raya No. 123, Yogyakarta'),
-(4, 'CV Maju Jaya', 'Jl. Merdeka No. 456, Semarang'),
 (5, 'PT Teknologi Wih Canggih', 'Jl. Canggih No. 789, Surakarta');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `sekolah`
+-- Table structure for table `sekolah`
 --
 
 CREATE TABLE `sekolah` (
@@ -257,7 +221,7 @@ CREATE TABLE `sekolah` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `sekolah`
+-- Dumping data for table `sekolah`
 --
 
 INSERT INTO `sekolah` (`id_sekolah`, `nama_sekolah`, `alamat_sekolah`, `kepala_sekolah`, `logo_sekolah`) VALUES
@@ -268,11 +232,12 @@ INSERT INTO `sekolah` (`id_sekolah`, `nama_sekolah`, `alamat_sekolah`, `kepala_s
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `siswa`
+-- Table structure for table `siswa`
 --
 
 CREATE TABLE `siswa` (
   `id_siswa` int(11) NOT NULL,
+  `nis` varchar(15) NOT NULL,
   `nisn` varchar(15) NOT NULL,
   `nama_siswa` varchar(50) NOT NULL,
   `no_wa` varchar(20) NOT NULL,
@@ -290,16 +255,16 @@ CREATE TABLE `siswa` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `siswa`
+-- Dumping data for table `siswa`
 --
 
-INSERT INTO `siswa` (`id_siswa`, `nisn`, `nama_siswa`, `no_wa`, `kelas`, `pro_keahlian`, `TTL`, `id_sekolah`, `id_perusahaan`, `tanggal_mulai`, `tanggal_selesai`, `id_pembimbing`, `id_guru`, `username`, `password`) VALUES
-(1, '23101106', 'ekoo', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko', 'eko');
+INSERT INTO `siswa` (`id_siswa`, `nis`, `nisn`, `nama_siswa`, `no_wa`, `kelas`, `pro_keahlian`, `TTL`, `id_sekolah`, `id_perusahaan`, `tanggal_mulai`, `tanggal_selesai`, `id_pembimbing`, `id_guru`, `username`, `password`) VALUES
+(1, '23101106', '0084986208', 'eko', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko', 'eko');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -311,7 +276,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`Id`, `username`, `password`, `nama`, `level`) VALUES
@@ -325,114 +290,114 @@ INSERT INTO `users` (`Id`, `username`, `password`, `nama`, `level`) VALUES
 --
 
 --
--- Indeks untuk tabel `absen`
+-- Indexes for table `absen`
 --
 ALTER TABLE `absen`
   ADD PRIMARY KEY (`id_absen`);
 
 --
--- Indeks untuk tabel `catatan`
+-- Indexes for table `catatan`
 --
 ALTER TABLE `catatan`
   ADD PRIMARY KEY (`id_catatan`);
 
 --
--- Indeks untuk tabel `guru`
+-- Indexes for table `guru`
 --
 ALTER TABLE `guru`
   ADD PRIMARY KEY (`id_guru`);
 
 --
--- Indeks untuk tabel `jurnal`
+-- Indexes for table `jurnal`
 --
 ALTER TABLE `jurnal`
   ADD PRIMARY KEY (`id_jurnal`);
 
 --
--- Indeks untuk tabel `pembimbing`
+-- Indexes for table `pembimbing`
 --
 ALTER TABLE `pembimbing`
   ADD PRIMARY KEY (`id_pembimbing`);
 
 --
--- Indeks untuk tabel `pengaturan_notifikasi`
+-- Indexes for table `pengaturan_notifikasi`
 --
 ALTER TABLE `pengaturan_notifikasi`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `perusahaan`
+-- Indexes for table `perusahaan`
 --
 ALTER TABLE `perusahaan`
   ADD PRIMARY KEY (`id_perusahaan`);
 
 --
--- Indeks untuk tabel `sekolah`
+-- Indexes for table `sekolah`
 --
 ALTER TABLE `sekolah`
   ADD PRIMARY KEY (`id_sekolah`);
 
 --
--- Indeks untuk tabel `siswa`
+-- Indexes for table `siswa`
 --
 ALTER TABLE `siswa`
   ADD PRIMARY KEY (`id_siswa`);
 
 --
--- Indeks untuk tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`Id`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `absen`
+-- AUTO_INCREMENT for table `absen`
 --
 ALTER TABLE `absen`
-  MODIFY `id_absen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `id_absen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
--- AUTO_INCREMENT untuk tabel `catatan`
+-- AUTO_INCREMENT for table `catatan`
 --
 ALTER TABLE `catatan`
-  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
--- AUTO_INCREMENT untuk tabel `guru`
+-- AUTO_INCREMENT for table `guru`
 --
 ALTER TABLE `guru`
   MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=987654322;
 
 --
--- AUTO_INCREMENT untuk tabel `jurnal`
+-- AUTO_INCREMENT for table `jurnal`
 --
 ALTER TABLE `jurnal`
-  MODIFY `id_jurnal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id_jurnal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
--- AUTO_INCREMENT untuk tabel `pembimbing`
+-- AUTO_INCREMENT for table `pembimbing`
 --
 ALTER TABLE `pembimbing`
   MODIFY `id_pembimbing` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT untuk tabel `pengaturan_notifikasi`
+-- AUTO_INCREMENT for table `pengaturan_notifikasi`
 --
 ALTER TABLE `pengaturan_notifikasi`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `siswa`
+-- AUTO_INCREMENT for table `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6900;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6913;
 
 --
--- AUTO_INCREMENT untuk tabel `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
