@@ -2,27 +2,12 @@
 <html lang="en">
 
 <head>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>
     Absensi | SMK N TEMBARAK
   </title>
-
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!--     Fonts and icons     -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
@@ -60,35 +45,10 @@
   <main class="main-content border-radius-lg ">
     <!-- Navbar -->
 
-
     <!-- End Navbar -->
-
-
-
-
-
     <div class="container-fluid py-4">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </div>
-
-
   </main>
-
-
-
   <div class="fixed-plugin">
     <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
       <i class="material-icons py-2">settings</i>
@@ -183,104 +143,20 @@
       </div>
     </div>
   </div>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!--   Core JS Files   -->
   <script src="./assets/js/core/popper.min.js"></script>
   <script src="./assets/js/core/bootstrap.min.js"></script>
   <script src="./assets/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="./assets/js/plugins/smooth-scrollbar.min.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

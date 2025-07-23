@@ -71,7 +71,11 @@
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
+<<<<<<< HEAD
                     <input type="text" name="nis" id="nis" class="form-control" required maxlength="8" minlength="8" oninput="validateNIS()">
+=======
+                    <input type="text" name="nis" id="nis" class="form-control" required minlength="8" maxlength="12" oninput="validateNIS()">
+>>>>>>> 347503aa207cbac013f6347c147123e78b578449
                     <div id="nisError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
@@ -201,8 +205,13 @@
             const nisError = document.getElementById('nisError');
             const nisValue = nisInput.value.trim();
             
+<<<<<<< HEAD
             if (nisValue.length !== 8) {
                 nisError.textContent = 'NIS harus terdiri dari 8-8 karakter';
+=======
+            if (nisValue.length < 8 || nisValue.length > 12) {
+                nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
+>>>>>>> 347503aa207cbac013f6347c147123e78b578449
                 return false;
             } else {
                 nisError.textContent = '';

@@ -64,7 +64,7 @@ $can_edit = ($is_owner || (isset($_SESSION['level']) && $_SESSION['level'] === '
             <div class="form-group">
                 <label>Tanggal</label>
                 <input type="date" name="tanggal" class="form-control small-date-input <?php echo !$can_edit ? 'readonly-field' : ''; ?>"
-                    value="<?php echo htmlspecialchars($jurnal_data['tanggal']); ?>" <?php echo !$can_edit ? 'readonly' : ''; ?> required>
+                    value="<?php echo htmlspecialchars($jurnal_data['tanggal']); ?>" <?php echo !$can_edit ? 'readonly-field' : ''; ?> required>
             </div>
             
             <div class="form-group">
