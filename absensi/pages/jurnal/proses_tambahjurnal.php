@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 require_once('../../koneksi.php');
 
 // Validasi dasar
-if (!isset($_SESSION['level']) || !in_array($_SESSION['level'], ['siswa'])) {
+if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'siswa') {
     echo json_encode(['status' => 'error', 'message' => 'Akses ditolak: Level user tidak valid']);
     exit();
 }
@@ -20,15 +20,20 @@ if (!isset($_SESSION['id_siswa'])) {
     exit();
 }
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Harus menggunakan POST.']);
+    exit();
+}
+
 if (!isset($_POST['keterangan'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Permintaan tidak valid']);
+    echo json_encode(['status' => 'error', 'message' => 'Keterangan tidak dikirim']);
     exit();
 }
 
 // Siapkan variabel
 $id_siswa = $_SESSION['id_siswa'];
 $tanggal_hari_ini = date('Y-m-d');
-$keterangan = isset($_POST['keterangan']) ? trim($_POST['keterangan']) : '';
+$keterangan = trim($_POST['keterangan']);
 
 // Validasi input
 if (empty($keterangan)) {
@@ -46,6 +51,7 @@ try {
     $stmt->execute();
     $result = $stmt->get_result();
     $jurnal_hari_ini = $result->fetch_assoc();
+    $stmt->close();
 
     // 2. Lakukan insert atau update
     if ($jurnal_hari_ini) {
@@ -61,14 +67,12 @@ try {
     // Eksekusi query
     if ($stmt->execute()) {
         $coneksi->commit();
-        echo json_encode([
-            'status' => 'success', 
-            'message' => $jurnal_hari_ini ? 'Jurnal berhasil diperbarui' : 'Jurnal berhasil disimpan'
-        ]);
+        echo json_encode(['status' => 'success', 'message' => 'Jurnal berhasil disimpan.']);
     } else {
-        throw new Exception('Gagal menjalankan query: ' . $stmt->error);
+        $coneksi->rollback();
+        echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan jurnal.']);
     }
-
+    $stmt->close();
 } catch (Exception $e) {
     $coneksi->rollback();
     error_log('Error jurnal: ' . $e->getMessage());
@@ -77,7 +81,6 @@ try {
         'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
     ]);
 } finally {
-    if (isset($stmt)) $stmt->close();
     $coneksi->autocommit(true);
 }
 ?>

@@ -90,11 +90,13 @@ if ($id_siswa) {
                 .then(data => {
                     if (data.status === 'success') {
                         Swal.fire({
-                            position: 'top-end',
+                            toast: true,
+                            position: 'top',
                             icon: 'success',
                             title: data.message,
                             showConfirmButton: false,
-                            timer: 1500
+                            timer: 1500,
+                            timerProgressBar: true
                         }).then(() => {
                             window.location.href = 'index.php?page=jurnal';
                         });

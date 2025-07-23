@@ -134,13 +134,36 @@ $result = mysqli_query($coneksi, $query);
 <?php
 // Notifikasi flash message hapus
 if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
-    echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data jurnal berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+    echo "
+    <script>
+    document.addEventListener('DOMContentLoaded',function()
+    {Swal.fire
+        ({icon:'info',
+            title:'Sukses!',
+            text:'Data jurnal berhasil dihapus',
+            position:'top',
+            showConfirmButton:false,
+            timer:3000,
+            toast:true
+        });
+    });</script>";
     unset($_SESSION['flash_hapus']);
 }
 ?>
 <?php
 if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
-    echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data jurnal berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+    echo "
+    <script>document.addEventListener('DOMContentLoaded',function()
+    {Swal.fire
+        ({icon:'success',
+            title:'Sukses!',
+            text:'Data jurnal berhasil di update',
+            position:'top',
+            showConfirmButton:false,
+            timer:3000,
+            toast:true
+        });
+    });</script>";
     unset($_SESSION['flash_edit']);
 }
 ?>
