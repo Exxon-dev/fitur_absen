@@ -40,13 +40,17 @@ $result = mysqli_query($coneksi, $query);
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jurnal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <style>
-        body { background-color: #f8f9fa; }
+        body {
+            background-color: #f8f9fa;
+        }
+
         .container {
             margin-top: 20px;
             background-color: #fff;
@@ -54,9 +58,20 @@ $result = mysqli_query($coneksi, $query);
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
-        h2 { color: #007bff; }
-        .table thead th { background-color: #007bff; color: white; }
-        .table tbody tr:hover { background-color: #e9ecef; }
+
+        h2 {
+            color: #007bff;
+        }
+
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
         .search-bar {
             margin-bottom: 20px;
             display: flex;
@@ -64,9 +79,11 @@ $result = mysqli_query($coneksi, $query);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h2 class="text-center">Jurnal</h2>
+        <a href="index.php?page=tambahjurnal" class="btn btn-primary">Tambah Jurnal</a>
+        <h2 class="text-center">Data Jurnal</h2>
         <hr>
 
         <!-- Form pencarian -->
@@ -131,10 +148,10 @@ $result = mysqli_query($coneksi, $query);
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<?php
-// Notifikasi flash message hapus
-if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
-    echo "
+    <?php
+    // Notifikasi flash message hapus
+    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
+        echo "
     <script>
     document.addEventListener('DOMContentLoaded',function()
     {Swal.fire
@@ -147,12 +164,12 @@ if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
             toast:true
         });
     });</script>";
-    unset($_SESSION['flash_hapus']);
-}
-?>
-<?php
-if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
-    echo "
+        unset($_SESSION['flash_hapus']);
+    }
+    ?>
+    <?php
+    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
+        echo "
     <script>document.addEventListener('DOMContentLoaded',function()
     {Swal.fire
         ({icon:'success',
@@ -164,13 +181,13 @@ if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
             toast:true
         });
     });</script>";
-    unset($_SESSION['flash_edit']);
-}
-?>
-<?php
-// Notifikasi flash message tambah
-if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
-    echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        unset($_SESSION['flash_edit']);
+    }
+    ?>
+    <?php
+    // Notifikasi flash message tambah
+    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
     Swal.fire({
         icon: 'success',
         title: 'Sukses!',
@@ -181,12 +198,12 @@ if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
         toast: true
     });
 });</script>";
-    unset($_SESSION['flash_tambah']);
-}
+        unset($_SESSION['flash_tambah']);
+    }
 
-// Notifikasi error
-if (isset($_SESSION['flash_error'])) {
-    echo "<script>document.addEventListener('DOMContentLoaded',function(){
+    // Notifikasi error
+    if (isset($_SESSION['flash_error'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
     Swal.fire({
         icon: 'error',
         title: 'Gagal!',
@@ -197,12 +214,12 @@ if (isset($_SESSION['flash_error'])) {
         toast: true
     });
 });</script>";
-    unset($_SESSION['flash_error']);
-}
+        unset($_SESSION['flash_error']);
+    }
 
-// Notifikasi duplikat
-if (isset($_SESSION['flash_duplikat'])) {
-    echo "<script>document.addEventListener('DOMContentLoaded',function(){
+    // Notifikasi duplikat
+    if (isset($_SESSION['flash_duplikat'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
     Swal.fire({
         icon: 'warning',
         title: 'Peringatan!',
@@ -213,9 +230,10 @@ if (isset($_SESSION['flash_duplikat'])) {
         toast: true
     });
 });</script>";
-    unset($_SESSION['flash_duplikat']);
-}
-?>
+        unset($_SESSION['flash_duplikat']);
+    }
+    ?>
 
 </body>
+
 </html>

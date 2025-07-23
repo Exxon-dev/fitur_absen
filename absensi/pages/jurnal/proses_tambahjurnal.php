@@ -1,86 +1,78 @@
 <?php
-// Pastikan output buffer clean sebelum memulai
-if (ob_get_level()) ob_clean();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Mulai session dan set header JSON
-session_start();
-header('Content-Type: application/json');
 
-// Include koneksi database
-require_once('../../koneksi.php');
+include('../../koneksi.php');
 
 // Validasi dasar
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $_SESSION['flash_error'] = "Invalid request method";
+    header("Location: ../../index.php?page=tambahjurnal");
+    exit();
+}
+
+// Validasi level pengguna
 if (!isset($_SESSION['level']) || $_SESSION['level'] !== 'siswa') {
-    echo json_encode(['status' => 'error', 'message' => 'Akses ditolak: Level user tidak valid']);
+    $_SESSION['flash_error'] = "Akses ditolak: Hanya siswa yang dapat menambah jurnal";
+    header("Location: ../../index.php?page=jurnal");
     exit();
 }
 
 if (!isset($_SESSION['id_siswa'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Session siswa tidak valid']);
-    exit();
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method. Harus menggunakan POST.']);
+    $_SESSION['flash_error'] = "Session siswa tidak valid";
+    header("Location: ../../index.php?page=jurnal");
     exit();
 }
 
 if (!isset($_POST['keterangan'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Keterangan tidak dikirim']);
+    $_SESSION['flash_error'] = "Keterangan tidak dikirim";
+    header("Location: ../../index.php?page=tambahjurnal");
     exit();
 }
 
-// Siapkan variabel
 $id_siswa = $_SESSION['id_siswa'];
 $tanggal_hari_ini = date('Y-m-d');
 $keterangan = trim($_POST['keterangan']);
 
-// Validasi input
 if (empty($keterangan)) {
-    echo json_encode(['status' => 'error', 'message' => 'Keterangan tidak boleh kosong']);
+    $_SESSION['flash_error'] = "Keterangan tidak boleh kosong";
+    header("Location: ../../index.php?page=tambahjurnal");
     exit();
 }
 
 try {
-    // Gunakan prepared statement untuk keamanan
-    $coneksi->autocommit(false); // Mulai transaction
-
-    // 1. Cek apakah sudah ada jurnal hari ini
-    $stmt = $coneksi->prepare("SELECT id_jurnal FROM jurnal WHERE id_siswa = ? AND tanggal = ?");
+    // Cek apakah sudah ada jurnal hari ini
+    $check_query = "SELECT id_jurnal FROM jurnal WHERE id_siswa = ? AND tanggal = ?";
+    $stmt = $coneksi->prepare($check_query);
     $stmt->bind_param("is", $id_siswa, $tanggal_hari_ini);
     $stmt->execute();
     $result = $stmt->get_result();
-    $jurnal_hari_ini = $result->fetch_assoc();
+    $existing_jurnal = $result->fetch_assoc();
     $stmt->close();
 
-    // 2. Lakukan insert atau update
-    if ($jurnal_hari_ini) {
+    if ($existing_jurnal) {
         // Update jurnal yang ada
-        $stmt = $coneksi->prepare("UPDATE jurnal SET keterangan = ? WHERE id_jurnal = ?");
-        $stmt->bind_param("si", $keterangan, $jurnal_hari_ini['id_jurnal']);
+        $update_query = "UPDATE jurnal SET keterangan = ? WHERE id_jurnal = ?";
+        $stmt = $coneksi->prepare($update_query);
+        $stmt->bind_param("si", $keterangan, $existing_jurnal['id_jurnal']);
     } else {
         // Buat entri baru
-        $stmt = $coneksi->prepare("INSERT INTO jurnal (tanggal, keterangan, id_siswa) VALUES (?, ?, ?)");
+        $insert_query = "INSERT INTO jurnal (tanggal, keterangan, id_siswa) VALUES (?, ?, ?)";
+        $stmt = $coneksi->prepare($insert_query);
         $stmt->bind_param("ssi", $tanggal_hari_ini, $keterangan, $id_siswa);
     }
 
-    // Eksekusi query
     if ($stmt->execute()) {
-        $coneksi->commit();
-        echo json_encode(['status' => 'success', 'message' => 'Jurnal berhasil disimpan.']);
+        $_SESSION['flash_tambah'] = 'sukses';
+        header("Location: ../../index.php?page=jurnal");
     } else {
-        $coneksi->rollback();
-        echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan jurnal.']);
+        throw new Exception("Gagal menyimpan jurnal: " . $stmt->error);
     }
     $stmt->close();
 } catch (Exception $e) {
-    $coneksi->rollback();
-    error_log('Error jurnal: ' . $e->getMessage());
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
-    ]);
-} finally {
-    $coneksi->autocommit(true);
+    $_SESSION['flash_error'] = $e->getMessage();
+    header("Location: ../../index.php?page=tambahjurnal");
+    exit();
 }
 ?>

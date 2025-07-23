@@ -36,7 +36,6 @@ $total_pages = max(1, ceil($total_rows / $limit));
 <head>
     <title>Data Siswa, Jurnal, dan Catatan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .clickable-row {
             cursor: pointer;
@@ -166,8 +165,70 @@ $total_pages = max(1, ceil($total_rows / $limit));
 
     </div>
 
-    <!-- Flash Message dan Script tetap seperti sebelumnya -->
-    <!-- ... (tidak saya ulangi karena tidak berubah) ... -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <?php
+    // Notifikasi flash message hapus
+    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data catatan berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+        unset($_SESSION['flash_hapus']);
+    }
+    ?>
+    <?php
+    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data catatan berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+        unset($_SESSION['flash_edit']);
+    }
+    ?>
+    <?php
+    // Notifikasi flash message tambah
+    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Data catatan berhasil ditambahkan',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_tambah']);
+    }
+
+    // Notifikasi error
+    if (isset($_SESSION['flash_error'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '" . addslashes($_SESSION['flash_error']) . "',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_error']);
+    }
+
+    // Notifikasi duplikat
+    if (isset($_SESSION['flash_duplikat'])) {
+        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan!',
+            text: Catatan sudah terdaftar',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });</script>";
+        unset($_SESSION['flash_duplikat']);
+    }
+    ?>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script>

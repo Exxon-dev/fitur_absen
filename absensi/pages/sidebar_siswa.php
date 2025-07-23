@@ -38,9 +38,6 @@
         <div class="collapse <?php echo (isset($_GET['page']) && (strpos($_GET['page'], 'jurnal') !== false || $_GET['page'] == 'catatan')) ? 'show' : ''; ?>" id="submenu-jurnal">
           <ul class="navbar-nav ps-3">
             <li class="nav-item">
-              <a href="index.php?page=tambahjurnal" class="nav-link text-white ps-4">Isi Jurnal</a>
-            </li>
-            <li class="nav-item">
               <a href="index.php?page=jurnal" class="nav-link text-white ps-4">Data Jurnal</a>
             </li>
             <li class="nav-item">
