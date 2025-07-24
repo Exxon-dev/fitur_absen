@@ -65,7 +65,7 @@ $total_pages = max(1, ceil($total_rows / $limit));
 </head>
 
 <body>
-    <div class="container">
+    <div class="container table-responsive">
         <h2 class="text-center text-primary">Data Siswa, Jurnal, dan Catatan Terbaru</h2>
         <hr>
 

@@ -94,7 +94,8 @@ $result = mysqli_query($coneksi, $query);
         </form>
 
         <!-- Tabel Jurnal -->
-        <table class="table table-bordered table-hover">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
             <thead>
                 <tr>
                     <th>NO</th>
@@ -121,7 +122,7 @@ $result = mysqli_query($coneksi, $query);
                 ?>
             </tbody>
         </table>
-
+        </div>
         <!-- Pagination -->
         <nav>
             <ul class="pagination justify-content-center">

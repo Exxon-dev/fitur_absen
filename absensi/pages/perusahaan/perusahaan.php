@@ -44,7 +44,7 @@ include('koneksi.php');
 
 <body>
 
-    <div class="container">
+    <div class="container table-responsive">
         <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
         <h2 class="text-center">Data Perusahaan</h2>
 
