@@ -43,7 +43,6 @@ $total_pages = max(1, ceil($total_rows / $limit));
 
         .container {
             margin-top: 20px;
-            margin-right: 30px;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
@@ -66,7 +65,7 @@ $total_pages = max(1, ceil($total_rows / $limit));
 </head>
 
 <body>
-    <div class="container table-responsive">
+    <div class="container">
         <h2 class="text-center text-primary">Data Siswa, Jurnal, dan Catatan Terbaru</h2>
         <hr>
 
