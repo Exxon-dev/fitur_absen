@@ -458,7 +458,6 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             <div class="student-header">
               <div>
                 <div class="student-name">' . htmlspecialchars($siswa['nama_siswa']) . '</div>
-                <div class="student-number">Siswa #' . $index . '</div>
               </div>
               <span class="badge-status ' . $badgeClass . '">' . $statusText . '</span>
             </div>
@@ -491,7 +490,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       // Notifikasi login sukses (hanya muncul sekali)
-      if (!localStorage.getItem('guruWelcomeShown')) {
+      if (!localStorage.getItem('guruWelcomeShowed')) {
         const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
 
         Swal.fire({

@@ -103,7 +103,7 @@
     localStorage.removeItem("siswaWelcomeShown");
     localStorage.removeItem("pembimbingAlertShown");
     localStorage.removeItem("adminWelcomeShown");
-    localStorage.removeItem("guruWelcomeShown");
+    localStorage.removeItem("guruWelcomeShowed");
   });
 </script>
 </body>

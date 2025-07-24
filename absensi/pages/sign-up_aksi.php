@@ -10,7 +10,7 @@ echo '<script>
     localStorage.removeItem("siswaWelcomeShown");
     localStorage.removeItem("pembimbingAlertShown");
     localStorage.removeItem("adminWelcomeShown");
-    localStorage.removeItem("guruWelcomeShown");
+    localStorage.removeItem("guruWelcomeShowed");
     window.location.href = "sign-in.php";
 </script>';
 exit();
