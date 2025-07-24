@@ -43,6 +43,7 @@ $total_pages = max(1, ceil($total_rows / $limit));
 
         .container {
             margin-top: 20px;
+            margin-right: 30px;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
