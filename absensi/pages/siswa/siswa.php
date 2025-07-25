@@ -67,31 +67,31 @@ include('koneksi.php');
             <tbody>
                 <?php
                 $sql = mysqli_query($coneksi, "
-    SELECT 
-        s.id_siswa, s.nis, s.nisn, s.nama_siswa, s.kelas, 
-        s.tanggal_mulai, s.tanggal_selesai,
-        sk.nama_sekolah, 
-        p.nama_perusahaan
-    FROM siswa s
-    LEFT JOIN sekolah sk ON s.id_sekolah = sk.id_sekolah
-    LEFT JOIN perusahaan p ON s.id_perusahaan = p.id_perusahaan
-    ORDER BY sk.nama_sekolah ASC, p.nama_perusahaan ASC
-") or die(mysqli_error($coneksi));
+                SELECT 
+                    s.id_siswa, s.nis, s.nisn, s.nama_siswa, s.kelas, 
+                    s.tanggal_mulai, s.tanggal_selesai,
+                    sk.nama_sekolah, 
+                    p.nama_perusahaan
+                FROM siswa s
+                LEFT JOIN sekolah sk ON s.id_sekolah = sk.id_sekolah
+                LEFT JOIN perusahaan p ON s.id_perusahaan = p.id_perusahaan
+                ORDER BY sk.nama_sekolah ASC, p.nama_perusahaan ASC
+            ") or die(mysqli_error($coneksi));
 
                 if (mysqli_num_rows($sql) > 0) {
                     $no = 1;
                     while ($data = mysqli_fetch_assoc($sql)) {
                         echo '
-        <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
-            <td>' . $no . '</td>
-            <td>' . htmlspecialchars($data['nisn']) . '</td>
-            <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
-            <td>' . htmlspecialchars($data['kelas']) . '</td>
-            <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
-            <td>' . htmlspecialchars($data['nama_perusahaan']) . '</td>
-            <td>' . $data['tanggal_mulai'] . '</td>
-            <td>' . $data['tanggal_selesai'] . '</td>
-        </tr>';
+                            <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
+                                <td>' . $no . '</td>
+                                <td>' . htmlspecialchars($data['nisn']) . '</td>
+                                <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
+                                <td>' . htmlspecialchars($data['kelas']) . '</td>
+                                <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
+                                <td>' . htmlspecialchars($data['nama_perusahaan']) . '</td>
+                                <td>' . $data['tanggal_mulai'] . '</td>
+                                <td>' . $data['tanggal_selesai'] . '</td>
+                            </tr>';
                         $no++;
                     }
                 } else {

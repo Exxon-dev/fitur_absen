@@ -9,13 +9,30 @@ if (isset($_SESSION['level']) && $_SESSION['level'] === 'pembimbing') {
 $tanggal_hari_ini = date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 if (!$id_jurnal) {
-    header('Location: index.php?page=catatan&pesan=gagal&error='.urlencode('ID Jurnal tidak ditemukan'));
-    exit();
-}
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error!",
+                        text: "ID Jurnal tidak ditemukan",
+                        toast: true,
+                        position: "top",
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                    setTimeout(function () {
+                        window.location.href = "index.php?page=catatan&pesan=gagal&error=' . urlencode("ID Jurnal tidak ditemukan") . '";
+                    }, 3000);
+                });
+            </script>';
+            exit();
+            }
 $jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_jurnal = '$id_jurnal'");
 $jurnal_data = mysqli_fetch_assoc($jurnal_result);
 if (!$jurnal_data) {
-    header('Location: index.php?page=catatan&pesan=gagal&error='.urlencode('Data jurnal tidak ditemukan'));
+    header('Location: index.php?page=catatan&pesan=gagal&error=' . urlencode('Data jurnal tidak ditemukan'));
     exit();
 }
 $catatan_result = mysqli_query($coneksi, "SELECT * FROM catatan WHERE id_jurnal = '$id_jurnal'");
@@ -86,7 +103,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                     </div>
                     <div class="col text-center">
                         <?php if ($catatan_data): ?>
-                        <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="btn btn-danger" id="btnHapusCatatan">Hapus</a>
+                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="btn btn-danger" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
                     <div class="col text-right">
@@ -102,29 +119,30 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
             <?php endif; ?>
         </form>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  var btnHapus = document.getElementById("btnHapusCatatan");
-  if (btnHapus) {
-    btnHapus.addEventListener("click", function(e) {
-      e.preventDefault();
-      Swal.fire({
-        title: 'Yakin ingin menghapus catatan ini?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = btnHapus.getAttribute('href');
-        }
-      });
-    });
-  }
-});
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var btnHapus = document.getElementById("btnHapusCatatan");
+            if (btnHapus) {
+                btnHapus.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus catatan ini?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = btnHapus.getAttribute('href');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
+
 </html>
