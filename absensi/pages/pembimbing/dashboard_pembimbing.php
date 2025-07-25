@@ -1,6 +1,5 @@
 <?php 
 include "koneksi.php";
-session_start();
 
 // Mendapatkan ID perusahaan yang sedang login
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
@@ -138,7 +137,7 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
 
 <body>
 
-  <div class="container" style="margin-top: 20px">
+  <div class="container main-content" style="margin-top: 20px;">
     <hr>
     <form method="POST" action="">
       <div class="container-fluid py-4">
