@@ -44,13 +44,13 @@ include('koneksi.php');
 
 <body>
 
-    <div class="container">
+    <div class="container table-responsive">
         <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
         <h2 class="text-center">Data Sekolah</h2>
 
         <hr>
 
-        <table class="table table-bordered table-hover">
+        <table class="table table-hover table-bordered ">
             <thead>
                 <tr>
                     <th>No</th>

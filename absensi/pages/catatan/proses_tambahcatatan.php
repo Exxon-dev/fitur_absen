@@ -33,7 +33,7 @@ if (isset($_POST['submit'])) {
             exit();
         }
     } else {
-        $_SESSION['flash_duplikat'] = 'duplikat';
+        $_SESSION['flash_duplikat'] = true;
         header('Location: ../../index.php?page=catatan');
         exit();
     }

@@ -1,3 +1,62 @@
+<style>
+  /* Tombol Burger */
+  .menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #344767;
+    border: none;
+    z-index: 1100;
+    color: white;
+    font-size: 24px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none;
+    cursor: pointer;
+  }
+
+  /* Overlay (muncul pas sidebar aktif di mobile) */
+  #sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1049;
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 991px) {
+    .menu-toggle {
+      display: block;
+    }
+
+    #sidenav-main {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1051;
+      position: fixed;
+    }
+
+    #sidenav-main.active {
+      transform: translateX(0);
+    }
+
+    #sidebar-overlay.active {
+      display: block;
+    }
+  }
+</style>
+
+<!-- Tombol burger -->
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- Overlay -->
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark" id="sidenav-main">
   <div class="sidenav-header">
     <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
@@ -12,15 +71,15 @@
       <li class="nav-item">
         <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'dashboard_guru') !== false) ? 'active' : ''; ?>" href="index.php?page=dashboard_guru">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-           <i class="material-icons opacity-10">dashboard</i>
+            <i class="material-icons opacity-10">dashboard</i>
           </div>
           <span class="nav-link-text ms-1">Dashboard</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'editguru') !== false) ? 'active' : ''; ?>" href="index.php?page=editguru&id_guru=<?php echo $_SESSION['id_guru']?>">
+        <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'editguru') !== false) ? 'active' : ''; ?>" href="index.php?page=editguru&id_guru=<?php echo $_SESSION['id_guru'] ?>">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-           <i class="material-icons opacity-10">person</i>
+            <i class="material-icons opacity-10">person</i>
           </div>
           <span class="nav-link-text ms-1">Data Guru</span>
         </a>
@@ -28,7 +87,7 @@
       <li class="nav-item">
         <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'jurnal') !== false) ? 'active' : ''; ?>" href="index.php?page=jurnal">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-           <i class="material-icons opacity-10">assignment</i>
+            <i class="material-icons opacity-10">assignment</i>
           </div>
           <span class="nav-link-text ms-1">Data Jurnal</span>
         </a>
@@ -36,7 +95,7 @@
       <li class="nav-item">
         <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'catatan') !== false) ? 'active' : ''; ?>" href="index.php?page=catatan">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-           <i class="material-icons opacity-10">receipt_long</i>
+            <i class="material-icons opacity-10">receipt_long</i>
           </div>
           <span class="nav-link-text ms-1">Data Catatan</span>
         </a>
@@ -63,3 +122,13 @@
     </ul>
   </div>
 </aside>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidenav-main');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+</script>

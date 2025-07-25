@@ -35,16 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             id_jurnal='$id_jurnal' 
             WHERE id_catatan='$id_catatan'";
 
-    if (mysqli_query($coneksi, $sql)) {
+    if ($sql) {
         $_SESSION['flash_edit'] = 'sukses';
-    } else {
-        $_SESSION['flash_error'] = "Gagal update: " . mysqli_error($coneksi);
     }
-
+    
     header("Location: ../../index.php?page=catatan");
     exit();
 } else {
-    $_SESSION['flash_duplikat'] = "duplikat";
     header("Location: ../../index.php?page=catatan");
     exit();
 }
