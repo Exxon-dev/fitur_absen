@@ -57,7 +57,7 @@
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
   }
-</script> 
+</script>
 <!-- Tombol burger -->
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
@@ -95,7 +95,7 @@
 
       <!-- Submenu Jurnal -->
       <li class="nav-item">
-      <a class="nav-link text-white <?php echo ( (isset($_GET['page']) && strpos($_GET['page'], 'jurnal') !== false) || (isset($_GET['page']) && $_GET['page'] == 'catatan') ) ? 'active' : ''; ?>" data-bs-toggle="collapse" href="#submenu-jurnal" role="button" aria-expanded="false" aria-controls="submenu-jurnal">
+        <a class="nav-link text-white <?php echo ((isset($_GET['page']) && strpos($_GET['page'], 'jurnal') !== false) || (isset($_GET['page']) && $_GET['page'] == 'catatan')) ? 'active' : ''; ?>" data-bs-toggle="collapse" href="#submenu-jurnal" role="button" aria-expanded="false" aria-controls="submenu-jurnal">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">assignment</i>
           </div>
