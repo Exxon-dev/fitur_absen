@@ -137,7 +137,7 @@ if (isset($_GET['id_guru'])) {
                 <div class="d-flex justify-content-center mb-3 position-relative" style="width: 100px; height: 100px; margin: auto;">
                    <img src="/fitur_absen/absensi/pages/image/<?php echo $data['profile'] ?? 'default.jpg'; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                     <label for="foto" class="position-absolute"
-                        style="bottom: 0; right: 0; background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
+                        style="bottom: 0; right: 0;  background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
                         <i class="fa fa-camera text-white"></i>
                     </label>
                     <input type="file" id="foto" name="foto" style="display: none;">
