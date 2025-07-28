@@ -11,14 +11,38 @@ if (isset($_GET['id_guru'])) {
 	}
 }
 
-if (isset($_POST['submit'])) {
-	$id_guru = $_POST['id_guru'];
-	$nama_guru = $_POST['nama_guru'];
-	$id_sekolah = $_POST['id_sekolah'];
-	$username = $_POST['username'];
-	$password = $_POST['password'];
+    if (isset($_POST['submit'])) {
+        $nama_guru = $_POST['nama_guru'];
+        $nip = $_POST['nip'];
+        $jenis_kelamin = $_POST['jenis_kelamin'];
+        $alamat = $_POST['alamat'];
+        $no_tlp = $_POST['no_tlp'];
+        $id_sekolah = $_POST['id_sekolah'];
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-	$sql = mysqli_query($coneksi, "UPDATE guru SET nama_guru='$nama_guru', id_sekolah='$id_sekolah', username='$username', password='$password' WHERE id_guru='$id_guru'");
+        $profile = $data['profile'] ?? '';
+        if (!empty($_FILES['foto']['name'])) {
+            $fotoName = $_FILES['foto']['name'];
+            $fotoTmp = $_FILES['foto']['tmp_name'];
+            $fotoExt = pathinfo($fotoName, PATHINFO_EXTENSION);
+            $fotoBaru = uniqid('guru_') . '.' . $fotoExt;
+            move_uploaded_file($fotoTmp, "../image/" . $fotoBaru);
+            $foto = $fotoBaru;
+        }
+
+       $sql = mysqli_query($coneksi, "UPDATE guru SET 
+            nama_guru='$nama_guru', 
+            nip='$nip', 
+            jenis_kelamin='$jenis_kelamin', 
+            alamat='$alamat', 
+            no_tlp='$no_tlp', 
+            id_sekolah='$id_sekolah', 
+            username='$username', 
+            password='$password',
+            profile='$profile'
+            WHERE id_guru='$id_guru'");
+
 	if ($sql) {
         $_SESSION['flash_edit'] = 'sukses';
     }
