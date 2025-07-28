@@ -1,67 +1,7 @@
-<style>
-  /* Tombol Burger */
-  .menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #344767;
-    border: none;
-    z-index: 1100;
-    color: white;
-    font-size: 24px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: none;
-    cursor: pointer;
-  }
-
-  /* Overlay (muncul pas sidebar aktif di mobile) */
-  #sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1049;
-  }
-
-  /* Responsive behavior */
-  @media (max-width: 991px) {
-    .menu-toggle {
-      display: block;
-    }
-
-    #sidenav-main {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1051;
-      position: fixed;
-    }
-
-    #sidenav-main.active {
-      transform: translateX(0);
-    }
-
-    #sidebar-overlay.active {
-      display: block;
-    }
-  }
-</style>
-<script>
-  function toggleSidebar() {
-    const sidebar = document.getElementById('sidenav-main');
-    const overlay = document.getElementById('sidebar-overlay');
-
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
-  }
-</script> 
-<!-- Tombol burger -->
+<!-- Tombol burger untuk mobile -->
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
-<!-- Overlay -->
+<!-- Overlay untuk mobile -->
 <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR GURU -->
@@ -75,9 +15,8 @@
   <hr class="horizontal light mt-0 mb-2">
   <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
     <ul class="navbar-nav">
-
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'dashboard_guru') !== false) ? 'active' : ''; ?>" href="index.php?page=dashboard_guru">
+        <a class="nav-link text-white <?php echo ($_GET['page'] == 'dashboard_guru') ? 'active' : ''; ?>" href="index.php?page=dashboard_guru">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">dashboard</i>
           </div>
@@ -89,15 +28,7 @@
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
           </div>
-          <span class="nav-link-text ms-1">Data Guru</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'jurnal') !== false) ? 'active' : ''; ?>" href="index.php?page=jurnal">
-          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">assignment</i>
-          </div>
-          <span class="nav-link-text ms-1">Data Jurnal</span>
+          <span class="nav-link-text ms-1">Profile Guru</span>
         </a>
       </li>
       <li class="nav-item">
@@ -120,16 +51,86 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'sign-up_aksi') ? 'active' : ''; ?>" href="./pages/sign-up_aksi.php">
+        <a class="nav-link text-white" href="./pages/sign-up_aksi.php">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">login</i>
           </div>
           <span class="nav-link-text ms-1">Sign Out</span>
         </a>
       </li>
-
     </ul>
   </div>
 </aside>
 
+<style>
+  .menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #344767;
+    border: none;
+    z-index: 1100;
+    color: white;
+    font-size: 24px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none;
+    cursor: pointer;
+  }
 
+  #sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1049;
+  }
+
+  #sidenav-main {
+    width: 260px;
+  }
+
+  @media (min-width: 992px) {
+    .main-content {
+      margin-left: 270px;
+      transition: margin-left 0.3s ease;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .menu-toggle {
+      display: block;
+    }
+
+    #sidenav-main {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1051;
+      position: fixed;
+    }
+
+    #sidenav-main.active {
+      transform: translateX(0);
+    }
+
+    #sidebar-overlay.active {
+      display: block;
+    }
+
+    .main-content {
+      margin-left: 0 !important;
+    }
+  }
+</style>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidenav-main');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+</script>

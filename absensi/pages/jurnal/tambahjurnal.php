@@ -94,7 +94,7 @@ if ($result) {
                 <button type="submit" class="btn btn-primary">
                     <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Simpan Jurnal' ?>
                 </button>
-                <a href="index.php?page=jurnal" class="btn btn-warning ml-2">Kembali</a>
+                <a href="index.php?page=catatan" class="btn btn-warning ml-2">Kembali</a>
             </div>
         </form>
     </div>
@@ -122,7 +122,7 @@ if ($result) {
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Ya, Simpan',
+                    confirmButtonText: 'Simpan',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {

@@ -65,7 +65,7 @@ try {
 
     if ($stmt->execute()) {
         $_SESSION['flash_tambah'] = 'sukses';
-        header("Location: ../../index.php?page=jurnal");
+        header("Location: ../../index.php?page=catatan");
     } else {
         throw new Exception("Gagal menyimpan jurnal: " . $stmt->error);
     }

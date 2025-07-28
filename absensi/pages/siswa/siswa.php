@@ -1,6 +1,5 @@
 <?php
 include('koneksi.php');
-session_start(); // Pastikan session aktif
 ?>
 
 <!DOCTYPE html>
