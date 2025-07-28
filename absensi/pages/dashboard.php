@@ -144,7 +144,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 
           // Tambahkan ini di halaman logout admin Anda
           
-        </script>
+          </script>
 </body>
 
 </html>

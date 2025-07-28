@@ -1,7 +1,7 @@
 <?php
 include('koneksi.php');
 
-$limit = 4;
+$limit = 10;
 $page_no = isset($_GET['page_no']) ? (int)$_GET['page_no'] : 1;
 $offset = ($page_no - 1) * $limit;
 $search = isset($_GET['search']) ? mysqli_real_escape_string($coneksi, $_GET['search']) : '';
@@ -36,6 +36,8 @@ $total_pages = max(1, ceil($total_rows / $limit));
 <head>
     <title>Data Siswa, Jurnal, dan Catatan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <!-- Font Awesome CDN (versi 6.4.0) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .clickable-row {
             cursor: pointer;
@@ -66,79 +68,94 @@ $total_pages = max(1, ceil($total_rows / $limit));
 
 <body>
     <div class="container">
-        <h2 class="text-center text-primary">Data Siswa, Jurnal, dan Catatan Terbaru</h2>
+        <h2 class="text-center text-primary">Data Jurnal, dan Catatan Terbaru</h2>
         <hr>
 
         <!-- Pencarian di kanan -->
-        <div class="d-flex justify-content-end mb-3">
-            <form method="GET" class="form-inline" action="index.php">
+        <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
+            <!-- Tombol Tambah Jurnal (kiri) -->
+            <?php if ($_SESSION['level'] === 'siswa'): ?>
+                <a href="index.php?page=tambahjurnal" class="btn btn-success mb-2 d-flex align-items-center">
+                    <span class="d-none d-sm-inline">Tambah Jurnal</span>
+                    <i class="fas fa-plus d-inline d-sm-none"></i>
+                </a>
+            <?php endif; ?>
+
+            <!-- Form Pencarian (kanan) -->
+            <form method="GET" class="d-flex align-items-center mb-2" action="index.php">
                 <input type="hidden" name="page" value="catatan" />
-                <input type="text" name="search" class="form-control mr-2" placeholder="Cari..." value="<?= htmlspecialchars($search) ?>" />
-                <button type="submit" class="btn btn-primary ms-2 mb-1">Cari</button>
+                <input type="text" name="search" class="form-control me-2" placeholder="Cari..." value="<?= htmlspecialchars($search) ?>" style="max-width: 160px; font-size: 0.9rem; padding: 4px 8px;" />
+                <button type="submit" class="btn btn-primary sm-1 mt-3">
+                    <i class="fas fa-search"></i>
+                </button>
             </form>
         </div>
 
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama Siswa</th>
-                    <th>Jurnal</th>
-                    <th>Catatan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $sql = "
-                    SELECT
-                        siswa.id_siswa,
-                        siswa.nama_siswa,
-                        jurnal.id_jurnal,
-                        jurnal.keterangan AS keterangan_jurnal,
-                        c.catatan
-                    FROM siswa
-                    LEFT JOIN (
-                        SELECT * FROM jurnal
-                        WHERE id_jurnal IN (
-                            SELECT MAX(id_jurnal) FROM jurnal GROUP BY id_siswa
-                        )
-                    ) AS jurnal ON siswa.id_siswa = jurnal.id_siswa
-                    LEFT JOIN (
-                        SELECT id_jurnal, catatan
-                        FROM catatan
-                        WHERE id_catatan IN (
-                            SELECT MAX(id_catatan) FROM catatan GROUP BY id_jurnal
-                        )
-                    ) AS c ON jurnal.id_jurnal = c.id_jurnal
-                    WHERE siswa.nama_siswa LIKE '%$search%'
-                    ORDER BY siswa.nama_siswa ASC
-                    LIMIT $limit OFFSET $offset
-                ";
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Siswa</th>
+                        <th>Jurnal</th>
+                        <th>Catatan</th>
+                        <th>Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $sql = "
+                            SELECT
+                                siswa.id_siswa,
+                                siswa.nama_siswa,
+                                jurnal.id_jurnal,
+                                jurnal.keterangan AS keterangan_jurnal,
+                                c.catatan,
+                                c.tanggal
+                            FROM siswa
+                            LEFT JOIN (
+                                SELECT * FROM jurnal
+                                WHERE id_jurnal IN (
+                                    SELECT MAX(id_jurnal) FROM jurnal GROUP BY id_siswa
+                                )
+                            ) AS jurnal ON siswa.id_siswa = jurnal.id_siswa
+                            LEFT JOIN (
+                                SELECT id_jurnal, catatan, tanggal
+                                FROM catatan
+                                WHERE id_catatan IN (
+                                    SELECT MAX(id_catatan) FROM catatan GROUP BY id_jurnal
+                                )
+                            ) AS c ON jurnal.id_jurnal = c.id_jurnal
+                            WHERE siswa.nama_siswa LIKE '%$search%'
+                            ORDER BY siswa.nama_siswa ASC
+                            LIMIT $limit OFFSET $offset ";
 
 
-                $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
+                    $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
-                if (mysqli_num_rows($result) > 0) {
-                    $no = $offset + 1;
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        $id_jurnal = $row['id_jurnal'] ?? 0;
-                        $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
-                        $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Tidak ada jurnal';
+                    if (mysqli_num_rows($result) > 0) {
+                        $no = $offset + 1;
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $id_jurnal = $row['id_jurnal'] ?? 0;
+                            $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
+                            $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Tidak ada jurnal';
 
-                        echo '<tr class="clickable-row" data-href="index.php?page=tambahcatatan&id_jurnal=' . $id_jurnal . '">';
-                        echo '<td>' . $no . '</td>';
-                        echo '<td>' . htmlspecialchars($row['nama_siswa']) . '</td>';
-                        echo '<td>' . htmlspecialchars($keterangan) . '</td>';
-                        echo '<td>' . htmlspecialchars($catatan) . '</td>';
-                        echo '</tr>';
-                        $no++;
+                            echo '<tr class="clickable-row" data-href="index.php?page=tambahcatatan&id_jurnal=' . $id_jurnal . '">';
+                            echo '<td>' . $no . '</td>';
+                            echo '<td>' . htmlspecialchars($row['nama_siswa']) . '</td>';
+                            echo '<td>' . htmlspecialchars($keterangan) . '</td>';
+                            echo '<td>' . htmlspecialchars($catatan) . '</td>';
+                            echo '<td>' . htmlspecialchars($row['tanggal'] ?? '') . '</td>';
+                            echo '</tr>';
+                            $no++;
+                        }
+                    } else {
+                        echo '<tr><td colspan="4" class="text-center">Tidak ada data ditemukan.</td></tr>';
                     }
-                } else {
-                    echo '<tr><td colspan="4" class="text-center">Tidak ada data ditemukan.</td></tr>';
-                }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
         <!-- PAGINATION -->
         <nav aria-label="Page navigation">
