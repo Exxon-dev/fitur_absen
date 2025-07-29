@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 <!-- Tombol burger (mobile) -->
-=======
 <style>
   /* Tombol Burger */
   .menu-toggle {
@@ -55,7 +53,6 @@
 </style>
 
 <!-- Tombol burger -->
->>>>>>> 5e2c68c (mengubah tataletak tombol burger, memperbaiki fitur absen menggunakan ip, lokasi dan koordinat)
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
 <!-- Overlay untuk mobile -->
@@ -143,71 +140,6 @@
     </ul>
   </div>
 </aside>
-<!-- STYLE -->
-<style>
-  .menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #344767;
-    border: none;
-    z-index: 1100;
-    color: white;
-    font-size: 24px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: none;
-    cursor: pointer;
-  }
-
-  #sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1049;
-  }
-
-  #sidenav-main {
-    width: 260px;
-  }
-
-  /* Layout fix */
-  @media (min-width: 992px) {
-    .main-content {
-      margin-left: 270px; /* Sesuaikan dengan lebar sidebar */
-      transition: margin-left 0.3s ease;
-    }
-  }
-
-  @media (max-width: 991px) {
-    .menu-toggle {
-      display: block;
-    }
-
-    #sidenav-main {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1051;
-      position: fixed;
-    }
-
-    #sidenav-main.active {
-      transform: translateX(0);
-    }
-
-    #sidebar-overlay.active {
-      display: block;
-    }
-
-    .main-content {
-      margin-left: 0 !important;
-    }
-  }
-</style>
 
 <!-- SCRIPT -->
 <script>

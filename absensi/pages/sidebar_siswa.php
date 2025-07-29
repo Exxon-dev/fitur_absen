@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 <!-- Tombol burger (mobile) -->
-=======
 <style>
   /* Tombol Burger */
   .menu-toggle {
@@ -54,7 +52,6 @@
 </style>
 
 <!-- Tombol burger -->
->>>>>>> 5e2c68c (mengubah tataletak tombol burger, memperbaiki fitur absen menggunakan ip, lokasi dan koordinat)
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
 <!-- Overlay untuk mobile -->

@@ -144,9 +144,12 @@ include('koneksi.php');
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Tempat Tanggal Lahir</label>
-                    <input type="text" name="TTL" class="form-control"
-                        value="<?php echo htmlspecialchars($data['TTL']); ?>" required>
+                    <label>Tempat Lahir</label>
+                    <input type="text" name="TL" class="form-control" value="<?php echo htmlspecialchars($data['TL']); ?>" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" name="TTGL" class="form-control" value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>

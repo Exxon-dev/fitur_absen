@@ -13,7 +13,8 @@ if (isset($_POST['submit'])) {
     $no_wa = $_POST['no_wa'];
     $kelas = $_POST['kelas'];
     $pro_keahlian = $_POST['pro_keahlian'];
-    $TTL = $_POST['TTL'];
+    $TL = $_POST['TL'];
+    $TTGL = $_POST['TTGL'];
     $id_sekolah = $_POST['id_sekolah'];
     $id_perusahaan = $_POST['id_perusahaan'];
     $tanggal_mulai = $_POST['tanggal_mulai'];
@@ -39,7 +40,8 @@ if (isset($_POST['submit'])) {
         no_wa,
         kelas,
         pro_keahlian,
-        TTL,
+        TL,
+        TTGL,
         id_sekolah,
         id_perusahaan,
         tanggal_mulai,
@@ -55,7 +57,8 @@ if (isset($_POST['submit'])) {
         '$no_wa',
         '$kelas',
         '$pro_keahlian',
-        '$TTL',
+        '$TL',
+        '$TTGL',
         '$id_sekolah',
         '$id_perusahaan',
         '$tanggal_mulai',

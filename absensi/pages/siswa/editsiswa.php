@@ -92,7 +92,8 @@ if (!isset($_SESSION['id_siswa'])) {
             $no_wa              = $_POST['no_wa'];
             $kelas              = $_POST['kelas'];
             $pro_keahlian       = $_POST['pro_keahlian'];
-            $TTL                = $_POST['TTL'];
+            $TL                 = $_POST['TL'];
+            $TTGL               = $_POST['TTGL'];
             $id_sekolah         = $_POST['id_sekolah'];
             $id_perusahaan      = $_POST['id_perusahaan'];
             $tanggal_mulai      = $_POST['tanggal_mulai'];
@@ -111,7 +112,8 @@ if (!isset($_SESSION['id_siswa'])) {
     password='$password', 
     kelas='$kelas', 
     pro_keahlian='$pro_keahlian',
-    TTL='$TTL'
+    TL='$TL',
+    TTGL='$TTGL'
 WHERE id_siswa='$id_siswa'");
 
             if ($sql) {
@@ -166,8 +168,12 @@ WHERE id_siswa='$id_siswa'");
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Tempat Tanggal Lahir</label>
-                    <input type="text" name="TTL" class="form-control" value="<?php echo htmlspecialchars($data['TTL']); ?>" required>
+                    <label>Tempat Lahir</label>
+                    <input type="text" name="TL" class="form-control" value="<?php echo htmlspecialchars($data['TL']); ?>" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" name="TTGL" class="form-control" value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>

@@ -75,10 +75,7 @@ $total_pages = max(1, ceil($total_rows / $limit));
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <!-- Tombol Tambah Jurnal (kiri) -->
             <?php if ($_SESSION['level'] === 'siswa'): ?>
-                <a href="index.php?page=tambahjurnal" class="btn btn-success mb-2 d-flex align-items-center">
-                    <span class="d-none d-sm-inline">Tambah Jurnal</span>
-                    <i class="fas fa-plus d-inline d-sm-none"></i>
-                </a>
+                <a href="index.php?page=tambahjurnal" class="btn btn-primary mb-2">Tambah Jurnal</a>
             <?php endif; ?>
 
             <!-- Form Pencarian (kanan) -->
