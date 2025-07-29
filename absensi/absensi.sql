@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 22, 2025 at 03:40 AM
+-- Generation Time: Jul 25, 2025 at 03:40 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -33,23 +33,20 @@ CREATE TABLE `absen` (
   `jam_masuk` time NOT NULL,
   `jam_keluar` time DEFAULT NULL,
   `tanggal` date NOT NULL,
-  `keterangan` text NOT NULL
+  `keterangan` text NOT NULL,
+  `ip_address` varchar(50) DEFAULT NULL,
+  `lokasi` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `absen`
 --
 
-INSERT INTO `absen` (`id_absen`, `id_siswa`, `jam_masuk`, `jam_keluar`, `tanggal`, `keterangan`) VALUES
-(81, 1, '08:07:24', NULL, '2025-07-14', 'Hadir'),
-(82, 2, '08:16:02', NULL, '2025-07-14', 'Hadir'),
-(84, 1, '14:15:28', NULL, '2025-07-16', 'Hadir'),
-(85, 6899, '08:20:49', NULL, '2025-07-17', 'Hadir'),
-(88, 1, '14:09:38', '14:46:28', '2025-07-17', 'Hadir'),
-(89, 1, '08:44:38', '15:55:05', '2025-07-18', 'Hadir'),
-(91, 1, '07:59:26', '18:56:51', '2025-07-19', 'Hadir'),
-(92, 1, '08:37:44', NULL, '2025-07-21', 'Hadir'),
-(93, 1, '08:09:31', NULL, '2025-07-22', 'Hadir');
+INSERT INTO `absen` (`id_absen`, `id_siswa`, `jam_masuk`, `jam_keluar`, `tanggal`, `keterangan`, `ip_address`, `lokasi`) VALUES
+(111, 1, '08:12:11', NULL, '2025-07-24', 'Hadir', NULL, NULL),
+(114, 6914, '10:56:53', '10:56:55', '2025-07-24', 'sakit', NULL, NULL),
+(116, 1, '08:17:02', NULL, '2025-07-25', 'Hadir', '::1', 'Tidak diketahui'),
+(117, 6914, '08:30:28', '08:30:43', '2025-07-25', 'sakit', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -78,7 +75,9 @@ INSERT INTO `catatan` (`id_catatan`, `id_pembimbing`, `catatan`, `id_jurnal`, `t
 (80, 1, 'haiii', 1, '2025-07-18'),
 (81, 1, 'hai', 72, '2025-07-18'),
 (83, 1, 'lomba apa?', 79, '2025-07-18'),
-(84, 1, 'haii juga', 82, '2025-07-22');
+(84, 1, 'haii juga', 82, '2025-07-22'),
+(89, 1, 'hallo juga', 88, '2025-07-23'),
+(90, 1, 'yang bener', 93, '2025-07-24');
 
 -- --------------------------------------------------------
 
@@ -136,7 +135,10 @@ INSERT INTO `jurnal` (`id_jurnal`, `tanggal`, `keterangan`, `id_siswa`) VALUES
 (79, '2025-07-18', 'mengikuti lomba.', 6904),
 (80, '2025-07-19', 'hallo pa kabar.', 1),
 (81, '2025-07-21', 'hallo', 1),
-(82, '2025-07-22', 'haiii', 1);
+(82, '2025-07-22', 'haiii', 1),
+(91, '2025-07-23', 'hallo juga', 6915),
+(93, '2025-07-23', 'Mampelajari git.', 1),
+(94, '2025-07-23', 'refisi website absensi', 6914);
 
 -- --------------------------------------------------------
 
@@ -259,7 +261,8 @@ CREATE TABLE `siswa` (
 --
 
 INSERT INTO `siswa` (`id_siswa`, `nis`, `nisn`, `nama_siswa`, `no_wa`, `kelas`, `pro_keahlian`, `TTL`, `id_sekolah`, `id_perusahaan`, `tanggal_mulai`, `tanggal_selesai`, `id_pembimbing`, `id_guru`, `username`, `password`) VALUES
-(1, '23101106', '0084986208', 'eko', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko', 'eko');
+(1, '23101106', '0084986208', 'ekoo', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko', 'eko'),
+(6914, '23101107', '0084986208', 'zahcalinna', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'calina', 'calina');
 
 -- --------------------------------------------------------
 
@@ -358,13 +361,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `absen`
 --
 ALTER TABLE `absen`
-  MODIFY `id_absen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `id_absen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT for table `catatan`
 --
 ALTER TABLE `catatan`
-  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `guru`
@@ -376,7 +379,7 @@ ALTER TABLE `guru`
 -- AUTO_INCREMENT for table `jurnal`
 --
 ALTER TABLE `jurnal`
-  MODIFY `id_jurnal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id_jurnal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 
 --
 -- AUTO_INCREMENT for table `pembimbing`
@@ -394,7 +397,7 @@ ALTER TABLE `pengaturan_notifikasi`
 -- AUTO_INCREMENT for table `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6913;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6916;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -1,27 +1,13 @@
 <?php
-// Pastikan tidak ada output sebelum header
 if (ob_get_level()) ob_clean();
 
 include '../../koneksi.php';
-
-// Set header pertama kali
+session_start();
 header('Content-Type: application/json');
 
 try {
-    // Validasi session
     if (!isset($_SESSION['id_siswa'])) {
-        throw new Exception(json_encode([
-            'status' => 'error',
-            'message' => 'Akses ditolak - Silakan login terlebih dahulu'
-        ]));
-    }
-
-    // Pastikan tidak ada output yang tidak diinginkan
-    if (headers_sent()) {
-        throw new Exception(json_encode([
-            'status' => 'error',
-            'message' => 'Header sudah terkirim'
-        ]));
+        throw new Exception('Akses ditolak - Silakan login terlebih dahulu');
     }
 
     $id_siswa = $_SESSION['id_siswa'];
@@ -29,19 +15,43 @@ try {
     $jam = date('H:i:s');
     $keterangan = 'Hadir';
 
-    // Validasi koneksi database
     if (!$coneksi) {
-        throw new Exception(json_encode([
-            'status' => 'error',
-            'message' => 'Koneksi database gagal'
-        ]));
+        throw new Exception('Koneksi database gagal');
     }
 
-
-    // Ambil aksi dari request
     $action = $_POST['action'] ?? '';
 
-    // Cek status absensi hari ini
+    // Ambil IP & Lokasi
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    $lokasi = 'Lokasi tidak diketahui';
+    $koordinat = '';
+
+    $ipinfo = @file_get_contents("http://ipinfo.io/{$ip_address}/json");
+    if ($ipinfo) {
+        $ipdata = json_decode($ipinfo, true);
+
+        $city = $ipdata['city'] ?? '';
+        $region = $ipdata['region'] ?? '';
+        $country = $ipdata['country'] ?? '';
+        $org = $ipdata['org'] ?? '';
+        $timezone = $ipdata['timezone'] ?? '';
+        $loc = $ipdata['loc'] ?? ''; // format: "latitude,longitude"
+
+        $lokasi_parts = [];
+        if ($city) $lokasi_parts[] = $city;
+        if ($region) $lokasi_parts[] = $region;
+        if ($country) $lokasi_parts[] = $country;
+        if ($org) $lokasi_parts[] = "Provider: $org";
+        if ($timezone) $lokasi_parts[] = "Zona: $timezone";
+
+        $lokasi = implode(' | ', $lokasi_parts);
+        if ($loc) {
+            $koordinat = $loc;
+            $lokasi .= " | Koordinat: $loc";
+        }
+    }
+
+    // Cek absensi hari ini
     $stmt = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa=? AND tanggal=?");
     mysqli_stmt_bind_param($stmt, "is", $id_siswa, $tanggal);
     mysqli_stmt_execute($stmt);
@@ -52,38 +62,54 @@ try {
         if ($absen && $absen['jam_masuk']) {
             die(json_encode(['success' => false, 'message' => 'Sudah absen masuk hari ini']));
         }
-        $jam_masuk = date('H:i:s');
+
+        $jam_masuk = $jam;
+
         if ($absen) {
-            // Update jika record sudah ada (tapi jam_masuk kosong)
-            $stmt = mysqli_prepare($coneksi, "UPDATE absen SET jam_masuk=? WHERE id_siswa=? AND tanggal=?");
-            mysqli_stmt_bind_param($stmt, "sis", $jam_masuk, $id_siswa, $tanggal);
-            mysqli_stmt_execute($stmt);
+            $stmt = mysqli_prepare($coneksi, "UPDATE absen SET jam_masuk=?, ip_address=?, lokasi=?, koordinat=? WHERE id_siswa=? AND tanggal=?");
+            mysqli_stmt_bind_param($stmt, "ssssis", $jam_masuk, $ip_address, $lokasi, $koordinat, $id_siswa, $tanggal);
         } else {
-            // Insert baru, jam_keluar langsung NULL di query tanpa bind_param
-            $keterangan = 'Hadir';
-            $stmt = mysqli_prepare($coneksi, "INSERT INTO absen (id_siswa, tanggal, jam_masuk, jam_keluar, keterangan) VALUES (?, ?, ?, NULL, ?)");
-            mysqli_stmt_bind_param($stmt, "isss", $id_siswa, $tanggal, $jam_masuk, $keterangan);
-            mysqli_stmt_execute($stmt);
+            $stmt = mysqli_prepare($coneksi, "INSERT INTO absen (id_siswa, tanggal, jam_masuk, keterangan, ip_address, lokasi, koordinat) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, "issssss", $id_siswa, $tanggal, $jam_masuk, $keterangan, $ip_address, $lokasi, $koordinat);
         }
-        die(json_encode(['success' => true, 'message' => 'Absen masuk berhasil']));
+
+        mysqli_stmt_execute($stmt);
+        die(json_encode([
+            'success' => true,
+            'message' => 'Absen masuk berhasil',
+            'ip' => $ip_address,
+            'lokasi' => $lokasi,
+            'koordinat' => $koordinat
+        ]));
+
     } elseif ($action == 'simpan_keluar') {
         if (!$absen || !$absen['jam_masuk']) {
             die(json_encode(['success' => false, 'message' => 'Belum absen masuk']));
         }
+
         if ($absen['jam_keluar']) {
             die(json_encode(['success' => false, 'message' => 'Sudah absen pulang hari ini']));
         }
-        $jam_keluar = date('H:i:s');
-        $stmt = mysqli_prepare($coneksi, "UPDATE absen SET jam_keluar=? WHERE id_siswa=? AND tanggal=?");
-        mysqli_stmt_bind_param($stmt, "sis", $jam_keluar, $id_siswa, $tanggal);
+
+        $jam_keluar = $jam;
+
+        $stmt = mysqli_prepare($coneksi, "UPDATE absen SET jam_keluar=?, ip_address=?, lokasi=?, koordinat=? WHERE id_siswa=? AND tanggal=?");
+        mysqli_stmt_bind_param($stmt, "ssssis", $jam_keluar, $ip_address, $lokasi, $koordinat, $id_siswa, $tanggal);
         mysqli_stmt_execute($stmt);
-        die(json_encode(['success' => true, 'message' => 'Absen pulang berhasil']));
+
+        die(json_encode([
+            'success' => true,
+            'message' => 'Absen pulang berhasil',
+            'ip' => $ip_address,
+            'lokasi' => $lokasi,
+            'koordinat' => $koordinat
+        ]));
+
     } else {
         die(json_encode(['success' => false, 'message' => 'Aksi tidak valid']));
     }
 
 } catch (Exception $e) {
-    // Pastikan output error juga berupa JSON
     die(json_encode([
         'status' => 'error',
         'message' => $e->getMessage()
