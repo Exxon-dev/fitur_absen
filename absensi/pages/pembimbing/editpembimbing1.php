@@ -28,8 +28,9 @@ if (isset($_POST['submit'])) {
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Detail Pembimbing</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -137,10 +138,10 @@ if (isset($_POST['submit'])) {
 
         <script>
             // SweetAlert untuk konfirmasi hapus
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const deleteBtn = document.getElementById('btnHapus');
                 if (deleteBtn) {
-                    deleteBtn.addEventListener('click', function (e) {
+                    deleteBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         const id = this.getAttribute('data-id');
                         Swal.fire({

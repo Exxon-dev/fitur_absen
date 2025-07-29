@@ -1,4 +1,4 @@
-<?php 
+<?php
 include "koneksi.php";
 
 // Mendapatkan ID perusahaan yang sedang login
@@ -18,33 +18,59 @@ $result = mysqli_stmt_get_result($stmt);
 $pembimbing = mysqli_fetch_assoc($result);
 $nama_pembimbing = $pembimbing ? $pembimbing['nama_pembimbing'] : "Pembimbing";
 
-// Query untuk mengambil pembimbing yang terkait dengan ID pembimbing yang sedang login
-$query_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing WHERE id_pembimbing = '$id_pembimbing'") or die(mysqli_error($coneksi));
-$pembimbing = mysqli_fetch_assoc($query_pembimbing);
-
 // Mengambil data siswa yang terkait dengan pembimbing yang sedang login
 $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
 
 // Mengambil data sekolah
 $query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
 
+// Mengambil data perusahaan
+$query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+
 // Menampilkan jumlah siswa dan sekolah yang terkait dengan pembimbing
 $jumlah_siswa = mysqli_num_rows($query_siswa);
 $jumlah_sekolah = mysqli_num_rows($query_sekolah);
-$jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
-
+$jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Absensi Siswa</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <style>
+    /* Penyesuaian posisi */
+    body {
+      padding-left: 270px;
+      transition: padding-left 0.3s;
+      background-color: #f8f9fa;
+    }
+    
+    .main-container {
+      margin-top: 20px;
+      margin-right: 20px;
+      margin-left: 0;
+      width: auto;
+      max-width: none;
+    }
+    
+    /* Style asli */
+    .container-custom {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-responsive {
+      margin-top: 20px;
+    }
+
     .absent {
       color: red;
     }
@@ -55,14 +81,6 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
 
     .readonly {
       background-color: #f8f9fa;
-    }
-
-    .container {
-      margin-top: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
     input[type="radio"] {
@@ -100,22 +118,22 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
       font-size: 0.9em;
       font-weight: bold;
     }
-    
+
     .badge-sakit {
       background-color: #FFE0B2;
       color: #E65100;
     }
-    
+
     .badge-izin {
       background-color: #BBDEFB;
       color: #0D47A1;
     }
-    
+
     .badge-alpa {
       background-color: #FFCDD2;
       color: #B71C1C;
     }
-    
+
     .badge-hadir {
       background-color: #C8E6C9;
       color: #1B5E20;
@@ -132,12 +150,45 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
       opacity: 0.7;
       cursor: not-allowed;
     }
+
+    .btn-wa {
+      background-color: #25D366;
+      color: white;
+    }
+
+    .btn-wa:hover {
+      background-color: #128C7E;
+      color: white;
+    }
+
+    .table-light th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .tabletbody tr:hover {
+      background-color: #e9ecef;
+    }
+    
+    @media (max-width: 991px) {
+      body {
+        padding-left: 0;
+      }
+      .main-container {
+        margin-right: 15px;
+        margin-left: 15px;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <!-- Include sidebar -->
+  <?php include 'sidebar_pembimbing.php'; ?>
 
   <div class="container main-content" style="margin-top: 20px;">
+  <!-- Main content -->
+  <div class="main-container container-custom">
     <hr>
     <form method="POST" action="">
       <div class="container-fluid py-4">
@@ -177,8 +228,8 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
                   <i class="material-icons opacity-10">location_city</i>
                 </div>
                 <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Pembimbing</p>
-                  <h4 class="mb-0"><?php echo $jumlah_pembimbing; ?></h4>
+                  <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
+                  <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
                 </div>
               </div>
               <hr class="dark horizontal my-0">
@@ -188,60 +239,60 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
       </div>
 
       <h2 class="text-center my-4">Absensi Siswa</h2>
-      
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama</th>
-            <th>Status</th>
-            <th>Sakit</th>
-            <th>Izin</th>
-            <th>Alpa</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php
-          $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
-          $index = 1;
-          $today = date('Y-m-d');
 
-          while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
-            $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
-            $attendance = mysqli_fetch_assoc($attendanceQuery);
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>Status</th>
+              <th>Sakit</th>
+              <th>Izin</th>
+              <th>Alpa</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+            $index = 1;
+            $today = date('Y-m-d');
 
-            $statusClass = 'status-belum';
-            $keterangan = '-';
-            $isReadOnly = false;
-            $badgeClass = '';
-            $statusText = 'Belum Absen';
+            while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
+              $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
+              $attendance = mysqli_fetch_assoc($attendanceQuery);
 
-            if ($attendance) {
-              $keterangan = $attendance['keterangan'];
-              $isReadOnly = true;
+              $statusClass = 'status-belum';
+              $keterangan = '-';
+              $isReadOnly = false;
+              $badgeClass = '';
+              $statusText = 'Belum Absen';
 
-              // Set warna teks dan badge berdasarkan keterangan
-              if ($keterangan === 'sakit') {
-                $statusClass = 'status-sakit';
-                $badgeClass = 'badge-sakit';
-                $statusText = 'Sakit';
-              } elseif ($keterangan === 'izin') {
-                $statusClass = 'status-izin';
-                $badgeClass = 'badge-izin';
-                $statusText = 'Izin';
-              } elseif ($keterangan === 'alpa') {
-                $statusClass = 'status-alpa';
-                $badgeClass = 'badge-alpa';
-                $statusText = 'Alpa';
-              } else {
-                $statusClass = 'status-hadir';
-                $badgeClass = 'badge-hadir';
-                $statusText = 'Hadir';
+              if ($attendance) {
+                $keterangan = $attendance['keterangan'];
+                $isReadOnly = true;
+
+                if ($keterangan === 'sakit') {
+                  $statusClass = 'status-sakit';
+                  $badgeClass = 'badge-sakit';
+                  $statusText = 'Sakit';
+                } elseif ($keterangan === 'izin') {
+                  $statusClass = 'status-izin';
+                  $badgeClass = 'badge-izin';
+                  $statusText = 'Izin';
+                } elseif ($keterangan === 'alpa') {
+                  $statusClass = 'status-alpa';
+                  $badgeClass = 'badge-alpa';
+                  $statusText = 'Alpa';
+                } else {
+                  $statusClass = 'status-hadir';
+                  $badgeClass = 'badge-hadir';
+                  $statusText = 'Hadir';
+                }
               }
-            }
 
-            echo '
+              echo '
               <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
                   <td>' . $index . '</td>
                   <td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
@@ -268,12 +319,13 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
                       <button type="submit" name="simpan_' . $siswa['id_siswa'] . '" class="btn btn-primary btn-sm" ' . ($isReadOnly ? 'disabled' : '') . '>Simpan</button>
                   </td>
               </tr>
-            ';
-            $index++;
-          }
-          ?>
-        </tbody>
-      </table>
+              ';
+              $index++;
+            }
+            ?>
+          </tbody>
+        </table>
+      </div>
     </form>
 
     <?php
@@ -347,7 +399,7 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const namaPembimbing = "<?php echo !empty($nama_pembimbing) ? htmlspecialchars($nama_pembimbing, ENT_QUOTES) : 'Pembimbing'; ?>";
-      
+
       // Cek apakah alert sudah pernah ditampilkan
       if (!localStorage.getItem('pembimbingAlertShown')) {
         Swal.fire({
@@ -365,7 +417,7 @@ $jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
             toast.addEventListener('mouseleave', Swal.resumeTimer);
           }
         });
-        
+
         // Set flag di localStorage bahwa alert sudah ditampilkan
         localStorage.setItem('pembimbingAlertShown', 'true');
       }

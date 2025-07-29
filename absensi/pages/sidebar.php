@@ -1,30 +1,63 @@
 
 <style>
-  /* Sembunyikan sidebar di HP/tablet saat awal */
-  @media (max-width: 1199.98px) {
-    #sidenav-main {
-      transform: translateX(-250px);
-      transition: all 0.3s ease;
-      z-index: 1099;
-    }
-
-    #sidenav-main.show {
-      transform: translateX(0);
-    }
+  /* Tombol Burger */
+  .menu-toggle {
+    position: fixed;
+    top: 15px;
+    right: 30px;
+    /* ini gantiin left: 15px */
+    background: #344767;
+    border: none;
+    z-index: 1100;
+    color: white;
+    font-size: 24px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none;
+    cursor: pointer;
   }
 
-  /* Saat desktop, tetap muncul */
-  @media (min-width: 1200px) {
+
+  /* Overlay (muncul pas sidebar aktif di mobile) */
+  #sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1049;
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 991px) {
+    .menu-toggle {
+      display: block;
+    }
+
     #sidenav-main {
-      transform: none !important;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1051;
+      position: fixed;
+    }
+
+    #sidenav-main.active {
+      transform: translateX(0);
+    }
+
+    #sidebar-overlay.active {
+      display: block;
     }
   }
 </style>
 
-<!-- Tombol ☰ khusus HP/Tablet -->
-<button id="menu-toggle" class="btn btn-dark d-xl-none position-fixed top-2 start-0 ms-4" style="z-index: 1100;">
-  ☰
-</button>
+<!-- Tombol burger -->
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- Overlay -->
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- sidebar.php -->
 <aside id="sidenav-main" class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" data-color="dark">
@@ -144,15 +177,11 @@
 </aside>
 
 <script>
-  const menuToggle = document.getElementById('menu-toggle');
-  const sidebar = document.getElementById('sidenav-main');
-  const closeBtn = document.getElementById('iconSidenav');
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidenav-main');
+    const overlay = document.getElementById('sidebar-overlay');
 
-  menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('show');
-  });
-
-  closeBtn.addEventListener('click', () => {
-    sidebar.classList.remove('show');
-  });
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
 </script>
