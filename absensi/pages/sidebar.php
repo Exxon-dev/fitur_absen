@@ -1,17 +1,4 @@
-<<<<<<< HEAD
-<li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-  <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
-    <i class="fas fa-bars text-white"></i>
-  </a>
-</li>
 
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark g-sidenav-hidden" id="sidenav-main">
-  <div class="sidenav-header">
-    <i class="fas fa-times p-3 cursor-pointer text-white opacity-8 position-absolute end-0 top-0 d-xl-none" id="iconSidenav"></i>
-    <a class="navbar-brand m-0" href="index.php?page=dashboard">
-      <img src="assets/img/LOGOSMK-removebg-preview.png" class="navbar-brand-img h-100" alt="main_logo">
-      <span class="ms-1 font-weight-bold text-white">ABSENS</span>
-=======
 <style>
   /* Sembunyikan sidebar di HP/tablet saat awal */
   @media (max-width: 1199.98px) {
@@ -45,7 +32,6 @@
     <i class="fas fa-times p-3 cursor-pointer text-white d-xl-none" id="iconSidenav"></i>
     <a class="navbar-brand m-0" href="#">
       <span class="ms-1 font-weight-bold text-white">ABSENS ADMIN</span>
->>>>>>> 7aefb515e5c9771bd41547c6bbac6ab484fee2ab
     </a>
   </div>
 
