@@ -83,6 +83,17 @@ if (isset($_GET['id_guru'])) {
         <hr>
         <?php
         if (isset($_POST['submit'])) {
+            $id_guru = $_GET['id_guru'];
+
+            // Ambil data guru lama dari database
+            $getGuru = mysqli_query($coneksi, "
+                SELECT guru.*, sekolah.nama_sekolah 
+                FROM guru 
+                INNER JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
+                WHERE guru.id_guru = '$id_guru'
+            ");
+            $data = mysqli_fetch_assoc($getGuru);
+
             $nama_guru = $_POST['nama_guru'];
             $nip = $_POST['nip'];
             $jenis_kelamin = $_POST['jenis_kelamin'];
@@ -92,29 +103,56 @@ if (isset($_GET['id_guru'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
 
-            $profile = $data['profile'] ?? '';
+            // Default profile lama
+            $profile = $data['profile'] ?? 'default.jpg';
+
+            // Jika ada upload foto baru
             if (!empty($_FILES['foto']['name'])) {
                 $fotoName = $_FILES['foto']['name'];
                 $fotoTmp = $_FILES['foto']['tmp_name'];
                 $fotoExt = pathinfo($fotoName, PATHINFO_EXTENSION);
                 $fotoBaru = uniqid('guru_') . '.' . $fotoExt;
-                $uploadPath = __DIR__ . '/../image/' . $fotoBaru;
-                move_uploaded_file($fotoTmp, $uploadPath);
-                $profile = $fotoBaru;
+                $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
+
+                if (move_uploaded_file($fotoTmp, $uploadPath)) {
+                    echo "<pre>";
+                    echo "✅ File berhasil di-upload ke: $uploadPath\n";
+
+                    // Debug foto lama
+                    $oldProfilePath = __DIR__ . "/../image/" . $data['profile'];
+                    echo "Foto lama: " . $data['profile'] . "\n";
+                    echo "Path lengkap foto lama: $oldProfilePath\n";
+                    echo "Apakah file ada? " . (file_exists($oldProfilePath) ? "YA" : "TIDAK") . "\n";
+                    echo "Apakah bukan default.jpg? " . ($data['profile'] !== 'default.jpg' ? "YA" : "TIDAK") . "\n";
+
+                    // Coba hapus
+                    if (!empty($data['profile']) && file_exists($oldProfilePath) && $data['profile'] !== 'default.jpg') {
+                        if (unlink($oldProfilePath)) {
+                            echo "✅ Foto lama berhasil dihapus.\n";
+                        } else {
+                            echo "❌ Gagal menghapus foto lama.\n";
+                        }
+                    } else {
+                        echo "⚠️ Tidak menghapus karena tidak memenuhi syarat.\n";
+                    }
+                    echo "</pre>";
+
+                    $profile = $fotoBaru;
+                }
             }
 
-
+            // Update ke database
             $sql = mysqli_query($coneksi, "UPDATE guru SET 
-            nama_guru='$nama_guru', 
-            nip='$nip', 
-            jenis_kelamin='$jenis_kelamin', 
-            alamat='$alamat', 
-            no_tlp='$no_tlp', 
-            id_sekolah='$id_sekolah', 
-            username='$username', 
-            password='$password',
-            profile='$profile'
-            WHERE id_guru='$id_guru'");
+                nama_guru='$nama_guru', 
+                nip='$nip', 
+                jenis_kelamin='$jenis_kelamin', 
+                alamat='$alamat', 
+                no_tlp='$no_tlp', 
+                id_sekolah='$id_sekolah', 
+                username='$username', 
+                password='$password',
+                profile='$profile'
+                WHERE id_guru='$id_guru'");
 
             if ($sql) {
                 echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
@@ -127,6 +165,7 @@ if (isset($_GET['id_guru'])) {
             }
         }
         ?>
+
 
         <?php if (isset($data) && $data): ?>
             <form action="" method="post" enctype="multipart/form-data">
@@ -165,9 +204,18 @@ if (isset($_GET['id_guru'])) {
                         <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                     </div>
                     <div class="form-group col-md-6">
-                        <label>ID Sekolah</label>
-                        <input type="text" name="id_sekolah" class="form-control" value="<?php echo htmlspecialchars($data['id_sekolah'] ?? ''); ?>" required>
+                        <label>Nama Sekolah</label>
+                        <select name="id_sekolah" class="form-control" required>
+                            <?php
+                            $querySekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
+                            while ($sekolah = mysqli_fetch_assoc($querySekolah)) {
+                                $selected = ($data['id_sekolah'] == $sekolah['id_sekolah']) ? 'selected' : '';
+                                echo "<option value='{$sekolah['id_sekolah']}' $selected>{$sekolah['nama_sekolah']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
+
                     <div class="form-group col-md-6">
                         <label>Username</label>
                         <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username'] ?? ''); ?>" required>
