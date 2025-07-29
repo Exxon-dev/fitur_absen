@@ -126,6 +126,9 @@
                             case 'laporan3':
                                 include "pages/laporan/laporan3.php";
                             break;
+                            case 'rekap_ip':
+                                include "pages/rekap_ip.php";
+                            break;
                             default:
                                     echo "Maaf halaman yang anda tuju tidak ada";
                                 break;

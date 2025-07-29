@@ -131,11 +131,8 @@ if (isset($_GET['id_guru'])) {
         <?php if (isset($data) && $data): ?>
             <form action="" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
-                <!-- Tambahkan di <head> -->
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
                 <div class="d-flex justify-content-center mb-3 position-relative" style="width: 100px; height: 100px; margin: auto;">
-                   <img src="/fitur_absen/absensi/pages/image/<?php echo $data['profile'] ?? 'default.jpg'; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    <img src="/fitur_absen/absensi/pages/image/<?php echo $data['profile'] ?? 'default.jpg'; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                     <label for="foto" class="position-absolute"
                         style="bottom: 0; right: 0;  background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
                         <i class="fa fa-camera text-white"></i>
