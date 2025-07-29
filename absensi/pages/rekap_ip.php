@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Set timezone
-date_default_timezone_set('Asia/Semarang');
+date_default_timezone_set('Asia/Jakarta');
 
 $tanggal = date('Y-m-d');
 
@@ -21,6 +21,7 @@ $query = mysqli_query($coneksi, "
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,15 +44,18 @@ $query = mysqli_query($coneksi, "
         .table-responsive {
             margin-top: 20px;
         }
+
         .table-light th {
             background-color: #007bff;
             color: white;
         }
+
         .table tbody tr:hover {
             background-color: #e9ecef;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
@@ -77,16 +81,17 @@ $query = mysqli_query($coneksi, "
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1; while ($row = mysqli_fetch_assoc($query)): ?>
+                    <?php $no = 1;
+                    while ($row = mysqli_fetch_assoc($query)): ?>
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
                             <td><?= htmlspecialchars($row['tanggal']) ?></td>
                             <td><?= $row['jam_masuk'] ?? '-' ?></td>
                             <td><?= $row['jam_keluar'] ?? '-' ?></td>
-                            <td><?= htmlspecialchars($row['koordinat']) ?></td>
-                            <td><?= htmlspecialchars($row['ip_address'] ?? '-') ?></td>
-                            <td><?= htmlspecialchars($row['lokasi'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($row['koordinat'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['ip_address'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($row['lokasi'] ?? '') ?></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -96,4 +101,5 @@ $query = mysqli_query($coneksi, "
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

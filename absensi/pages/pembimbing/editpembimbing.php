@@ -3,8 +3,9 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Edit Pembimbing</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
@@ -88,7 +89,7 @@
                 echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data pembimbing berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editpembimbing&id_pembimbing=' . $id_pembimbing . '&pesan=sukses";},1200);</script>';
                 exit();
             } else {
-                $err = htmlspecialchars(mysqli_error($coneksi),ENT_QUOTES);
+                $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
                 echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
                 echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
             }
