@@ -92,7 +92,7 @@ $total_pages = max(1, ceil($total_rows / $limit));
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>No</th>
