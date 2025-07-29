@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- Tombol burger (mobile) -->
 <style>
   /* Tombol Burger */
@@ -52,6 +53,9 @@
 </style>
 
 <!-- Tombol burger -->
+=======
+
+>>>>>>> 576ca59 (menghapus konflik)
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
 <!-- Overlay untuk mobile -->

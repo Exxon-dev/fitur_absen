@@ -1,8 +1,6 @@
 <?php
-if (ob_get_level()) ob_clean();
 
 include '../../koneksi.php';
-session_start();
 header('Content-Type: application/json');
 
 try {

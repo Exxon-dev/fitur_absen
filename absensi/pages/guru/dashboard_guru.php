@@ -539,6 +539,13 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       <?php endif; ?>
     });
   </script>
+  <script>
+  // Auto-refresh halaman setiap 30 detik (30000 milidetik)
+  setInterval(function() {
+    location.reload();
+  }, 30000);
+</script>
+
 </body>
 
 </html>
