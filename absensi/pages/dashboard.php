@@ -19,16 +19,21 @@ include 'koneksi.php';
 $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
 $query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
 $query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+$query_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing ORDER BY id_pembimbing ASC") or die(mysqli_error($coneksi));
+$query_guru = mysqli_query($coneksi, "SELECT * FROM guru ORDER BY id_guru ASC") or die(mysqli_error($coneksi));
 $jumlah_siswa = mysqli_num_rows($query_siswa);
 $jumlah_sekolah = mysqli_num_rows($query_sekolah);
 $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
+$jumlah_pembimbing = mysqli_num_rows($query_pembimbing);
+$jumlah_guru = mysqli_num_rows($query_guru);
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>
     Absensi | SMK N TEMBARAK
@@ -55,6 +60,9 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+    .card {
+      margin-bottom: 30px;
+    }
   </style>
 </head>
 
@@ -78,6 +86,36 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
               <hr class="dark horizontal my-0">
             </div>
           </div>
+          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                  <i class="material-icons opacity-10">person</i>
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Guru</p>
+                  <h4 class="mb-0"><?php echo $jumlah_guru; ?></h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+            </div>
+          </div>
+
+          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                  <i class="material-icons opacity-10">supervisor_account</i>
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Pembimbing</p>
+                  <h4 class="mb-0"><?php echo $jumlah_pembimbing; ?></h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+            </div>
+          </div>
+
           <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
               <div class="card-header p-3 pt-2">
@@ -160,8 +198,9 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             <?php endif; ?>
           <?php endif; ?>
         });
-          // Tambahkan ini di halaman logout admin Anda
-          </script>
+        // Tambahkan ini di halaman logout admin Anda
+      </script>
       </script>
 </body>
+
 </html>

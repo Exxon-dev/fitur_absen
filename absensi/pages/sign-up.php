@@ -104,6 +104,7 @@
     localStorage.removeItem("pembimbingAlertShown");
     localStorage.removeItem("adminWelcomeShown");
     localStorage.removeItem("guruWelcomeShowed");
+    localStorage.removeItem("sekolahAlertShown");
   });
 </script>
 </body>

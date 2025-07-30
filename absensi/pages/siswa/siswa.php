@@ -42,7 +42,7 @@ include('koneksi.php');
 
     <div class="container table-responsive">
         <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
-        <h2 class="text-center">Data SISWA</h2>
+        <h2 class="text-center">Data Siswa</h2>
         <hr>
 
         <table class="table table-bordered table-hover">

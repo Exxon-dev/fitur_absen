@@ -40,6 +40,18 @@
 				</div>
 			</div>
 			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">Username</label>
+				<div class="col-sm-10">
+					<input type="text" name="username" class="form-control" size="4" required>
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2 col-form-label">Password</label>
+				<div class="col-sm-10">
+					<input type="password" name="password" class="form-control" size="4" required>
+				</div>
+			</div>
+			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-10">
 					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" >

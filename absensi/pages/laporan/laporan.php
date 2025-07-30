@@ -105,8 +105,8 @@ if (!isset($_SESSION['id_siswa'])) {
     <hr>
 
     <form id="myForm" action="pages/laporan/preview.php" method="POST" onsubmit="openTab(event)">
-        <label for="id_siswa">ID Siswa:</label>
-        <input type="text" id="id_siswa" name="id_siswa" value="<?php echo htmlspecialchars($_SESSION['id_siswa']); ?>" class="form-control" readonly required>
+        <label for="id_siswa"></label>
+        <input type="hidden" id="id_siswa" name="id_siswa" value="<?php echo htmlspecialchars($_SESSION['id_siswa']); ?>" class="form-control" readonly required>
 
         <label for="reportSelect">Pilih Laporan:</label>
         <select id="reportSelect" name="page" class="form-control" required>
