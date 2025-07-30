@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-<!-- Tombol burger untuk mobile -->
 <style>
-  /* Tombol Burger */
   .menu-toggle {
     position: fixed;
     top: 15px;
-    right: 30px;
+    left: 15px;
     background: #344767;
     border: none;
     z-index: 1100;
@@ -17,7 +14,6 @@
     cursor: pointer;
   }
 
-  /* Overlay (muncul pas sidebar aktif di mobile) */
   #sidebar-overlay {
     display: none;
     position: fixed;
@@ -29,7 +25,17 @@
     z-index: 1049;
   }
 
-  /* Responsive behavior */
+  #sidenav-main {
+    width: 260px;
+  }
+
+  @media (min-width: 992px) {
+    .main-content {
+      margin-left: 270px;
+      transition: margin-left 0.3s ease;
+    }
+  }
+
   @media (max-width: 991px) {
     .menu-toggle {
       display: block;
@@ -49,12 +55,14 @@
     #sidebar-overlay.active {
       display: block;
     }
+
+    .main-content {
+      margin-left: 0 !important;
+    }
   }
 </style>
 
 <!-- Tombol burger -->
-=======
->>>>>>> 576ca59 (menghapus konflik)
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
 <!-- Overlay untuk mobile -->
@@ -122,7 +130,10 @@
   function toggleSidebar() {
     const sidebar = document.getElementById('sidenav-main');
     const overlay = document.getElementById('sidebar-overlay');
+
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
   }
 </script>
+
+

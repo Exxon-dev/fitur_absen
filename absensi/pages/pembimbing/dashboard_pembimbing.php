@@ -1,6 +1,5 @@
 <?php
 include "koneksi.php";
-session_start();
 
 // Mendapatkan ID perusahaan yang sedang login
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
@@ -184,9 +183,6 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 </head>
 
 <body>
-  <!-- Include sidebar -->
-  <?php include 'sidebar_pembimbing.php'; ?>
-
   <!-- Main content -->
   <div class="main-container container-custom">
     <hr>
