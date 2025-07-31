@@ -1,6 +1,8 @@
 <?php
+if (ob_get_level()) ob_clean();
 
 include '../../koneksi.php';
+session_start();
 header('Content-Type: application/json');
 
 try {
@@ -37,7 +39,6 @@ try {
         $region   = $ipdata['region'] ?? '';
         $country  = $ipdata['country'] ?? '';
         $org      = $ipdata['org'] ?? '';
-        $timezone = $ipdata['timezone'] ?? '';
         $loc      = $ipdata['loc'] ?? ''; // format: lat,long
 
         $lokasi_parts = [];
@@ -45,7 +46,6 @@ try {
         if ($region) $lokasi_parts[] = $region;
         if ($country) $lokasi_parts[] = $country;
         if ($org) $lokasi_parts[] = "Provider: $org";
-        if ($timezone) $lokasi_parts[] = "Zona: $timezone";
 
         if (!empty($lokasi_parts)) {
             $lokasi = implode(' | ', $lokasi_parts);
@@ -85,7 +85,6 @@ try {
             'lokasi' => $lokasi,
             'koordinat' => $koordinat
         ]));
-
     } elseif ($action === 'simpan_keluar') {
         if (!$absen || !$absen['jam_masuk']) {
             throw new Exception('Belum absen masuk');
@@ -111,12 +110,9 @@ try {
     } else {
         throw new Exception('Aksi tidak valid');
     }
-
 } catch (Exception $e) {
     die(json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]));
 }
-
-?>

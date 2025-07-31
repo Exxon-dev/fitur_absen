@@ -1,7 +1,8 @@
 <?php
 include "koneksi.php";
+session_start(); // Tambahkan session_start() di awal
 
-// Cek apakah guru udah login
+// Cek apakah guru sudah login
 if (!isset($_SESSION['id_guru'])) {
   header("Location: sign-in.php");
   exit();
@@ -9,24 +10,42 @@ if (!isset($_SESSION['id_guru'])) {
 
 $id_guru = $_SESSION['id_guru'];
 
-// Ambil data guru (termasuk nama)
-$getGuru = mysqli_query($coneksi, "SELECT id_sekolah, nama_guru FROM guru WHERE id_guru = '$id_guru'") or die(mysqli_error($coneksi));
-$dataGuru = mysqli_fetch_assoc($getGuru);
+// Ambil data guru (termasuk nama) dengan prepared statement
+$stmt = mysqli_prepare($coneksi, "SELECT id_sekolah, nama_guru FROM guru WHERE id_guru = ?");
+mysqli_stmt_bind_param($stmt, "i", $id_guru);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$dataGuru = mysqli_fetch_assoc($result);
 
 if (!$dataGuru) {
-  echo "Data guru tidak ditemukan.";
+  echo "<script>
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Data guru tidak ditemukan',
+    }).then(() => {
+      window.location.href = 'sign-in.php';
+    });
+  </script>";
   exit();
 }
 
 $id_sekolah = $dataGuru['id_sekolah'];
 $nama_guru = $dataGuru['nama_guru'];
 
-// Query untuk mendapatkan data siswa berdasarkan id_sekolah
-$query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_sekolah = '$id_sekolah' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+// Query untuk mendapatkan data siswa dengan prepared statement
+$stmt = mysqli_prepare($coneksi, "SELECT * FROM siswa WHERE id_sekolah = ? ORDER BY id_siswa ASC");
+mysqli_stmt_bind_param($stmt, "i", $id_sekolah);
+mysqli_stmt_execute($stmt);
+$query_siswa = mysqli_stmt_get_result($stmt);
 
-// Hanya ada satu sekolah yang relevan, jadi kita query satu sekolah saja
-$query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah WHERE id_sekolah = '$id_sekolah' LIMIT 1") or die(mysqli_error($coneksi));
+// Query sekolah dengan prepared statement
+$stmt = mysqli_prepare($coneksi, "SELECT * FROM sekolah WHERE id_sekolah = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, "i", $id_sekolah);
+mysqli_stmt_execute($stmt);
+$query_sekolah = mysqli_stmt_get_result($stmt);
 
+// Query perusahaan
 $query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
 
 $jumlah_siswa = mysqli_num_rows($query_siswa);
@@ -40,59 +59,45 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absensi Siswa</title>
+  <title>Absensi Siswa - <?php echo htmlspecialchars($nama_guru); ?></title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
-    .absent {
-      color: red;
+    /* Improved CSS with better organization */
+    :root {
+      --primary-color: #007bff;
+      --success-color: #28a745;
+      --info-color: #17a2b8;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    body {
+      padding-left: 270px;
+      transition: padding-left 0.3s;
+      background-color: var(--light-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .present {
-      color: green;
-    }
-
-    .readonly {
-      background-color: #f8f9fa;
-    }
-
-    .container {
+    .main-container {
       margin-top: 20px;
+      margin-right: 20px;
+      margin-left: 0;
+      width: auto;
+      max-width: none;
+    }
+
+    .container-custom {
       background-color: #ffffff;
       border-radius: 10px;
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
-    input[type="radio"] {
-      transform: scale(1.3);
-      margin-right: 6px;
-    }
-
-    .status-hadir {
-      color: green;
-      font-weight: bold;
-    }
-
-    .status-sakit {
-      color: orange;
-      font-weight: bold;
-    }
-
-    .status-izin {
-      color: blue;
-      font-weight: bold;
-    }
-
-    .status-alpa {
-      color: red;
-      font-weight: bold;
-    }
-
-    .status-belum {
-      color: #6c757d;
-    }
-
+    /* Status Badges */
     .badge-status {
       padding: 5px 10px;
       border-radius: 20px;
@@ -123,11 +128,22 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       color: #1B5E20;
     }
 
+    .badge-belum {
+      background-color: #E0E0E0;
+      color: #424242;
+    }
+
+    /* Radio Buttons */
     .radio-label {
       display: inline-flex;
       align-items: center;
       margin-right: 15px;
       cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .radio-label:hover {
+      opacity: 0.8;
     }
 
     .radio-label.disabled {
@@ -135,26 +151,95 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       cursor: not-allowed;
     }
 
+    input[type="radio"] {
+      transform: scale(1.3);
+      margin-right: 6px;
+    }
+
+    /* Table Styles */
+    .table-responsive {
+      margin-top: 20px;
+    }
+
+    .table thead th {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(0, 123, 255, 0.05);
+    }
+
+    /* Card Styles */
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      border-radius: 10px 10px 0 0 !important;
+      background-color: white;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile Card View */
+    .student-card {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+
+    .student-card:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .student-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .radio-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     /* Responsive Styles */
-    @media (max-width: 768px) {
-      .container {
-        margin-top: 10px;
-        padding: 10px;
-        border-radius: 5px;
+    @media (max-width: 991px) {
+      body {
+        padding-left: 0;
       }
 
+      .main-container {
+        margin-right: 15px;
+        margin-left: 15px;
+      }
+    }
+
+    @media (max-width: 768px) {
       h2 {
         font-size: 1.5rem;
-        margin: 20px 0 !important;
-      }
-
-      /* Card responsif */
-      .col-xl-4 {
-        margin-bottom: 15px;
-      }
-
-      .card {
-        margin-bottom: 10px;
       }
 
       .card-header {
@@ -165,127 +250,68 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         font-size: 1.2rem;
       }
 
-      /* Tabel responsif - hide table dan show card layout */
-      .table-responsive-stack {
-        display: block;
-      }
-
-      .table-responsive-stack .table {
-        display: none;
-      }
-
-      .student-card {
-        background: #fff;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        padding: 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .student-card .student-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-      }
-
-      .student-card .student-name {
-        font-weight: bold;
-        font-size: 1.1rem;
-        color: #333;
-        margin-bottom: 5px;
-      }
-
-      .student-card .student-number {
-        color: #666;
-        font-size: 0.9rem;
-      }
-
-      .student-card .status-section {
-        margin-bottom: 15px;
-      }
-
-      .student-card .radio-section {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .student-card .radio-label {
-        margin-right: 0;
-        margin-bottom: 8px;
-        font-size: 0.9rem;
-        min-width: 70px;
-      }
-
-      .student-card .radio-label input[type="radio"] {
-        transform: scale(1.2);
-        margin-right: 5px;
-      }
-
-      /* Badge responsif */
-      .badge-status {
-        font-size: 0.8rem;
-        padding: 4px 8px;
-        min-width: 60px;
-      }
-
-      /* Input radio lebih kecil di mobile */
-      input[type="radio"] {
-        transform: scale(1.1);
-        margin-right: 4px;
-      }
-    }
-
-    @media (min-width: 769px) {
-      .student-cards {
-        display: none;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .container {
-        padding: 8px;
-      }
-
       .student-card {
         padding: 12px;
       }
 
-      .student-card .radio-section {
+      .radio-section {
         flex-direction: column;
       }
 
-      .student-card .radio-label {
-        margin-bottom: 10px;
-        justify-content: flex-start;
-      }
-
-      /* Stats cards stack vertically */
-      .col-xl-4 {
+      .radio-label {
         margin-bottom: 10px;
       }
 
-      h2 {
-        font-size: 1.3rem;
+      input[type="radio"] {
+        transform: scale(1.1);
       }
+    }
+
+    /* Refresh Indicator */
+    .refresh-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 50px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .refresh-indicator i {
+      margin-right: 8px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    h2 {
+      color: #007bff;
     }
   </style>
 </head>
 
 <body>
-
-  <div class="container" style="margin-top: 20px">
+  <div class="main-container container-custom">
+    <div class="text-center">
+      <h2 class="mb-0">Absensi Siswa</h2>
+    </div>
     <hr>
+
+    <!-- Stats Cards -->
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">group</i>
+                <i class="fas fa-users"></i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Siswa</p>
@@ -299,7 +325,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
           <div class="card">
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">school</i>
+                <i class="fas fa-school"></i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Sekolah</p>
@@ -313,7 +339,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
           <div class="card">
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">location_city</i>
+                <i class="fas fa-building"></i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
@@ -326,19 +352,18 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       </div>
     </div>
 
-    <h2 class="text-center my-4">Absensi Siswa</h2>
-
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
-      <table class="table table-bordered">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th>No</th>
-            <th>Nama</th>
+            <th>Nama Siswa</th>
             <th>Status</th>
             <th>Sakit</th>
             <th>Izin</th>
             <th>Alpa</th>
+            <th>Hadir</th>
           </tr>
         </thead>
         <tbody>
@@ -351,59 +376,60 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
             $attendance = mysqli_fetch_assoc($attendanceQuery);
 
-            $statusClass = 'status-belum';
-            $keterangan = '-';
-            $isReadOnly = true; // Always read-only in this version
-            $badgeClass = '';
+            $keterangan = $attendance['keterangan'] ?? null;
+            $badgeClass = 'badge-belum';
             $statusText = 'Belum Absen';
 
-            if ($attendance) {
-              $keterangan = $attendance['keterangan'];
-
-              // Set warna teks dan badge berdasarkan keterangan
-              if ($keterangan === 'sakit') {
-                $statusClass = 'status-sakit';
-                $badgeClass = 'badge-sakit';
-                $statusText = 'Sakit';
-              } elseif ($keterangan === 'izin') {
-                $statusClass = 'status-izin';
-                $badgeClass = 'badge-izin';
-                $statusText = 'Izin';
-              } elseif ($keterangan === 'alpa') {
-                $statusClass = 'status-alpa';
-                $badgeClass = 'badge-alpa';
-                $statusText = 'Alpa';
-              } else {
-                $statusClass = 'status-hadir';
-                $badgeClass = 'badge-hadir';
-                $statusText = 'Hadir';
+            if ($keterangan) {
+              switch ($keterangan) {
+                case 'sakit':
+                  $badgeClass = 'badge-sakit';
+                  $statusText = 'Sakit';
+                  break;
+                case 'izin':
+                  $badgeClass = 'badge-izin';
+                  $statusText = 'Izin';
+                  break;
+                case 'alpa':
+                  $badgeClass = 'badge-alpa';
+                  $statusText = 'Alpa';
+                  break;
+                default:
+                  $badgeClass = 'badge-hadir';
+                  $statusText = 'Hadir';
               }
             }
 
             echo '
-              <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
-                  <td>' . $index . '</td>
-                  <td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
-                  <td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
-                  <td>
-                      <label class="radio-label disabled">
-                        <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
-                        <span>Sakit</span>
-                      </label>
-                  </td>
-                  <td>
-                      <label class="radio-label disabled">
-                        <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ' disabled>
-                        <span>Izin</span>
-                      </label>
-                  </td>
-                  <td>
-                      <label class="radio-label disabled">
-                        <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ' disabled>
-                        <span>Alpa</span>
-                      </label>
-                  </td>
-              </tr>
+            <tr>
+              <td>' . $index . '</td>
+              <td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
+              <td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
+              <td>
+                <label class="radio-label disabled">
+                  <input type="radio" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
+                  <span>Sakit</span>
+                </label>
+              </td>
+              <td>
+                <label class="radio-label disabled">
+                  <input type="radio" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ' disabled>
+                  <span>Izin</span>
+                </label>
+              </td>
+              <td>
+                <label class="radio-label disabled">
+                  <input type="radio" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ' disabled>
+                  <span>Alpa</span>
+                </label>
+              </td>
+              <td>
+                <label class="radio-label disabled">
+                  <input type="radio" name="absen_' . $siswa['id_siswa'] . '" value="hadir" ' . (!$keterangan || $keterangan === 'hadir' ? 'checked' : '') . ' disabled>
+                  <span>Hadir</span>
+                </label>
+              </td>
+            </tr>
             ';
             $index++;
           }
@@ -415,7 +441,6 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     <!-- Mobile Card View -->
     <div class="student-cards d-block d-md-none">
       <?php
-      // Reset query untuk mobile view
       $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_sekolah = '$id_sekolah' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
       $index = 1;
       $today = date('Y-m-d');
@@ -424,59 +449,58 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
         $attendance = mysqli_fetch_assoc($attendanceQuery);
 
-        $statusClass = 'status-belum';
-        $keterangan = '-';
-        $isReadOnly = true; // Always read-only in this version
-        $badgeClass = '';
+        $keterangan = $attendance['keterangan'] ?? null;
+        $badgeClass = 'badge-belum';
         $statusText = 'Belum Absen';
 
-        if ($attendance) {
-          $keterangan = $attendance['keterangan'];
-
-          // Set warna teks dan badge berdasarkan keterangan
-          if ($keterangan === 'sakit') {
-            $statusClass = 'status-sakit';
-            $badgeClass = 'badge-sakit';
-            $statusText = 'Sakit';
-          } elseif ($keterangan === 'izin') {
-            $statusClass = 'status-izin';
-            $badgeClass = 'badge-izin';
-            $statusText = 'Izin';
-          } elseif ($keterangan === 'alpa') {
-            $statusClass = 'status-alpa';
-            $badgeClass = 'badge-alpa';
-            $statusText = 'Alpa';
-          } else {
-            $statusClass = 'status-hadir';
-            $badgeClass = 'badge-hadir';
-            $statusText = 'Hadir';
+        if ($keterangan) {
+          switch ($keterangan) {
+            case 'sakit':
+              $badgeClass = 'badge-sakit';
+              $statusText = 'Sakit';
+              break;
+            case 'izin':
+              $badgeClass = 'badge-izin';
+              $statusText = 'Izin';
+              break;
+            case 'alpa':
+              $badgeClass = 'badge-alpa';
+              $statusText = 'Alpa';
+              break;
+            default:
+              $badgeClass = 'badge-hadir';
+              $statusText = 'Hadir';
           }
         }
 
         echo '
-          <div class="student-card">
-            <div class="student-header">
-              <div>
-                <div class="student-name">' . htmlspecialchars($siswa['nama_siswa']) . '</div>
-              </div>
-              <span class="badge-status ' . $badgeClass . '">' . $statusText . '</span>
+        <div class="student-card">
+          <div class="student-header">
+            <div>
+              <div class="student-name">' . $index . '. ' . htmlspecialchars($siswa['nama_siswa']) . '</div>
             </div>
-            
-            <div class="radio-section">
-              <label class="radio-label disabled">
-                <input type="radio" id="Sakit_mobile_' . $siswa['id_siswa'] . '" name="absen_mobile_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
-                <span>Sakit</span>
-              </label>
-              <label class="radio-label disabled">
-                <input type="radio" id="Izin_mobile_' . $siswa['id_siswa'] . '" name="absen_mobile_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ' disabled>
-                <span>Izin</span>
-              </label>
-              <label class="radio-label disabled">
-                <input type="radio" id="Alpa_mobile_' . $siswa['id_siswa'] . '" name="absen_mobile_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ' disabled>
-                <span>Alpa</span>
-              </label>
-            </div>
+            <span class="badge-status ' . $badgeClass . '">' . $statusText . '</span>
           </div>
+          
+          <div class="radio-section">
+            <label class="radio-label disabled">
+              <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="hadir" ' . (!$keterangan || $keterangan === 'hadir' ? 'checked' : '') . ' disabled>
+              <span>Hadir</span>
+            </label>
+            <label class="radio-label disabled">
+              <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
+              <span>Sakit</span>
+            </label>
+            <label class="radio-label disabled">
+              <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ' disabled>
+              <span>Izin</span>
+            </label>
+            <label class="radio-label disabled">
+              <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ' disabled>
+              <span>Alpa</span>
+            </label>
+          </div>
+        </div>
         ';
         $index++;
       }
@@ -484,17 +508,23 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     </div>
   </div>
 
+  <!-- Refresh Indicator -->
+  <div class="refresh-indicator" id="refreshIndicator">
+    <i class="fas fa-sync-alt"></i>
+    <span>Auto-refresh in <span id="countdown">5</span>s</span>
+  </div>
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Notifikasi login sukses (hanya muncul sekali)
+      // Welcome notification
       if (!localStorage.getItem('guruWelcomeShowed')) {
         const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
-
+        
         Swal.fire({
-          title: `Selamat datang ${namaGuru}!`,
+          title: `Selamat datang, ${namaGuru}!`,
           text: "Anda berhasil login ke sistem",
           icon: 'success',
           position: 'top-end',
@@ -502,18 +532,26 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
           timer: 2000,
           timerProgressBar: true,
           toast: true,
-          background: '#f8f9fa',
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer);
-            toast.addEventListener('mouseleave', Swal.resumeTimer);
-          }
+          background: '#f8f9fa'
         });
 
-        // Set flag bahwa alert sudah ditampilkan
         localStorage.setItem('guruWelcomeShowed', 'true');
       }
 
-      // Untuk notifikasi lainnya (jika ada)
+      // Countdown for auto-refresh
+      let seconds = 30;
+      const countdownElement = document.getElementById('countdown');
+      const countdownInterval = setInterval(() => {
+        seconds--;
+        countdownElement.textContent = seconds;
+        
+        if (seconds <= 0) {
+          clearInterval(countdownInterval);
+          location.reload();
+        }
+      }, 1000);
+
+      // Show notification if any
       <?php if (isset($_GET['pesan'])): ?>
         <?php if ($_GET['pesan'] == 'sukses'): ?>
           Swal.fire({
@@ -539,13 +577,5 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       <?php endif; ?>
     });
   </script>
-  <script>
-  // Auto-refresh halaman setiap 30 detik (30000 milidetik)
-  setInterval(function() {
-    location.reload();
-  }, 30000);
-</script>
-
 </body>
-
 </html>

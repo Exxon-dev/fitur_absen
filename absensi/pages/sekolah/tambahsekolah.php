@@ -7,11 +7,46 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
 		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link rel="stylesheet" href="style.css">
+	<style>
+		/* Penyesuaian posisi */
+		body {
+			padding-left: 270px;
+			transition: padding-left 0.3s;
+			background-color: #f8f9fa;
+		}
+
+		.main-container {
+			margin-top: 20px;
+			margin-right: 20px;
+			margin-left: 0;
+			width: auto;
+			max-width: none;
+		}
+
+		/* Style asli */
+		.container-custom {
+			background-color: #ffffff;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		}
+
+		@media (max-width: 991px) {
+			body {
+				padding-left: 0;
+			}
+
+			.main-container {
+				margin-right: 15px;
+				margin-left: 15px;
+			}
+		}
+	</style>
 </head>
 
 <body>
 
-	<div class="container" style="margin-top:20px">
+	<div class="main-container container-custom" style="margin-top:20px">
 		<h2>Tambah Sekolah</h2>
 		<hr>
 		<form action="pages/sekolah/proses_tambahsekolah.php" method="post" enctype="multipart/form-data">
@@ -54,7 +89,7 @@
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-10">
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" >
+					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
 				</div>
 			</div>
 			<div class="form-row">

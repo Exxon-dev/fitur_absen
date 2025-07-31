@@ -135,4 +135,13 @@
     </ul>
   </div>
 </aside>
+<!-- SCRIPT -->
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidenav-main');
+    const overlay = document.getElementById('sidebar-overlay');
 
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+</script>

@@ -14,15 +14,26 @@ if (!isset($_SESSION['id_siswa'])) {
     <title>Edit Siswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
-            background-color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
@@ -64,12 +75,25 @@ if (!isset($_SESSION['id_siswa'])) {
         .form-row {
             margin-bottom: 15px;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h2>Edit Siswa</h2>
+    <div class="main-container container-custom">
+        <div class="text-center">
+            <h2>Edit Siswa</h2>
+        </div>
         <hr>
 
         <?php
@@ -121,7 +145,7 @@ WHERE id_siswa='$id_siswa'");
                 echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data siswa berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
                 exit();
             } else {
-                $err = htmlspecialchars(mysqli_error($coneksi),ENT_QUOTES);
+                $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
                 echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
                 echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
             }
@@ -178,7 +202,7 @@ WHERE id_siswa='$id_siswa'");
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
-                        
+
                         <?php
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {

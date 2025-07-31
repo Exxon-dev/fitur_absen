@@ -63,7 +63,7 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white d-xl-none" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="#">
-            <span class="ms-1 font-weight-bold text-white">ABSENS ADMIN</span>
+            <span class="ms-1 font-weight-bold text-white">ABSENS SEKOLAH</span>
         </a>
     </div>
 
@@ -82,7 +82,7 @@
 
             <!-- Profile Sekolah -->
             <li class="nav-item">
-                <a class="nav-link text-white <?= ($page == 'profile_sekolah') ? 'active' : ''; ?>" href="index.php?page=profile_sekolah">
+                <a class="nav-link text-white <?= ($page == 'profile_sekolah') ? 'active' : ''; ?>" href="index.php?page=profile_sekolah&id_sekolah=<?php echo $_SESSION['id_sekolah'] ?>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">school</i>
                     </div>
