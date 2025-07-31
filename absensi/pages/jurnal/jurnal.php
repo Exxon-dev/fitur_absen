@@ -149,7 +149,7 @@ $result = mysqli_query($coneksi, $query);
             <ul class="pagination justify-content-center">
                 <?php if ($page > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=jurnal&search=<?= urlencode($search) ?>&halaman=<?= $page - 1 ?>"><-< /a>
+                        <a class="page-link" href="?page=jurnal&search=<?= urlencode($search) ?>&halaman=<?= $page - 1 ?>"><-</a>
                     </li>
                 <?php endif; ?>
 

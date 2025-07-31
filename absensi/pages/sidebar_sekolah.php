@@ -63,7 +63,7 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white d-xl-none" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="#">
-            <span class="ms-1 font-weight-bold text-white">ABSENS ADMIN</span>
+            <span class="ms-1 font-weight-bold text-white">ABSENS SEKOLAH</span>
         </a>
     </div>
 

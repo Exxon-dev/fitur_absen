@@ -32,11 +32,11 @@ $stmt_pembimbing->execute();
 $login_pembimbing = $stmt_pembimbing->get_result();
 $cek_pembimbing = $login_pembimbing->num_rows;
 
-// $stmt_sekolah = $coneksi->prepare("SELECT * FROM sekolah WHERE username=? AND password=?");
-// $stmt_sekolah->bind_param("ss", $username, $password);
-// $stmt_sekolah->execute();
-// $login_sekolah = $stmt_sekolah->get_result();
-// $cek_sekolah = $login_sekolah->num_rows;
+$stmt_sekolah = $coneksi->prepare("SELECT * FROM sekolah WHERE username=? AND password=?");
+$stmt_sekolah->bind_param("ss", $username, $password);
+$stmt_sekolah->execute();
+$login_sekolah = $stmt_sekolah->get_result();
+$cek_sekolah = $login_sekolah->num_rows;
 
 if ($cek > 0) {
     $data = $login->fetch_assoc();
@@ -74,16 +74,16 @@ if ($cek > 0) {
     $_SESSION['role'] = "pembimbing";
     header("location:../index.php?page=dashboard_pembimbing&login=berhasil&username=$username");
     exit;
-// } elseif ($cek_sekolah > 0) {
-//     $data = $login_sekolah->fetch_assoc();
-//     $_SESSION['username'] = $username;
-//     $_SESSION['id_perusahaan'] = $data['id_perusahaan'];
-//     $_SESSION['id_sekolah'] = $data['id_sekolah'];
-//     $_SESSION['level'] = "sekolah";
-//     $_SESSION['role'] = "sekolah";
-//     header("location:../index.php?page=dashboard_sekolah&login=berhasil&username=$username");
-//     exit;
-// } else {
+} elseif ($cek_sekolah > 0) {
+    $data = $login_sekolah->fetch_assoc();
+    $_SESSION['username'] = $username;
+    $_SESSION['id_perusahaan'] = $data['id_perusahaan'];
+    $_SESSION['id_sekolah'] = $data['id_sekolah'];
+    $_SESSION['level'] = "sekolah";
+    $_SESSION['role'] = "sekolah";
+    header("location:../index.php?page=dashboard_sekolah&login=berhasil&username=$username");
+    exit;
+} else {
     header("location: sign-in.php?login=gagal");
     exit;
 }
