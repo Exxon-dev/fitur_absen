@@ -91,7 +91,9 @@ if (!isset($_SESSION['id_siswa'])) {
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Siswa</h2>
+        <div class="text-center">
+            <h2>Edit Siswa</h2>
+        </div>
         <hr>
 
         <?php

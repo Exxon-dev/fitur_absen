@@ -35,6 +35,7 @@
         h2 {
             margin-bottom: 20px;
             color: #007bff;
+            text-align: center;
         }
 
         .form-control {

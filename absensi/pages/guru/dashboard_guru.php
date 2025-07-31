@@ -291,16 +291,16 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    h2 {
+      color: #007bff;
+    }
   </style>
 </head>
 
 <body>
   <div class="main-container container-custom">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="text-center">
       <h2 class="mb-0">Absensi Siswa</h2>
-      <div class="text-muted">
-        <i class="fas fa-calendar-alt"></i> <?php echo date('d F Y'); ?>
-      </div>
     </div>
     <hr>
 
@@ -511,7 +511,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
   <!-- Refresh Indicator -->
   <div class="refresh-indicator" id="refreshIndicator">
     <i class="fas fa-sync-alt"></i>
-    <span>Auto-refresh in <span id="countdown">30</span>s</span>
+    <span>Auto-refresh in <span id="countdown">5</span>s</span>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

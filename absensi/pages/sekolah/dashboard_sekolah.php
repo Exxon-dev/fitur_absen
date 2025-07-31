@@ -46,6 +46,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             padding-left: 270px;
@@ -67,15 +68,42 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .table-responsive {
-            margin-top: 20px;
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
 
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-lg {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        /* Status Badges */
         .badge-status {
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.9em;
             font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            min-width: 70px;
         }
 
         .badge-sakit {
@@ -103,25 +131,19 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             color: #424242;
         }
 
-        .radio-label {
-            display: inline-flex;
-            align-items: center;
-            margin-right: 15px;
-            cursor: pointer;
+        /* Table Styles */
+        .table-responsive {
+            margin-top: 20px;
         }
 
-        .radio-label.disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .table-light th {
+        .table thead th {
             background-color: #007bff;
             color: white;
+            border: none;
         }
 
         .table tbody tr:hover {
-            background-color: #e9ecef;
+            background-color: rgba(0, 123, 255, 0.05);
         }
 
         /* Mobile Card View */
@@ -134,7 +156,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .student-header {
@@ -175,7 +197,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             .radio-section {
                 flex-direction: column;
             }
-
+            
             .radio-label {
                 margin-bottom: 8px;
             }
@@ -191,15 +213,15 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             <h3><?php echo htmlspecialchars($nama_sekolah, ENT_QUOTES); ?></h3>
         </div>
         <hr>
-
-        <!-- Statistik -->
+        
+        <!-- Statistik Cards -->
         <div class="container-fluid py-4">
             <div class="row">
                 <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
                     <div class="card">
                         <div class="card-header p-3 pt-2">
                             <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-                                <i class="material-icons opacity-10">group</i>
+                                <i class="material-icons">group</i>
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Siswa</p>
@@ -213,7 +235,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                     <div class="card">
                         <div class="card-header p-3 pt-2">
                             <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                                <i class="material-icons opacity-10">school</i>
+                                <i class="material-icons">school</i>
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Sekolah</p>
@@ -227,7 +249,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                     <div class="card">
                         <div class="card-header p-3 pt-2">
                             <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                                <i class="material-icons opacity-10">location_city</i>
+                                <i class="material-icons">location_city</i>
                             </div>
                             <div class="text-end pt-1">
                                 <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
@@ -253,6 +275,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                         <th>Sakit</th>
                         <th>Izin</th>
                         <th>Alpa</th>
+                        <th>Hadir</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -312,6 +335,12 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                                     <span>Alpa</span>
                                 </label>
                             </td>
+                            <td>
+                                <label class="radio-label disabled">
+                                    <input type="radio" name="absen_' . $siswa['id_siswa'] . '" value="hadir" ' . (!$keterangan || $keterangan === 'hadir' ? 'checked' : '') . ' disabled>
+                                    <span>Hadir</span>
+                                </label>
+                            </td>
                         </tr>
                         ';
                         $index++;
@@ -361,12 +390,16 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                 <div class="student-card">
                     <div class="student-header">
                         <div>
-                            <div class="student-name">' . htmlspecialchars($siswa['nama_siswa']) . '</div>
+                            <div class="student-name">' . $index . '. ' . htmlspecialchars($siswa['nama_siswa']) . '</div>
                         </div>
                         <span class="badge-status ' . $badgeClass . '">' . $statusText . '</span>
                     </div>
                     
                     <div class="radio-section">
+                        <label class="radio-label disabled">
+                            <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="hadir" ' . (!$keterangan || $keterangan === 'hadir' ? 'checked' : '') . ' disabled>
+                            <span>Hadir</span>
+                        </label>
                         <label class="radio-label disabled">
                             <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
                             <span>Sakit</span>
@@ -419,5 +452,4 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         });
     </script>
 </body>
-
 </html>
