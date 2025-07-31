@@ -47,13 +47,24 @@ $result = mysqli_query($coneksi, $query);
     <title>Jurnal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
-            background-color: #fff;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -77,11 +88,22 @@ $result = mysqli_query($coneksi, $query);
             display: flex;
             justify-content: flex-end;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-container container-custom">
         <a href="index.php?page=tambahjurnal" class="btn btn-primary">Tambah Jurnal</a>
         <h2 class="text-center">Data Jurnal</h2>
         <hr>
@@ -127,7 +149,7 @@ $result = mysqli_query($coneksi, $query);
             <ul class="pagination justify-content-center">
                 <?php if ($page > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=jurnal&search=<?= urlencode($search) ?>&halaman=<?= $page - 1 ?>"><-</a>
+                        <a class="page-link" href="?page=jurnal&search=<?= urlencode($search) ?>&halaman=<?= $page - 1 ?>"><-< /a>
                     </li>
                 <?php endif; ?>
 

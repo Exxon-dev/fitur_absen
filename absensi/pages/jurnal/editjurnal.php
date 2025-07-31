@@ -8,7 +8,7 @@ $current_user_id = $_SESSION['id_siswa'] ?? null;
 // Get journal ID from URL
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 if (!$id_jurnal) {
-    header('Location: index.php?page=jurnal&pesan=gagal&error='.urlencode('ID Jurnal tidak ditemukan'));
+    header('Location: index.php?page=jurnal&pesan=gagal&error=' . urlencode('ID Jurnal tidak ditemukan'));
     exit();
 }
 
@@ -17,7 +17,7 @@ $jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_jurnal = 
 $jurnal_data = mysqli_fetch_assoc($jurnal_result);
 
 if (!$jurnal_data) {
-    header('Location: index.php?page=jurnal&pesan=gagal&error='.urlencode('Data jurnal tidak ditemukan'));
+    header('Location: index.php?page=jurnal&pesan=gagal&error=' . urlencode('Data jurnal tidak ditemukan'));
     exit();
 }
 
@@ -35,28 +35,57 @@ $can_edit = ($is_owner || (isset($_SESSION['level']) && $_SESSION['level'] === '
     <title>Detail Jurnal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
-        .form-container {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* Penyesuaian posisi */
+        body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
+            background-color: #f8f9fa;
         }
+
+        .main-container {
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
         .small-date-input {
             width: 150px;
         }
+
         .readonly-field {
             background-color: #f8f9fa;
             cursor: not-allowed;
         }
+
         .btn-container {
             margin-top: 20px;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container form-container">
+    <div class="main-container container-custom">
         <h2>Detail Jurnal</h2>
         <hr>
         <form id="jurnalForm" action="pages/jurnal/proses_editjurnal.php" method="POST">
@@ -66,13 +95,13 @@ $can_edit = ($is_owner || (isset($_SESSION['level']) && $_SESSION['level'] === '
                 <input type="date" name="tanggal" class="form-control small-date-input <?php echo !$can_edit ? 'readonly-field' : ''; ?>"
                     value="<?php echo htmlspecialchars($jurnal_data['tanggal']); ?>" <?php echo !$can_edit ? 'readonly-field' : ''; ?> required>
             </div>
-            
+
             <div class="form-group">
                 <label>Keterangan</label>
-                <textarea class="form-control <?php echo !$can_edit ? 'readonly-field' : ''; ?>" rows="4" 
+                <textarea class="form-control <?php echo !$can_edit ? 'readonly-field' : ''; ?>" rows="4"
                     name="keterangan" <?php echo !$can_edit ? 'readonly' : ''; ?> required><?php echo htmlspecialchars($jurnal_data['keterangan']); ?></textarea>
             </div>
-            
+
             <div class="row btn-container">
                 <?php if ($can_edit): ?>
                     <div class="col text-left">
@@ -117,4 +146,5 @@ $can_edit = ($is_owner || (isset($_SESSION['level']) && $_SESSION['level'] === '
         });
     </script>
 </body>
+
 </html>

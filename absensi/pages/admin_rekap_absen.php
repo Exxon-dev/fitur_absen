@@ -28,12 +28,23 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
             background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
@@ -74,11 +85,22 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
         .tabletbody tr:hover {
             background-color: #e9ecef;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-container container-custom">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
             <div class="text-center"></div>
             <h2 class="text-primary"><i class="bi bi-calendar-check"></i> Rekap Absensi <?= htmlspecialchars($tanggal) ?></h2>

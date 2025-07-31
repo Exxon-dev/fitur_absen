@@ -43,9 +43,24 @@ $total_pages = max(1, ceil($total_rows / $limit));
             cursor: pointer;
         }
 
-        .container {
+        /* Penyesuaian posisi */
+        body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
+            background-color: #f8f9fa;
+        }
+
+        .main-container {
             margin-top: 20px;
-            background-color: #fff;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -63,11 +78,22 @@ $total_pages = max(1, ceil($total_rows / $limit));
         .pagination {
             justify-content: center;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-container container-custom">
         <h2 class="text-center text-primary">Data Jurnal, dan Catatan Terbaru</h2>
         <hr>
 

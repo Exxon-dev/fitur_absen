@@ -12,12 +12,23 @@ include('koneksi.php');
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
             background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
@@ -40,12 +51,21 @@ include('koneksi.php');
         .btn-warning {
             margin-bottom: 20px;
         }
+        @media (max-width: 991px) {
+      body {
+        padding-left: 0;
+      }
+      .main-container {
+        margin-right: 15px;
+        margin-left: 15px;
+      }
+    }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="main-container container-custom">
         <a href="index.php?page=tambahguru" class="btn btn-primary">Tambah Guru</a>
         <h2 class="text-center">Data GURU</h2>
 
