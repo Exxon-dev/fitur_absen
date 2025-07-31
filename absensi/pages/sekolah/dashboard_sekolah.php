@@ -1,6 +1,5 @@
 <?php
-include "koneksi.php";
-session_start();
+include "koneksi.php";;
 
 // Mendapatkan ID perusahaan yang sedang login
 $id_sekolah = $_SESSION['id_sekolah'] ?? null;

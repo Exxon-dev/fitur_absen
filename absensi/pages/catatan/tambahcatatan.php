@@ -99,15 +99,13 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-                    </div>
-                    <div class="col text-center">
                         <?php if ($catatan_data): ?>
                             <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="btn btn-danger" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
                     <div class="col text-right">
                         <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
+                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                     </div>
                 </div>
             <?php else: ?>

@@ -115,7 +115,7 @@
                     required>
             </div>
             <div class="form-group row">
-                <div class="col text-left">
+                <div class="col text-right">
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
         </form>
