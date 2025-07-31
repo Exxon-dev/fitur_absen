@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 25, 2025 at 03:40 AM
+-- Generation Time: Jul 31, 2025 at 06:12 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -35,18 +35,18 @@ CREATE TABLE `absen` (
   `tanggal` date NOT NULL,
   `keterangan` text NOT NULL,
   `ip_address` varchar(50) DEFAULT NULL,
-  `lokasi` varchar(100) DEFAULT NULL
+  `lokasi` text DEFAULT NULL,
+  `koordinat` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `absen`
 --
 
-INSERT INTO `absen` (`id_absen`, `id_siswa`, `jam_masuk`, `jam_keluar`, `tanggal`, `keterangan`, `ip_address`, `lokasi`) VALUES
-(111, 1, '08:12:11', NULL, '2025-07-24', 'Hadir', NULL, NULL),
-(114, 6914, '10:56:53', '10:56:55', '2025-07-24', 'sakit', NULL, NULL),
-(116, 1, '08:17:02', NULL, '2025-07-25', 'Hadir', '::1', 'Tidak diketahui'),
-(117, 6914, '08:30:28', '08:30:43', '2025-07-25', 'sakit', NULL, NULL);
+INSERT INTO `absen` (`id_absen`, `id_siswa`, `jam_masuk`, `jam_keluar`, `tanggal`, `keterangan`, `ip_address`, `lokasi`, `koordinat`) VALUES
+(167, 1, '14:27:59', '14:28:05', '2025-07-30', 'sakit', NULL, NULL, NULL),
+(168, 6916, '14:27:59', '14:28:05', '2025-07-30', 'alpa', NULL, NULL, NULL),
+(169, 1, '08:03:37', '08:05:03', '2025-07-31', 'Hadir', '103.105.206.1', 'Suzhou | Jiangsu | CN', '31.3041,120.5954');
 
 -- --------------------------------------------------------
 
@@ -77,7 +77,8 @@ INSERT INTO `catatan` (`id_catatan`, `id_pembimbing`, `catatan`, `id_jurnal`, `t
 (83, 1, 'lomba apa?', 79, '2025-07-18'),
 (84, 1, 'haii juga', 82, '2025-07-22'),
 (89, 1, 'hallo juga', 88, '2025-07-23'),
-(90, 1, 'yang bener', 93, '2025-07-24');
+(90, 1, 'yang bener', 93, '2025-07-24'),
+(91, 1, 'hallo', 95, '2025-07-29');
 
 -- --------------------------------------------------------
 
@@ -138,7 +139,8 @@ INSERT INTO `jurnal` (`id_jurnal`, `tanggal`, `keterangan`, `id_siswa`) VALUES
 (82, '2025-07-22', 'haiii', 1),
 (91, '2025-07-23', 'hallo juga', 6915),
 (93, '2025-07-23', 'Mampelajari git.', 1),
-(94, '2025-07-23', 'refisi website absensi', 6914);
+(94, '2025-07-23', 'refisi website absensi', 6914),
+(95, '2025-07-29', 'haiiiiiiiii', 1);
 
 -- --------------------------------------------------------
 
@@ -171,7 +173,8 @@ CREATE TABLE `pembimbing` (
 --
 
 INSERT INTO `pembimbing` (`id_pembimbing`, `nama_pembimbing`, `username`, `password`) VALUES
-(1, 'Maulida Nur Masruroh', 'ida', 'i');
+(1, 'Maulida Nur Masruroh', 'ida', 'i'),
+(2, 'hah', 'ha', 'h');
 
 -- --------------------------------------------------------
 
@@ -219,17 +222,19 @@ CREATE TABLE `sekolah` (
   `nama_sekolah` varchar(50) NOT NULL,
   `alamat_sekolah` varchar(300) NOT NULL,
   `kepala_sekolah` varchar(25) NOT NULL,
-  `logo_sekolah` varchar(255) DEFAULT NULL
+  `logo_sekolah` varchar(255) DEFAULT NULL,
+  `username` varchar(20) NOT NULL,
+  `password` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `sekolah`
 --
 
-INSERT INTO `sekolah` (`id_sekolah`, `nama_sekolah`, `alamat_sekolah`, `kepala_sekolah`, `logo_sekolah`) VALUES
-(1, 'SMK N Tembarak', 'Greges,Tembarak,Temanggung', 'Aster Aswiny,S.Pd,M.Pd', 'logo_smkntbk.png'),
-(2, 'SMK N 2 Temanggung', 'Jalan Kartini, Temanggung, Kabupaten Temanggung', 'Drs. Suharna', 'logo_smkn2.png'),
-(3, 'SMA N 1 Magelang', 'Jl. Pahlawan No. 10, Magelang', 'Dr. H. Joko Widodo', 'logo_sman1.png');
+INSERT INTO `sekolah` (`id_sekolah`, `nama_sekolah`, `alamat_sekolah`, `kepala_sekolah`, `logo_sekolah`, `username`, `password`) VALUES
+(1, 'SMK N Tembarak', 'Greges,Tembarak,Temanggung', 'Aster Aswiny,S.Pd,M.Pd', 'logo_smkntbk.png', 'tembarak', 'tembarak'),
+(2, 'SMK N 2 Temanggung', 'Jalan Kartini, Temanggung, Kabupaten Temanggung', 'Drs. Suharna', 'logo_smkn2.png', 'smk2tmg', 'smk2tmg'),
+(3, 'SMA N 1 Magelang', 'Jl. Pahlawan No. 10, Magelang', 'Dr. H. Joko Widodo', 'logo_sman1.png', 'sma1mgl', 'sma1mgl');
 
 -- --------------------------------------------------------
 
@@ -244,8 +249,9 @@ CREATE TABLE `siswa` (
   `nama_siswa` varchar(50) NOT NULL,
   `no_wa` varchar(20) NOT NULL,
   `kelas` varchar(10) NOT NULL,
-  `pro_keahlian` varchar(20) NOT NULL,
-  `TTL` varchar(100) NOT NULL,
+  `pro_keahlian` varchar(50) NOT NULL,
+  `TL` text NOT NULL,
+  `TTGL` date NOT NULL,
   `id_sekolah` int(11) NOT NULL,
   `id_perusahaan` int(11) NOT NULL,
   `tanggal_mulai` date NOT NULL,
@@ -260,9 +266,10 @@ CREATE TABLE `siswa` (
 -- Dumping data for table `siswa`
 --
 
-INSERT INTO `siswa` (`id_siswa`, `nis`, `nisn`, `nama_siswa`, `no_wa`, `kelas`, `pro_keahlian`, `TTL`, `id_sekolah`, `id_perusahaan`, `tanggal_mulai`, `tanggal_selesai`, `id_pembimbing`, `id_guru`, `username`, `password`) VALUES
-(1, '23101106', '0084986208', 'ekoo', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko', 'eko'),
-(6914, '23101107', '0084986208', 'zahcalinna', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'calina', 'calina');
+INSERT INTO `siswa` (`id_siswa`, `nis`, `nisn`, `nama_siswa`, `no_wa`, `kelas`, `pro_keahlian`, `TL`, `TTGL`, `id_sekolah`, `id_perusahaan`, `tanggal_mulai`, `tanggal_selesai`, `id_pembimbing`, `id_guru`, `username`, `password`) VALUES
+(1, '23101106', '0084986208', 'eko', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang', '2008-11-25', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko', 'eko'),
+(6916, '23101107', '0084986208', 'ekooo', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', '0000-00-00', 3, 1, '2025-07-10', '2025-07-10', 1, 1, 'eko1', 'eko1'),
+(6917, '23101108', '0084986208', 'ek00', '6285799788258', '12 RPL A', 'Perangkat Lunak', 'Magelang 25 November 2008', '0000-00-00', 3, 1, '2025-07-10', '2025-07-10', 2, 2, 'eko2', 'eko2');
 
 -- --------------------------------------------------------
 
@@ -286,7 +293,8 @@ INSERT INTO `users` (`Id`, `username`, `password`, `nama`, `level`) VALUES
 (1, 'admin', 'admin', 'frida', 'admin'),
 (2, 'siswa', 'siswa', 'dian', 'siswa'),
 (3, 'guru', 'guru', 'amin', 'guru'),
-(22, 'guru2', 'guru2', 'pembimbing', 'pembimbing');
+(22, 'guru2', 'guru2', 'pembimbing', 'pembimbing'),
+(23, 'sekolah', 'sekolah', 'sekolah', 'sekolah');
 
 --
 -- Indexes for dumped tables
@@ -361,13 +369,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `absen`
 --
 ALTER TABLE `absen`
-  MODIFY `id_absen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
+  MODIFY `id_absen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=170;
 
 --
 -- AUTO_INCREMENT for table `catatan`
 --
 ALTER TABLE `catatan`
-  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id_catatan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
 
 --
 -- AUTO_INCREMENT for table `guru`
@@ -379,13 +387,13 @@ ALTER TABLE `guru`
 -- AUTO_INCREMENT for table `jurnal`
 --
 ALTER TABLE `jurnal`
-  MODIFY `id_jurnal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+  MODIFY `id_jurnal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `pembimbing`
 --
 ALTER TABLE `pembimbing`
-  MODIFY `id_pembimbing` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_pembimbing` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `pengaturan_notifikasi`
@@ -397,13 +405,13 @@ ALTER TABLE `pengaturan_notifikasi`
 -- AUTO_INCREMENT for table `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6916;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6918;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
