@@ -62,8 +62,8 @@ if ($cek > 0) {
 } elseif ($cek_pembimbing > 0) {
     $data = $login_pembimbing->fetch_assoc();
     $_SESSION['username'] = $username;
-    $_SESSION['id_perusahaan'] = $data['id_perusahaan'];
     $_SESSION['id_pembimbing'] = $data['id_pembimbing'];
+    $_SESSION['id_perusahaan'] = $data['id_perusahaan'];
     $_SESSION['level'] = "pembimbing";
     $_SESSION['role'] = "pembimbing";
     header("location:../index.php?page=dashboard_pembimbing&login=berhasil&username=$username");

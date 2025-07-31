@@ -115,27 +115,13 @@ if (isset($_GET['id_guru'])) {
                 $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
 
                 if (move_uploaded_file($fotoTmp, $uploadPath)) {
-                    echo "<pre>";
-                    echo "✅ File berhasil di-upload ke: $uploadPath\n";
-
                     // Debug foto lama
                     $oldProfilePath = __DIR__ . "/../image/" . $data['profile'];
-                    echo "Foto lama: " . $data['profile'] . "\n";
-                    echo "Path lengkap foto lama: $oldProfilePath\n";
-                    echo "Apakah file ada? " . (file_exists($oldProfilePath) ? "YA" : "TIDAK") . "\n";
-                    echo "Apakah bukan default.jpg? " . ($data['profile'] !== 'default.jpg' ? "YA" : "TIDAK") . "\n";
-
                     // Coba hapus
                     if (!empty($data['profile']) && file_exists($oldProfilePath) && $data['profile'] !== 'default.jpg') {
                         if (unlink($oldProfilePath)) {
-                            echo "✅ Foto lama berhasil dihapus.\n";
-                        } else {
-                            echo "❌ Gagal menghapus foto lama.\n";
                         }
-                    } else {
-                        echo "⚠️ Tidak menghapus karena tidak memenuhi syarat.\n";
                     }
-                    echo "</pre>";
 
                     $profile = $fotoBaru;
                 }

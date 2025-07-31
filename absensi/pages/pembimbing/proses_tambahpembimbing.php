@@ -1,6 +1,5 @@
 <?php 
 include('../../koneksi.php');
-session_start();
 
 if (isset($_POST['submit'])) {
     $id_pembimbing = $_POST['id_pembimbing'];

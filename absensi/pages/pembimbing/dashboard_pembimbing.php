@@ -1,188 +1,188 @@
-<?php
-include "koneksi.php";
+  <?php
+  include "koneksi.php";
 
-// Mendapatkan ID perusahaan yang sedang login
-$id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
-$nama_pembimbing = $_SESSION['nama_pembimbing'] ?? null;
+  // Mendapatkan ID perusahaan yang sedang login
+  $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
+  $nama_pembimbing = $_SESSION['nama_pembimbing'] ?? null;
 
-// Jika tidak ada pembimbing yang login, arahkan ke halaman sign-in
-if (!$id_pembimbing) {
-  header("Location: sign-in.php");
-  exit();
-}
+  // Jika tidak ada pembimbing yang login, arahkan ke halaman sign-in
+  if (!$id_pembimbing) {
+    header("Location: sign-in.php");
+    exit();
+  }
 
-$stmt = mysqli_prepare($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = ?");
-mysqli_stmt_bind_param($stmt, "i", $id_pembimbing);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$pembimbing = mysqli_fetch_assoc($result);
-$nama_pembimbing = $pembimbing ? $pembimbing['nama_pembimbing'] : "Pembimbing";
+  $stmt = mysqli_prepare($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = ?");
+  mysqli_stmt_bind_param($stmt, "i", $id_pembimbing);
+  mysqli_stmt_execute($stmt);
+  $result = mysqli_stmt_get_result($stmt);
+  $pembimbing = mysqli_fetch_assoc($result);
+  $nama_pembimbing = $pembimbing ? $pembimbing['nama_pembimbing'] : "Pembimbing";
 
-// Mengambil data siswa yang terkait dengan pembimbing yang sedang login
-$query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+  // Mengambil data siswa yang terkait dengan pembimbing yang sedang login
+  $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
 
-// Mengambil data sekolah
-$query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
+  // Mengambil data sekolah
+  $query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
 
-// Mengambil data perusahaan
-$query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+  // Mengambil data perusahaan
+  $query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
 
-// Menampilkan jumlah siswa dan sekolah yang terkait dengan pembimbing
-$jumlah_siswa = mysqli_num_rows($query_siswa);
-$jumlah_sekolah = mysqli_num_rows($query_sekolah);
-$jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
-?>
+  // Menampilkan jumlah siswa dan sekolah yang terkait dengan pembimbing
+  $jumlah_siswa = mysqli_num_rows($query_siswa);
+  $jumlah_sekolah = mysqli_num_rows($query_sekolah);
+  $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
+  ?>
 
-<!DOCTYPE html>
-<html lang="en">
+  <!DOCTYPE html>
+  <html lang="en">
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Absensi Siswa</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <style>
-    /* Penyesuaian posisi */
-    body {
-      padding-left: 270px;
-      transition: padding-left 0.3s;
-      background-color: #f8f9fa;
-    }
-    
-    .main-container {
-      margin-top: 20px;
-      margin-right: 20px;
-      margin-left: 0;
-      width: auto;
-      max-width: none;
-    }
-    
-    /* Style asli */
-    .container-custom {
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .table-responsive {
-      margin-top: 20px;
-    }
-
-    .absent {
-      color: red;
-    }
-
-    .present {
-      color: green;
-    }
-
-    .readonly {
-      background-color: #f8f9fa;
-    }
-
-    input[type="radio"] {
-      transform: scale(1.3);
-      margin-right: 6px;
-    }
-
-    .status-hadir {
-      color: green;
-      font-weight: bold;
-    }
-
-    .status-sakit {
-      color: orange;
-      font-weight: bold;
-    }
-
-    .status-izin {
-      color: blue;
-      font-weight: bold;
-    }
-
-    .status-alpa {
-      color: red;
-      font-weight: bold;
-    }
-
-    .status-belum {
-      color: #6c757d;
-    }
-
-    .badge-status {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.9em;
-      font-weight: bold;
-    }
-
-    .badge-sakit {
-      background-color: #FFE0B2;
-      color: #E65100;
-    }
-
-    .badge-izin {
-      background-color: #BBDEFB;
-      color: #0D47A1;
-    }
-
-    .badge-alpa {
-      background-color: #FFCDD2;
-      color: #B71C1C;
-    }
-
-    .badge-hadir {
-      background-color: #C8E6C9;
-      color: #1B5E20;
-    }
-
-    .radio-label {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 15px;
-      cursor: pointer;
-    }
-
-    .radio-label.disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .btn-wa {
-      background-color: #25D366;
-      color: white;
-    }
-
-    .btn-wa:hover {
-      background-color: #128C7E;
-      color: white;
-    }
-
-    .table-light th {
-      background-color: #007bff;
-      color: white;
-    }
-
-    .tabletbody tr:hover {
-      background-color: #e9ecef;
-    }
-    
-    @media (max-width: 991px) {
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Absensi Siswa</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+      /* Penyesuaian posisi */
       body {
-        padding-left: 0;
+        transition: padding-left 0.3s;
+        background-color: #f8f9fa;
       }
+      
       .main-container {
-        margin-right: 15px;
-        margin-left: 15px;
+        margin-top: 20px;
+        margin-right: 20px;
+        margin-left: 0;
+        width: auto;
+        max-width: none;
       }
-    }
-  </style>
-</head>
+      
+      /* Style asli */
+      .container-custom {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
 
-<body>
+      .table-responsive {
+        margin-top: 20px;
+      }
+
+      .absent {
+        color: red;
+      }
+
+      .present {
+        color: green;
+      }
+
+      .readonly {
+        background-color: #f8f9fa;
+      }
+
+      input[type="radio"] {
+        transform: scale(1.3);
+        margin-right: 6px;
+      }
+
+      .status-hadir {
+        color: green;
+        font-weight: bold;
+      }
+
+      .status-sakit {
+        color: orange;
+        font-weight: bold;
+      }
+
+      .status-izin {
+        color: blue;
+        font-weight: bold;
+      }
+
+      .status-alpa {
+        color: red;
+        font-weight: bold;
+      }
+
+      .status-belum {
+        color: #6c757d;
+      }
+
+      .badge-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+
+      .badge-sakit {
+        background-color: #FFE0B2;
+        color: #E65100;
+      }
+
+      .badge-izin {
+        background-color: #BBDEFB;
+        color: #0D47A1;
+      }
+
+      .badge-alpa {
+        background-color: #FFCDD2;
+        color: #B71C1C;
+      }
+
+      .badge-hadir {
+        background-color: #C8E6C9;
+        color: #1B5E20;
+      }
+
+      .radio-label {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 15px;
+        cursor: pointer;
+      }
+
+      .radio-label.disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .btn-wa {
+        background-color: #25D366;
+        color: white;
+      }
+
+      .btn-wa:hover {
+        background-color: #128C7E;
+        color: white;
+      }
+
+      .table-light th {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .tabletbody tr:hover {
+        background-color: #e9ecef;
+      }
+      
+      @media (max-width: 991px) {
+        body {
+          padding-left: 0;
+        }
+        .main-container {
+          margin-right: 15px;
+          margin-left: 15px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+
   <!-- Main content -->
   <div class="main-container container-custom">
     <hr>
