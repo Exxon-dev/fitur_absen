@@ -1,7 +1,61 @@
+<style>
+  /* Tombol Burger */
+  .menu-toggle {
+    position: fixed;
+    top: 15px;
+    right: 30px;
+    /* ini gantiin left: 15px */
+    background: #344767;
+    border: none;
+    z-index: 1100;
+    color: white;
+    font-size: 24px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none;
+    cursor: pointer;
+  }
+
+
+  /* Overlay (muncul pas sidebar aktif di mobile) */
+  #sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1049;
+  }
+
+  /* Responsive behavior */
+  @media (max-width: 991px) {
+    .menu-toggle {
+      display: block;
+    }
+
+    #sidenav-main {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1051;
+      position: fixed;
+    }
+
+    #sidenav-main.active {
+      transform: translateX(0);
+    }
+
+    #sidebar-overlay.active {
+      display: block;
+    }
+  }
+</style>
+
 <!-- Tombol burger -->
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
-<!-- Overlay untuk mobile -->
+<!-- Overlay -->
 <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- SIDEBAR -->
@@ -67,70 +121,6 @@
     </ul>
   </div>
 </aside>
-
-<style>
-  .menu-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #344767;
-    border: none;
-    z-index: 1100;
-    color: white;
-    font-size: 24px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: none;
-    cursor: pointer;
-  }
-
-  #sidebar-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 1049;
-  }
-
-  #sidenav-main {
-    width: 260px;
-  }
-
-  @media (min-width: 992px) {
-    .main-content {
-      margin-left: 270px;
-      transition: margin-left 0.3s ease;
-    }
-  }
-
-  @media (max-width: 991px) {
-    .menu-toggle {
-      display: block;
-    }
-
-    #sidenav-main {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1051;
-      position: fixed;
-    }
-
-    #sidenav-main.active {
-      transform: translateX(0);
-    }
-
-    #sidebar-overlay.active {
-      display: block;
-    }
-
-    .main-content {
-      margin-left: 0 !important;
-    }
-  }
-</style>
 
 <script>
   function toggleSidebar() {

@@ -46,6 +46,8 @@
     include "pages/sidebar_guru.php";
   } elseif ($_SESSION['level'] == "pembimbing") {
     include "pages/sidebar_pembimbing.php";
+  } elseif ($_SESSION['level'] == "sekolah") {
+    include "pages/sidebar_sekolah.php";
   }
   ?>
 

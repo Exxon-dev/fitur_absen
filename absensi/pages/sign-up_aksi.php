@@ -11,6 +11,7 @@ echo '<script>
     localStorage.removeItem("pembimbingAlertShown");
     localStorage.removeItem("adminWelcomeShown");
     localStorage.removeItem("guruWelcomeShowed");
+    localStorage.removeItem("sekolahAlertShown");
     window.location.href = "sign-in.php";
 </script>';
 exit();

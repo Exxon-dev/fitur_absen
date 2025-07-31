@@ -18,6 +18,9 @@
             case 'dashboard_guru':
                 include "pages/guru/dashboard_guru.php";
                 break;
+            case 'dashboard_sekolah':
+                include "pages/sekolah/dashboard_sekolah.php";
+                break;
             case 'siswa':
                 include "pages/siswa/siswa.php";
                 break;
@@ -80,6 +83,9 @@
                 break;
             case 'sekolah':
                 include "pages/sekolah/sekolah.php";
+                break;
+            case 'profile_sekolah':
+                include "pages/sekolah/profile_sekolah.php";
                 break;
             case 'tambahsekolah':
                 include "pages/sekolah/tambahsekolah.php";
