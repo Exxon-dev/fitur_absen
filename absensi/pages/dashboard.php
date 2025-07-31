@@ -53,21 +53,48 @@ $jumlah_guru = mysqli_num_rows($query_guru);
   <!-- Nepcha is a easy-to-use web analytics. No cookies and fully compliant with GDPR, CCPA and PECR. -->
   <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
   <style>
-    .container {
+    /* Penyesuaian posisi */
+    body {
+      padding-left: 270px;
+      transition: padding-left 0.3s;
+      background-color: #f8f9fa;
+    }
+
+    .main-container {
       margin-top: 20px;
+      margin-right: 20px;
+      margin-left: 0;
+      width: auto;
+      max-width: none;
+    }
+
+    /* Style asli */
+    .container-custom {
       background-color: #ffffff;
       border-radius: 10px;
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+
     .card {
       margin-bottom: 30px;
+    }
+
+    @media (max-width: 991px) {
+      body {
+        padding-left: 0;
+      }
+
+      .main-container {
+        margin-right: 15px;
+        margin-left: 15px;
+      }
     }
   </style>
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">
-  <div class="container" style="margin-top: 20px">
+  <div class="main-container container-custom" style="margin-top: 20px">
     <hr>
     <form method="POST" action="">
       <div class="container-fluid py-4">

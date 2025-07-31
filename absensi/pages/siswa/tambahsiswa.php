@@ -8,15 +8,26 @@
     <title>Tambah Siswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
-            background-color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
@@ -60,11 +71,22 @@
             font-size: 0.8em;
             margin-top: 5px;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-container container-custom">
         <h2>Tambah Siswa</h2>
         <hr>
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
@@ -204,7 +226,7 @@
             const nisInput = document.getElementById('nis');
             const nisError = document.getElementById('nisError');
             const nisValue = nisInput.value.trim();
-            
+
             if (nisValue.length < 8 || nisValue.length > 12) {
                 nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
                 return false;
@@ -218,7 +240,7 @@
             const nisnInput = document.getElementById('nisn');
             const nisnError = document.getElementById('nisnError');
             const nisnValue = nisnInput.value.trim();
-            
+
             if (nisnValue.length !== 10) {
                 nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
                 return false;
@@ -231,7 +253,7 @@
         function validateForm() {
             const isNISValid = validateNIS();
             const isNISNValid = validateNISN();
-            
+
             if (!isNISValid || !isNISNValid) {
                 if (!isNISValid) {
                     document.getElementById('nis').focus();
@@ -244,4 +266,5 @@
         }
     </script>
 </body>
+
 </html>

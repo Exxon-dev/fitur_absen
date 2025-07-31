@@ -9,7 +9,7 @@ if (isset($_SESSION['level']) && $_SESSION['level'] === 'pembimbing') {
 $tanggal_hari_ini = date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 if (!$id_jurnal) {
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
                     Swal.fire({
@@ -27,8 +27,8 @@ if (!$id_jurnal) {
                     }, 3000);
                 });
             </script>';
-            exit();
-            }
+    exit();
+}
 $jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_jurnal = '$id_jurnal'");
 $jurnal_data = mysqli_fetch_assoc($jurnal_result);
 if (!$jurnal_data) {
@@ -49,18 +49,44 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
     <title>Tambah Catatan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
-        .container {
+        /* Penyesuaian posisi */
+        body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
+            background-color: #f8f9fa;
+        }
+
+        .main-container {
             margin-top: 20px;
-            background-color: #fff;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-container container-custom">
         <h2>Tambah Catatan</h2>
         <hr>
         <form id="formTambahCatatan" action="pages/catatan/proses_tambahcatatan.php" method="post">

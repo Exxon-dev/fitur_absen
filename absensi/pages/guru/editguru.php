@@ -28,15 +28,26 @@ if (isset($_GET['id_guru'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
-            background-color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
@@ -74,11 +85,22 @@ if (isset($_GET['id_guru'])) {
         .btn-warning:hover {
             background-color: #e0a800;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-container container-custom">
         <h2 class="text-center">Edit Guru</h2>
         <hr>
         <?php
@@ -114,6 +136,7 @@ if (isset($_GET['id_guru'])) {
                 $fotoBaru = uniqid('guru_') . '.' . $fotoExt;
                 $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
 
+               
                 if (move_uploaded_file($fotoTmp, $uploadPath)) {
                     // Debug foto lama
                     $oldProfilePath = __DIR__ . "/../image/" . $data['profile'];

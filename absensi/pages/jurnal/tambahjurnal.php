@@ -41,22 +41,50 @@ if ($result) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
-        .container {
+        /* Penyesuaian posisi */
+        body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
+            background-color: #f8f9fa;
+        }
+
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
+            background-color: #ffffff;
+            border-radius: 10px;
             padding: 20px;
-            border-radius: 8px;
-            background-color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
+
         .small-date-input {
             max-width: 200px;
         }
+
         .alert-container {
             position: fixed;
             top: 20px;
             right: 20px;
             width: 300px;
             z-index: 1000;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
         }
     </style>
 </head>
@@ -73,23 +101,23 @@ if ($result) {
         <?php endif; ?>
     </div>
 
-    <div class="container">
+    <div class="main-container container-custom">
         <h2 class="mb-4">Tambah Jurnal Harian</h2>
-        
+
         <form id="jurnalForm" action="pages/jurnal/proses_tambahjurnal.php" method="POST">
             <div class="form-group">
                 <label>Tanggal</label>
-                <input type="text" class="form-control small-date-input" 
+                <input type="text" class="form-control small-date-input"
                     value="<?= htmlspecialchars($tanggal_hari_ini) ?>" readonly>
             </div>
-            
+
             <div class="form-group">
                 <label>Keterangan Kegiatan</label>
-                <textarea class="form-control" rows="6" name="keterangan" required><?= 
-                    htmlspecialchars($jurnal_hari_ini['keterangan'] ?? '') 
-                ?></textarea>
+                <textarea class="form-control" rows="6" name="keterangan" required><?=
+                                                                                    htmlspecialchars($jurnal_hari_ini['keterangan'] ?? '')
+                                                                                    ?></textarea>
             </div>
-            
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">
                     <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Simpan Jurnal' ?>
@@ -114,7 +142,7 @@ if ($result) {
             // Konfirmasi sebelum submit
             $('#jurnalForm').on('submit', function(e) {
                 e.preventDefault();
-                
+
                 Swal.fire({
                     title: 'Konfirmasi',
                     text: "Apakah Anda yakin ingin menyimpan jurnal ini?",
@@ -133,4 +161,5 @@ if ($result) {
         });
     </script>
 </body>
+
 </html>

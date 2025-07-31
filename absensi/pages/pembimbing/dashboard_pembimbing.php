@@ -1,4 +1,4 @@
-  <?php
+<?php
   include "koneksi.php";
 
   // Mendapatkan ID perusahaan yang sedang login

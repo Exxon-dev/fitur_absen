@@ -11,12 +11,23 @@ include('koneksi.php');
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Penyesuaian posisi */
         body {
+            padding-left: 270px;
+            transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
 
-        .container {
+        .main-container {
             margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
+
+        /* Style asli */
+        .container-custom {
             background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
@@ -39,12 +50,23 @@ include('koneksi.php');
         .btn-warning {
             margin-bottom: 20px;
         }
+
+        @media (max-width: 991px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-container {
+                margin-right: 15px;
+                margin-left: 15px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container table-responsive">
+    <div class="main-container container-custom">
         <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
         <h2 class="text-center">Data Sekolah</h2>
 
@@ -96,7 +118,7 @@ include('koneksi.php');
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <?php
     // Notifikasi flash message hapus
