@@ -125,6 +125,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
+
                         <?php if ($catatan_data): ?>
                             <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="btn btn-danger" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>

@@ -185,8 +185,8 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                   <textarea class="form-control mt-2" readonly>${pesan}</textarea>`,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Kirim',
                 cancelButtonText: 'Batal',
+                confirmButtonText: 'Kirim',
                 confirmButtonColor: '#25D366'
             });
 

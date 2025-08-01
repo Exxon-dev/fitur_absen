@@ -74,8 +74,9 @@ include('koneksi.php');
 
         <hr>
 
-        <table class="table table-hover table-bordered">
-            <thead class="table-light">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
                 <tr>
                     <th>No</th>
                     <th>Nama</th>

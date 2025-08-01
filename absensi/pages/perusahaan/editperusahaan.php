@@ -85,22 +85,22 @@
 		<form action="pages/perusahaan/proses_editperusahaan.php?id_perusahaan=<?php echo $id_perusahaan; ?>" method="post" enctype="multipart/form-data">
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label"> Nama Perusahaan</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="hidden" name="id_perusahaan" value=<?php echo $_GET['id_perusahaan']; ?>></<input>
 					<input type="text" name="nama_perusahaan" class="form-control" value="<?php echo $data['nama_perusahaan']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Alamat Perusahaan</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="alamat_perusahaan" class="form-control" value="<?php echo $data['alamat_perusahaan']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">&nbsp;</label>
-				<div class="col-sm-10">
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+				<div class="col-md-3 text-right">
 					<a href="index.php?page=perusahaan" class="btn btn-warning">KEMBALI</a>
+					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>
 			</div>
 		</form>

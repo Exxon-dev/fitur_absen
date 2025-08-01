@@ -99,7 +99,7 @@ $query = mysqli_query($coneksi, "
                         <th>Jam Keluar</th>
                         <th>Koordinat</th>
                         <th>IP Address</th>
-                        <th>Lokasi dan Provider</th>
+                        <th>Lokasi</th>
                     </tr>
                 </thead>
                 <tbody>
