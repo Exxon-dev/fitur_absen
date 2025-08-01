@@ -1,6 +1,5 @@
 <?php
 include "koneksi.php";
-session_start();
 
 // Mendapatkan ID perusahaan yang sedang login
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
