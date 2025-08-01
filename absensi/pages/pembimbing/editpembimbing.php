@@ -83,7 +83,7 @@
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Pembimbing</h2>
+        <h2>Profile Pembimbing</h2>
         <hr>
 
         <?php
@@ -100,12 +100,45 @@
         }
 
         if (isset($_POST['submit'])) {
-            $id_pembimbing = $_POST['id_pembimbing'];
-            $nama_pembimbing = $_POST['nama_pembimbing'];
-            $username = $_POST['username'];
-            $password = $_POST['password'];
+            $id_pembimbing    = $_POST['id_pembimbing'];
+            $nama_pembimbing  = $_POST['nama_pembimbing'];
+            $no_tlp           = $_POST['no_tlp'];
+            $alamat           = $_POST['alamat'];
+            $jenis_kelamin    = $_POST['jenis_kelamin'];
+            $username         = $_POST['username'];
+            $password         = $_POST['password'];
+            $foto_lama        = $_POST['foto_lama'] ?? 'default.jpg';
 
-            $sql = mysqli_query($coneksi, "UPDATE pembimbing SET nama_pembimbing='$nama_pembimbing', username='$username', password='$password' WHERE id_pembimbing='$id_pembimbing'") or die(mysqli_error($coneksi));
+            $profile = $foto_lama;
+
+            // Jika ada upload foto baru
+            if (!empty($_FILES['foto']['name'])) {
+                $fotoName   = $_FILES['foto']['name'];
+                $fotoTmp    = $_FILES['foto']['tmp_name'];
+                $fotoExt    = pathinfo($fotoName, PATHINFO_EXTENSION);
+                $fotoBaru   = uniqid('guru_') . '.' . $fotoExt;
+                $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
+
+                if (move_uploaded_file($fotoTmp, $uploadPath)) {
+                    // Hapus foto lama jika bukan default
+                    $oldProfilePath = __DIR__ . "/../image/" . $foto_lama;
+                    if (!empty($foto_lama) && file_exists($oldProfilePath) && $foto_lama !== 'default.jpg') {
+                        unlink($oldProfilePath);
+                    }
+                    $profile = $fotoBaru;
+                }
+            }
+
+            $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
+                nama_pembimbing = '$nama_pembimbing',
+                no_tlp          = '$no_tlp',
+                alamat          = '$alamat',
+                jenis_kelamin   = '$jenis_kelamin',
+                username        = '$username', 
+                profile         = '$profile', 
+                password        = '$password'
+                WHERE id_pembimbing = '$id_pembimbing'")
+                or die(mysqli_error($coneksi));
 
             if ($sql) {
                 echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
@@ -119,34 +152,68 @@
         }
         ?>
 
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
-
-            <div class="form-group">
-                <label>Nama Pembimbing</label>
-                <input type="text" name="nama_pembimbing" class="form-control"
-                    value="<?php echo $data['nama_pembimbing']; ?>" required>
+            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
+            <div class="d-flex justify-content-center mb-3 position-relative" style="width: 100px; height: 100px; margin: auto;">
+                <img src="http://localhost/fitur_absen/absensi/pages/image/<?php echo $data['profile']; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                <label for="foto" class="position-absolute"
+                    style="bottom: 0; right: 0;  background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
+                    <i class="fa fa-camera text-white"></i>
+                </label>
+                <input type="file" id="foto" name="foto" style="display: none;">
             </div>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
-                    required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
-                    required>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Nama Pembimbing</label>
+                    <input type="text" name="nama_pembimbing" class="form-control"
+                        value="<?php echo $data['nama_pembimbing']; ?>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>No. Telepon / HP</label>
+                    <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Alamat</label>
+                    <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Jenis Kelamin</label>
+                    <select name="jenis_kelamin" class="form-control">
+                        <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                        <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>" required>
+                </div>
             </div>
             <div class="form-group row">
                 <div class="col text-right">
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
+            </div>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script>
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const imgPreview = document.querySelector('img');
+        const file = e.target.files[0];
+        if (file) {
+            imgPreview.src = URL.createObjectURL(file);
+        }
+    });
+</script>
+
 </body>
 
 </html>

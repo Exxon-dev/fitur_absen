@@ -1,6 +1,5 @@
 <?php
 include "koneksi.php";
-session_start(); // Tambahkan session_start() di awal
 
 // Cek apakah guru sudah login
 if (!isset($_SESSION['id_guru'])) {
