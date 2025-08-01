@@ -237,15 +237,13 @@ include('koneksi.php');
         </div>
 
         <div class="form-group row">
-            <div class="col text-center">
-                <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-            </div>
-            <div class="col text-center">
+            <div class="col text-left">
                 <button type="button" class="btn btn-danger" id="btnHapus"
                     data-id="<?php echo $data['id_siswa']; ?>">Hapus</button>
             </div>
             <div class="col text-right">
                 <a href="index.php?page=siswa" class="btn btn-warning">KEMBALI</a>
+                <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
             </div>
         </div>
     </form>

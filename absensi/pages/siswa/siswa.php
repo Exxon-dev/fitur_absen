@@ -67,22 +67,22 @@ include('koneksi.php');
         <h2 class="text-center">Data Siswa</h2>
         <hr>
 
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr class="text-center">
-                    <th>No</th>
-                    <th>NISN</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>Sekolah</th>
-                    <th>Tempat Prakerin</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Selesai</th>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead class="table-light">
+                <th>No</th>
+                <th>NISN</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>Sekolah</th>
+                <th>Tempat Prakerin</th>
+                <th>Tanggal Mulai</th>
+                <th>Tanggal Selesai</th>
                 </tr>
-            </thead>
-            <tbody>
-                <?php
-                $sql = mysqli_query($coneksi, "
+                </thead>
+                <tbody>
+                    <?php
+                    $sql = mysqli_query($coneksi, "
                     SELECT 
                         s.id_siswa, s.nis, s.nisn, s.nama_siswa, s.kelas, 
                         s.tanggal_mulai, s.tanggal_selesai,
@@ -94,10 +94,10 @@ include('koneksi.php');
                     ORDER BY sk.nama_sekolah ASC, p.nama_perusahaan ASC
                 ") or die(mysqli_error($coneksi));
 
-                if (mysqli_num_rows($sql) > 0) {
-                    $no = 1;
-                    while ($data = mysqli_fetch_assoc($sql)) {
-                        echo '
+                    if (mysqli_num_rows($sql) > 0) {
+                        $no = 1;
+                        while ($data = mysqli_fetch_assoc($sql)) {
+                            echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td>' . $no++ . '</td>
                             <td>' . htmlspecialchars($data['nisn']) . '</td>
@@ -108,26 +108,26 @@ include('koneksi.php');
                             <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
                             <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
                         </tr>';
-                    }
-                } else {
-                    echo '
+                        }
+                    } else {
+                        echo '
                         <tr>
                             <td colspan="8" class="text-center">Tidak ada data.</td>
                         </tr>';
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- Scripts -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- SweetAlert Flash Notifications -->
-    <?php
-    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
-        echo "<script>
+        <!-- SweetAlert Flash Notifications -->
+        <?php
+        if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
+            echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'info',
@@ -140,11 +140,11 @@ include('koneksi.php');
                 });
             });
         </script>";
-        unset($_SESSION['flash_hapus']);
-    }
+            unset($_SESSION['flash_hapus']);
+        }
 
-    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
-        echo "<script>
+        if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
+            echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'success',
@@ -157,11 +157,11 @@ include('koneksi.php');
                 });
             });
         </script>";
-        unset($_SESSION['flash_edit']);
-    }
+            unset($_SESSION['flash_edit']);
+        }
 
-    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
-        echo "<script>
+        if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+            echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'success',
@@ -174,11 +174,11 @@ include('koneksi.php');
                 });
             });
         </script>";
-        unset($_SESSION['flash_tambah']);
-    }
+            unset($_SESSION['flash_tambah']);
+        }
 
-    if (isset($_SESSION['flash_error'])) {
-        echo "<script>
+        if (isset($_SESSION['flash_error'])) {
+            echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'error',
@@ -191,11 +191,11 @@ include('koneksi.php');
                 });
             });
         </script>";
-        unset($_SESSION['flash_error']);
-    }
+            unset($_SESSION['flash_error']);
+        }
 
-    if (isset($_SESSION['flash_duplikat'])) {
-        echo "<script>
+        if (isset($_SESSION['flash_duplikat'])) {
+            echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'warning',
@@ -208,9 +208,9 @@ include('koneksi.php');
                 });
             });
         </script>";
-        unset($_SESSION['flash_duplikat']);
-    }
-    ?>
+            unset($_SESSION['flash_duplikat']);
+        }
+        ?>
 </body>
 
 </html>

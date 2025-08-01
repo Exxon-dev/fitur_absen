@@ -52,29 +52,27 @@
 			enctype="multipart/form-data">
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label"> ID Perusahaan</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="id_perusahaan" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Nama Perusahaan</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="nama_perusahaan" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Alamat Perusahaan</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="alamat_perusahaan" class="form-control" size="4" required>
 				</div>
 			</div>
 
 			<div class="form-row">
-				<div class="col-md-3">
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-				</div>
-				<div class="col-md-3 offset-md-6 text-center-center">
+				<div class="col-md-3 text-right">
 					<a href="index.php?page=perusahaan" class="btn btn-warning">KEMBALI</a>
+					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>
 			</div>
 		</form>

@@ -266,7 +266,7 @@ WHERE id_siswa='$id_siswa'");
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group text-right">
                 <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
             </div>
         </form>

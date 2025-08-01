@@ -127,11 +127,9 @@
 				</div>
 			</div>
 			<div class="form-row">
-				<div class="col-md-3">
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-				</div>
-				<div class="col-md-3 offset-md-6 text-center-center">
+				<div class="col-md-3 text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
+					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>
 			</div>
 		</form>

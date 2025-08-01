@@ -118,11 +118,11 @@ if ($result) {
                                                                                     ?></textarea>
             </div>
 
-            <div class="form-group">
+            <div class="form-group text-right">
+                <a href="index.php?page=catatan" class="btn btn-warning ml-2">Kembali</a>
                 <button type="submit" class="btn btn-primary">
                     <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Simpan Jurnal' ?>
                 </button>
-                <a href="index.php?page=catatan" class="btn btn-warning ml-2">Kembali</a>
             </div>
         </form>
     </div>

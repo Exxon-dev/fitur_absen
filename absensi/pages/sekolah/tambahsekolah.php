@@ -51,53 +51,51 @@
 		<hr>
 		<form action="pages/sekolah/proses_tambahsekolah.php" method="post" enctype="multipart/form-data">
 			<div class="form-group row">
-				<label class="col-sm-2 col-form-label"> ID Sekolah</label>
-				<div class="col-sm-10">
-					<input type="text" name="id_sekolah" class="form-control" size="4" required>
+				<label class="col-sm-2 col-form-label"></label>
+				<div class="col-sm-15">
+					<input type="hidden" name="id_sekolah" class="form-control" size="4">
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Nama Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="nama_sekolah" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Alamat Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="alamat_sekolah" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="kepala_sekolah" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Username</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="username" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Password</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="password" name="password" class="form-control" size="4" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
 				</div>
 			</div>
 			<div class="form-row">
-				<div class="col-md-3">
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-				</div>
-				<div class="col-md-3 offset-md-6 text-center-center">
+				<div class="col-md-3 text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
+					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>
 			</div>
 		</form>
