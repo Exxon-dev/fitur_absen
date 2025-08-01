@@ -89,7 +89,7 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>ID Guru</label>
-                    <input type="text" name="id_guru" class="form-control" required>
+                    <input type="text" name="id_guru" class="form-control">
                 </div>
                 <div class="form-group col-md-6">
                     <label>Nama Guru</label>
@@ -111,9 +111,10 @@
                 </div>
             </div>
             <div class="form-row">
-                <div class="col-md-3 text-right">
+                <div class="col text-right">
                     <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                    
                 </div>
             </div>
         </form>

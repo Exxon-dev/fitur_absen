@@ -15,6 +15,10 @@
 			background-color: #f8f9fa;
 		}
 
+		h2 {
+			color: #007bff;
+		}
+
 		.main-container {
 			margin-top: 20px;
 			margin-right: 20px;
@@ -84,7 +88,7 @@
 				echo '<div class="alert alert-warning">Gagal melakukan proses tambah data.</div>';
 			}
 		} else {
-			echo 'You should select a file to upload !!';
+			echo 'Anda harus memilih file untuk diunggah!!';
 		}
 
 		?>
@@ -92,42 +96,42 @@
 		<form action="pages/sekolah/proses_editsekolah.php?id_sekolah=<?php echo $id_sekolah; ?>" method="post" enctype="multipart/form-data">
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label"> Nama Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="nama_sekolah" class="form-control" value="<?php echo $data['nama_sekolah']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Alamat Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="alamat_sekolah" class="form-control" value="<?php echo $data['alamat_sekolah']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Username</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Password</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>" required>
 				</div>
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
-				<div class="col-sm-10">
+				<div class="col-sm-15">
 					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" value="<?php echo $data['logo_sekolah'] ?>">
 				</div>
 			</div>
 			<div class="form-row">
-				<div class="col-md-3 text-right">
+				<div class="col text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
 					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>

@@ -134,7 +134,7 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tanggal Lahir</label>
-                    <input type="date" name="TTgL" class="form-control" required>
+                    <input type="date" name="TTGL" class="form-control" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -207,7 +207,7 @@
             </div>
 
             <div class="form-row">
-                <div class="col-md-3 text-right">
+                <div class="col text-right">
                     <a href="index.php?page=siswa" class="btn btn-warning">KEMBALI</a>
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>

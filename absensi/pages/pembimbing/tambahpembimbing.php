@@ -103,7 +103,7 @@
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-md-3 text-right">
+                <div class="col text-right">
                     <a href="index.php?page=pembimbing" class="btn btn-warning">KEMBALI</a>
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>

@@ -48,7 +48,7 @@ if (isset($_POST['submit'])) {
         tanggal_selesai,
         id_pembimbing,
         id_guru,
-        username, 
+        username,
         password)
         VALUES (
         '$nis',

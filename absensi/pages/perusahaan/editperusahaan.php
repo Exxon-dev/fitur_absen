@@ -12,6 +12,10 @@
 			background-color: #f8f9fa;
 		}
 
+		h2 {
+			color: #007bff;
+		}
+
 		.main-container {
 			margin-top: 20px;
 			margin-right: 20px;
@@ -77,7 +81,7 @@
 				echo '<div class="alert alert-warning">Gagal melakukan proses tambah data.</div>';
 			}
 		} else {
-			echo 'You should select a file to upload !!';
+			echo ' ';
 		}
 
 		?>
@@ -98,7 +102,7 @@
 			</div>
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">&nbsp;</label>
-				<div class="col-md-3 text-right">
+				<div class="col text-right">
 					<a href="index.php?page=perusahaan" class="btn btn-warning">KEMBALI</a>
 					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>
