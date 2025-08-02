@@ -73,7 +73,10 @@
     <ul class="navbar-nav">
       <!-- MENU -->
       <li class="nav-item">
-        <a class="nav-link text-white <?= ($_GET['page'] == 'dashboard_pembimbing') ? 'active' : ''; ?>"
+        <?php
+        $isActive = (isset($_GET['page']) && $_GET['page'] === 'dashboard_pembimbing');
+        ?>
+        <a class="nav-link text-white <?= $isActive ? 'active' : '' ?>"
           href="index.php?page=dashboard_pembimbing">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">dashboard</i>
@@ -81,7 +84,7 @@
           <span class="nav-link-text ms-1">Dashboard</span>
         </a>
       </li>
-            <li class="nav-item">
+      <li class="nav-item">
         <a class='nav-link text-white <?php echo ($_GET['page'] == 'editpembimbing') ? 'active' : ''; ?>' href='index.php?page=editpembimbing&id_pembimbing=<?php echo $_SESSION['id_pembimbing'] ?>'>
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
