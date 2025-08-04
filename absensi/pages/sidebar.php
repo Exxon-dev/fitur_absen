@@ -137,7 +137,6 @@
     </ul>
   </div>
 </aside>
-
 <script>
   function toggleSidebar() {
     const sidebar = document.getElementById('sidenav-main');
