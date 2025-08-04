@@ -205,8 +205,9 @@ $coneksi->close();
                 <p class="mt-8 style9">Pembimbing Sekolah</p>
                 <p class="mt-16 style9">.......................................................</p>
             </div>
+            <br>
             <div>
-                <p class="style9">.............., .......................... 202.....</p>
+                <p class="style9">Kajoran, ..................... 202.....</p>
                 <p class="style9">Pimpinan/Pembimbing DUDI</p>
                 <p class="mt-16 style9">.......................................................</p>
             </div>
