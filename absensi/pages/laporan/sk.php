@@ -13,7 +13,8 @@ $query = "
         s.pro_keahlian,
         s.tanggal_mulai,
         s.tanggal_selesai,
-        s.TTL,
+        s.TL,
+        s.TTGL,
         s.NISN,
         p.nama_perusahaan AS id_perusahaan, 
         b.nama_pembimbing AS id_pembimbing,
@@ -100,8 +101,12 @@ $coneksi->close();
                 <span class="w-2/5">: <?php echo htmlspecialchars($data['nama_siswa']); ?></span>
             </div>
             <div class="flex mb-2">
-                <span class="w-1/5">Tempat tanggal lahir </span>
-                <span class="w-2/5">: <?php echo htmlspecialchars($data['TTL']); ?></span>
+                <span class="w-1/5">Tempat lahir </span>
+                <span class="w-2/5">: <?php echo htmlspecialchars($data['TL']); ?></span>
+            </div>
+            <div class="flex mb-2">
+                <span class="w-1/5">Tanggal lahir </span>
+                <span class="w-2/5">: <?php echo htmlspecialchars($data['TTGL']); ?></span>
             </div>
             <div class="flex mb-2">
                 <span class="w-1/5">NISN </span>

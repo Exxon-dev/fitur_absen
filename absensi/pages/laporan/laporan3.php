@@ -1,8 +1,18 @@
 <?php
 include('koneksi.php');
 
+$id_sekolah = $_SESSION['id_sekolah'];
+
+// Cek kalau BELUM login
+if (!isset($_SESSION['id_sekolah'])) {
+    header("Location: sign-in.php");
+    exit();
+}
+
+// // Ambil ID sekolah dari session
+
 // Query untuk mengambil daftar siswa berdasarkan ID sekolah
-$query = "SELECT * FROM siswa ORDER BY id_siswa ASC";
+$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_sekolah = '$id_sekolah'";
 $result = mysqli_query($coneksi, $query);
 
 // Cek jika query berhasil
@@ -94,62 +104,32 @@ if (!$result) {
             }
         }
     </style>
-    <script>
-        function openTab(event) {
-            event.preventDefault();
-            const form = document.getElementById('myForm');
-            const formData = new FormData(form);
-
-            const params = new URLSearchParams();
-            for (const pair of formData.entries()) {
-                params.append(pair[0], pair[1]);
-            }
-
-            const url = form.action + '?' + params.toString();
-            window.open(url, '_blank');
-
-            // Kirim data POST menggunakan fetch
-            fetch(url, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text(); // Ambil respons sebagai teks
-                })
-                .then(data => {
-                    // Menuliskan respons ke tab baru
-                    newTab.document.write(data);
-                    newTab.document.close(); // Menutup dokumen untuk memproses konten
-                })
-                .catch(error => {
-                    console.error('Terjadi kesalahan saat mengirim data:', error);
-                    newTab.document.write("<h1>Gagal memuat laporan</h1><p>" + error.message + "</p>");
-                    newTab.document.close();
-                });
-        }
-    </script>
 </head>
 
 <body>
-
     <div class="main-container container-custom">
         <h1>Buka Laporan Siswa</h1>
         <hr>
 
-        <form id="myForm" action="pages/laporan/preview.php" method="POST" onsubmit="openTab(event)">
-            <label for="id_siswa">ID Siswa:</label>
-            <select id="id_siswa" name="id_siswa" class="form-control" required>
-                <option value="">-- Pilih ID Siswa --</option>
+        <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
+            <label for="siswa_search">Cari Nama Siswa:</label>
+            <input type="text"
+                id="siswa_search"
+                class="form-control"
+                list="siswa_list"
+                placeholder="Ketik nama siswa..."
+                autocomplete="off">
+
+            <datalist id="siswa_list">
                 <?php
-                // Menampilkan ID siswa yang diambil dari database
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo '<option value="' . $row['id_siswa'] . '">' . $row['id_siswa'] . ' - ' . $row['nama_siswa'] . '</option>';
-                }
-                ?>
-            </select>
+                mysqli_data_seek($result, 0);
+                while ($row = mysqli_fetch_assoc($result)): ?>
+                    <option value="<?= htmlspecialchars($row['nama_siswa']) ?>" data-id="<?= $row['id_siswa'] ?>">
+                    <?php endwhile; ?>
+            </datalist>
+
+            <!-- Input hidden untuk menyimpan ID siswa -->
+            <input type="hidden" name="id_siswa" id="selected_siswa_id">
 
             <label for="reportSelect">Pilih Laporan:</label>
             <select id="reportSelect" name="page" class="form-control" required>
@@ -167,11 +147,20 @@ if (!$result) {
 
             <button type="submit" class="btn btn-primary btn-block mt-4">Unduh Laporan</button>
         </form>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+        <!-- Script untuk menangkap ID siswa -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#siswa_search').on('input', function() {
+                    const selectedOption = $(`#siswa_list option[value="${$(this).val()}"]`);
+                    if (selectedOption.length) {
+                        $('#selected_siswa_id').val(selectedOption.data('id'));
+                    }
+                });
+            });
+        </script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
 </body>
 
