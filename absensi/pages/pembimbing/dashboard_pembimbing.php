@@ -1,4 +1,5 @@
 <?php
+ob_start();
 include "koneksi.php";
 
 // Mendapatkan ID perusahaan yang sedang login
@@ -50,7 +51,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       transition: padding-left 0.3s;
       background-color: #f8f9fa;
     }
-    
+
     .main-container {
       margin-top: 20px;
       margin-right: 20px;
@@ -58,7 +59,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       width: auto;
       max-width: none;
     }
-    
+
     /* Style asli */
     .container-custom {
       background-color: #ffffff;
@@ -169,11 +170,12 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     .tabletbody tr:hover {
       background-color: #e9ecef;
     }
-    
+
     @media (max-width: 991px) {
       body {
         padding-left: 0;
       }
+
       .main-container {
         margin-right: 15px;
         margin-left: 15px;
@@ -183,8 +185,6 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 </head>
 
 <body>
-  <!-- Include sidebar -->
-  <?php include 'sidebar_pembimbing.php'; ?>
 
   <!-- Main content -->
   <div class="main-container container-custom">
@@ -249,7 +249,6 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
               <th>Sakit</th>
               <th>Izin</th>
               <th>Alpa</th>
-              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -314,9 +313,6 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
                         <span>Alpa</span>
                       </label>
                   </td>
-                  <td>
-                      <button type="submit" name="simpan_' . $siswa['id_siswa'] . '" class="btn btn-primary btn-sm" ' . ($isReadOnly ? 'disabled' : '') . '>Simpan</button>
-                  </td>
               </tr>
               ';
               $index++;
@@ -324,72 +320,64 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             ?>
           </tbody>
         </table>
+        <div class="mt-3 text-right">
+          <button type="submit" name="simpan_semua" class="btn btn-success">Simpan Semua</button>
+        </div>
       </div>
     </form>
 
     <?php
-    // Proses penyimpanan data absensi
-    foreach ($_POST as $key => $value) {
-      if (strpos($key, 'simpan_') === 0) {
-        $id_siswa = str_replace('simpan_', '', $key);
-        $keterangan = mysqli_real_escape_string($coneksi, $_POST['absen_' . $id_siswa]);
-        $tanggal = date('Y-m-d');
-        $jamKeluar = date('H:i:s');
-        $jamMasuk = date('H:i:s');
+    if (isset($_POST['simpan_semua'])) {
+      foreach ($_POST as $key => $value) {
+        if (strpos($key, 'absen_') === 0) {
+          $id_siswa = str_replace('absen_', '', $key);
+          $keterangan = mysqli_real_escape_string($coneksi, $value);
+          $tanggal = date('Y-m-d');
+          $jamMasuk = date('H:i:s');
+          $jamKeluar = date('H:i:s');
 
-        // Cek jika data sudah ada di database
-        $checkQuery = mysqli_query($coneksi, "SELECT * FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'");
+          // Cek jika data sudah ada di database
+          $checkQuery = mysqli_query($coneksi, "SELECT * FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'");
 
-        if (mysqli_num_rows($checkQuery) > 0) {
-          // Jika ada, update data
-          $updateQuery = "UPDATE absen SET keterangan = '$keterangan', jam_keluar = '$jamKeluar' WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
-          $result = mysqli_query($coneksi, $updateQuery);
-
-          if ($result) {
-            $_SESSION['flash_edit'] = 'sukses';
-            echo '<script>
-              document.addEventListener("DOMContentLoaded", function() {
-                Swal.fire({
-                  icon: "success",
-                  title: "Sukses!",
-                  text: "Absen siswa berhasil diupdate",
-                  position: "top",
-                  showConfirmButton: false,
-                  timer: 3000,
-                  toast: true
-                });
-              });
-            </script>';
+          if (mysqli_num_rows($checkQuery) > 0) {
+            // Update data jika sudah ada
+            $updateQuery = "UPDATE absen SET keterangan = '$keterangan', jam_keluar = '$jamKeluar' WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
+            $result = mysqli_query($coneksi, $updateQuery);
           } else {
-            echo '<div class="alert alert-warning">Gagal memperbarui data.</div>';
-          }
-        } else {
-          // Jika tidak ada, insert data baru
-          $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jamMasuk')";
-          $result = mysqli_query($coneksi, $insertQuery);
-
-          if ($result) {
-            $_SESSION['flash_edit'] = 'sukses';
-            echo '<script>
-              document.addEventListener("DOMContentLoaded", function() {
-                Swal.fire({
-                  icon: "success",
-                  title: "Sukses!",
-                  text: "Absen siswa berhasil disimpan",
-                  position: "top",
-                  showConfirmButton: false,
-                  timer: 3000,
-                  toast: true
-                });
-              });
-            </script>';
-          } else {
-            echo '<div class="alert alert-warning">Gagal menyimpan data.</div>';
+            // Insert data baru
+            $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jamMasuk')";
+            $result = mysqli_query($coneksi, $insertQuery);
           }
         }
       }
+
+      $_SESSION['show_alert'] = true;
+
+      // Redirect ke halaman yang sama dengan method GET
+      echo '<script>window.location.href = "index.php?page=dashboard_pembimbing";</script>';
+      exit();
+    }
+
+    if (isset($_SESSION['show_alert'])) {
+      echo '<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        Swal.fire({
+            icon: "success",
+            title: "Sukses!",
+            text: "Absensi berhasil disimpan untuk semua siswa",
+            position: "top",
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>';
+
+      // Hapus session alert setelah ditampilkan
+      unset($_SESSION['show_alert']);
     }
     ?>
+
   </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -423,4 +411,5 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     });
   </script>
 </body>
+
 </html>
