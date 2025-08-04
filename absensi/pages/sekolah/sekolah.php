@@ -9,7 +9,6 @@ include('koneksi.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Sekolah</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
         /* Penyesuaian posisi */
         body {
@@ -67,10 +66,9 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
-        <h2 class="text-center">Data Sekolah</h2>
-
+        <h2 class="text-center">Data Sekolah</h2>     
         <hr>
+        <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
