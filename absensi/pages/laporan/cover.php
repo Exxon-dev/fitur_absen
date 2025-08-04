@@ -20,9 +20,9 @@ if (isset($_SESSION['logged_in'])) {
 $query = "
     SELECT 
         s.nama_siswa, 
-        s.kelas,
         s.nis,
         s.nisn,
+        s.pro_keahlian,
         p.nama_perusahaan AS nama_perusahaan, 
         b.nama_pembimbing AS nama_pembimbing,
         sk.nama_sekolah,
@@ -114,7 +114,7 @@ header("Cache-Control: no-cache, must-revalidate");
             <td colspan="2" class="text-center" style="padding-top: 30mm;">
                 <h1 class="text-lg">LAPORAN KEGIATAN</h1>
                 <h1 class="text-lg">PRAKTIK KERJA INDUSTRI (PRAKERIN)</h1>
-                <h2 class="text-lg">PENGEMBANGAN PERANGKAT LUNAK DAN GIM</h2>
+                <h2 class="text-lg"><?= htmlspecialchars($data['pro_keahlian']); ?></h2>
                 <h2 class="text-lg">DI <?php echo strtoupper(htmlspecialchars($data['nama_perusahaan'])); ?></h2>
             </td>
         </tr>

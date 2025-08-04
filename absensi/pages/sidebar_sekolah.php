@@ -63,7 +63,7 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-white d-xl-none" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="#">
-            <span class="ms-1 font-weight-bold text-white">ABSENS SEKOLAH</span>
+            <span class="ms-1 font-weight-bold text-white">ABSENSI SEKOLAH</span>
         </a>
     </div>
 
@@ -90,7 +90,7 @@
                 </a>
             </li>
             
-            <!-- Jurnal -->
+            <!-- Jurnal
             <li class="nav-item">
                 <a class="nav-link text-white" href="index.php?page=jurnal">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -98,7 +98,7 @@
                     </div>
                     <span class="nav-link-text ms-1">Jurnal</span>
                 </a>
-            </li>
+            </li> -->
 
             <!-- Catatan -->
             <li class="nav-item">

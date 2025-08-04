@@ -43,7 +43,6 @@ function formatJam($jam) {
     <tr>
         <th rowspan="2">No</th>
         <th rowspan="2">Nama</th>
-        <th rowspan="2">Kelas</th>
         <?php 
         $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', "Jum'at", 'Sabtu'];
         foreach ($days as $day): ?>
@@ -62,7 +61,6 @@ function formatJam($jam) {
     <?php while($s = mysqli_fetch_assoc($siswa_q)): ?>
         <?php
         $id_siswa = $s['id_siswa'];
-        $kelas = $s['kelas'];
         $nama = $s['nama_siswa'];
 
         $hadir_data = [];

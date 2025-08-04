@@ -169,26 +169,11 @@ WHERE id_siswa='$id_siswa'");
                     <input type="text" name="nama_siswa" class="form-control" value="<?php echo htmlspecialchars($data['nama_siswa']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Kelas</label>
-                    <select name="kelas" class="form-control" required>
-                        <option value="<?php echo htmlspecialchars($data['kelas']); ?>"><?php echo htmlspecialchars($data['kelas']); ?></option>
-                        <option value="12 RPL A">12 RPL A</option>
-                        <option value="12 RPL B">12 RPL B</option>
-                        <option value="12 RPL C">12 RPL C</option>
-                        <option value="12 ELIND A">12 ELIND A</option>
-                        <option value="12 ELIND B">12 ELIND B</option>
-                        <option value="12 ELIND C">12 ELIND C</option>
-                        <option value="12 MEKA A">12 MEKA A</option>
-                        <option value="12 MEKA B">12 MEKA B</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>
-                        <option value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>"><?php echo htmlspecialchars($data['pro_keahlian']); ?></option>
-                        <option value="Elektronika">Elektronika</option>
-                        <option value="Perangkat Lunak">Perangkat Lunak</option>
-                        <option value="Mekatronika">Mekatronika</option>
+                        <option value="Multimedia">Multimedia"</option>
+                        <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
+                        <option value="Perkantoran">Perkantoran</option>
                     </select>
                 </div>
                 <div class="form-group col-md-3">

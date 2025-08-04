@@ -73,7 +73,6 @@ include('koneksi.php');
                 <th>No</th>
                 <th>NISN</th>
                 <th>Nama</th>
-                <th>Kelas</th>
                 <th>Sekolah</th>
                 <th>Tempat Prakerin</th>
                 <th>Tanggal Mulai</th>
@@ -84,7 +83,7 @@ include('koneksi.php');
                     <?php
                     $sql = mysqli_query($coneksi, "
                     SELECT 
-                        s.id_siswa, s.nis, s.nisn, s.nama_siswa, s.kelas, 
+                        s.id_siswa, s.nis, s.nisn, s.nama_siswa,
                         s.tanggal_mulai, s.tanggal_selesai,
                         sk.nama_sekolah, 
                         p.nama_perusahaan
@@ -102,7 +101,6 @@ include('koneksi.php');
                             <td>' . $no++ . '</td>
                             <td>' . htmlspecialchars($data['nisn']) . '</td>
                             <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
-                            <td>' . htmlspecialchars($data['kelas']) . '</td>
                             <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
                             <td>' . htmlspecialchars($data['nama_perusahaan']) . '</td>
                             <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>

@@ -10,7 +10,6 @@ if (!$id_siswa) {
 $query = " 
     SELECT 
         s.nama_siswa, 
-        s.kelas, 
         s.pro_keahlian,
         s.tanggal_mulai,
         s.tanggal_selesai,
@@ -97,10 +96,6 @@ $coneksi->close();
             <div class="flex mb-2">
                 <span class="w-1/5">Nama Peserta Didik</span>
                 <span class="w-2/5">: <?php echo htmlspecialchars($data['nama_siswa']); ?></span>
-            </div>
-            <div class="flex mb-2 style9">
-                <span class="w-1/5">Kelas</span>
-                <span class="w-2/5">: <?php echo htmlspecialchars($data['kelas']); ?></span>
             </div>
             <div class="flex mb-2 style9">
                 <span class="w-1/5">Program Keahlian</span>
