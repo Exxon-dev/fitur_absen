@@ -63,9 +63,9 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
         <h2 class="text-center">Data Siswa</h2>
         <hr>
+        <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
@@ -102,7 +102,7 @@ include('koneksi.php');
                             <td>' . htmlspecialchars($data['nisn']) . '</td>
                             <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_perusahaan']) . '</td>
+                            <td>' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
                             <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
                             <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
                         </tr>';

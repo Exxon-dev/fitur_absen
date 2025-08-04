@@ -156,7 +156,7 @@
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
             <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
             <div class="d-flex justify-content-center mb-3 position-relative" style="width: 100px; height: 100px; margin: auto;">
-                <img src="http://localhost/fitur_absen/absensi/pages/image/<?php echo $data['profile']; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                <img id="previewFoto" src="http://localhost/fitur_absen/absensi/pages/image/<?php echo $data['profile']; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                 <label for="foto" class="position-absolute"
                     style="bottom: 0; right: 0;  background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
                     <i class="fa fa-camera text-white"></i>
@@ -206,13 +206,13 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     <script>
     document.getElementById('foto').addEventListener('change', function(e) {
-        const imgPreview = document.querySelector('img');
         const file = e.target.files[0];
-        if (file) {
+        const imgPreview = document.getElementById('previewFoto');
+        if (file && imgPreview) {
             imgPreview.src = URL.createObjectURL(file);
         }
     });
-</script>
+    </script>
 
 </body>
 

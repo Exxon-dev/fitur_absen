@@ -9,7 +9,6 @@ include('koneksi.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Perusahaan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
         body {
             padding-left: 270px;
@@ -66,10 +65,9 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
         <h2 class="text-center">Data Perusahaan</h2>
-
         <hr>
+        <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
