@@ -84,40 +84,42 @@
 
 <body>
     <div class="main-container container-custom">
-        <h2>Tambah Guru</h2>
-        <form action="pages/guru/proses_tambahguru.php" method="post">
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label>ID Guru</label>
-                    <input type="text" name="id_guru" class="form-control">
+        <h2 class="text-center">Tambah Guru</h2>
+            <form action="pages/guru/proses_tambahguru.php" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Nama Guru</label>
+                        <input type="text" name="nama_guru" class="form-control" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Sekolah</label>
+                        <select name="id_sekolah" class="form-control" required>
+                            <?php
+                            $querySekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
+                            while ($sekolah = mysqli_fetch_assoc($querySekolah)) {
+                                $selected = ($data['id_sekolah'] == $sekolah['id_sekolah']) ? 'selected' : '';
+                                echo "<option value='{$sekolah['id_sekolah']}' $selected>{$sekolah['nama_sekolah']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
                 </div>
-                <div class="form-group col-md-6">
-                    <label>Nama Guru</label>
-                    <input type="text" name="nama_guru" class="form-control" required>
+                <div class="form-row">
+                    <div class="col text-right">
+                        <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
+                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+
+                    </div>
                 </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label>ID Sekolah</label>
-                    <input type="text" name="id_sekolah" class="form-control" required>
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control" required>
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="col text-right">
-                    <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
-                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-                    
-                </div>
-            </div>
-        </form>
+            </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

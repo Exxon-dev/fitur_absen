@@ -32,8 +32,47 @@ if (isset($_POST['submit'])) {
 	$id_guru = $_POST['id_guru'];
 	$username = $_POST['username'];
 	$password = $_POST['password'];
+    $foto_lama        = $_POST['foto_lama'] ?? 'default.jpg';
 
-	$sql = mysqli_query($coneksi, "UPDATE siswa SET nisn='$nisn', nama_siswa='$nama_siswa', kelas='$kelas', pro_keahlian='$pro_keahlian', TL='$TL', TTGL='$TTGL', id_sekolah='$id_sekolah',id_perusahaan='$id_perusahaan', tanggal_mulai='$tanggal_mulai', tanggal_selesai='$tanggal_selesai', id_pembimbing='$id_pembimbing', id_guru='$id_guru', username='$username', password='$password' WHERE id_siswa='$id_siswa'");
+	$profile = $foto_lama;
+
+	// Jika ada upload foto baru
+	if (!empty($_FILES['foto']['name'])) {
+		$fotoName   = $_FILES['foto']['name'];
+		$fotoTmp    = $_FILES['foto']['tmp_name'];
+		$fotoExt    = pathinfo($fotoName, PATHINFO_EXTENSION);
+		$fotoBaru   = uniqid('siswa_') . '.' . $fotoExt;
+		$uploadPath = __DIR__ . "/../image/" . $fotoBaru;
+
+		if (move_uploaded_file($fotoTmp, $uploadPath)) {
+			// Hapus foto lama jika bukan default
+			$oldProfilePath = __DIR__ . "/../image/" . $foto_lama;
+			if (!empty($foto_lama) && file_exists($oldProfilePath) && $foto_lama !== 'default.jpg') {
+				unlink($oldProfilePath);
+			}
+			$profile = $fotoBaru;
+		}
+	}
+
+	$sql = mysqli_query($coneksi, "UPDATE siswa SET 
+
+	profile='$profile', 
+	nisn='$nisn', 
+	nama_siswa='$nama_siswa', 
+	kelas='$kelas', 
+	pro_keahlian='$pro_keahlian', 
+	TL='$TL', 
+	TTGL='$TTGL', 
+	id_sekolah='$id_sekolah',
+	id_perusahaan='$id_perusahaan', 
+	tanggal_mulai='$tanggal_mulai', 
+	tanggal_selesai='$tanggal_selesai', 
+	id_pembimbing='$id_pembimbing', 
+	id_guru='$id_guru', 
+	username='$username', 
+	password='$password' 
+	WHERE 
+	id_siswa='$id_siswa'");
 	if ($sql) {
 		$_SESSION['flash_edit'] = 'sukses';
 	}

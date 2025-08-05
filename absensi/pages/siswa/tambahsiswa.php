@@ -87,7 +87,7 @@
 
 <body>
     <div class="main-container container-custom">
-        <h2>Tambah Siswa</h2>
+        <h2 class="text-center">Tambah Siswa</h2>
         <hr>
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">

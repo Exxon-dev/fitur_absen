@@ -93,7 +93,7 @@ include('koneksi.php');
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Siswa</h2>
+        <h2 class="text-center">Data Siswa</h2>
         <hr>
 
         <?php
