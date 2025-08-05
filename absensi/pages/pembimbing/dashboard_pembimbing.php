@@ -352,30 +352,30 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
               }
 
               echo '
-              <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
-                  <td>' . $index . '</td>
-                  <td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
-                  <td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
-                  <td>
-                      <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
-                        <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-                        <span>Sakit</span>
-                      </label>
-                  </td>
-                  <td>
-                      <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
-                        <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-                        <span>Izin</span>
-                      </label>
-                  </td>
-                  <td>
-                      <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
-                        <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-                        <span>Alpa</span>
-                      </label>
-                  </td>
-              </tr>
-              ';
+<tr class="' . ($isReadOnly ? 'readonly' : '') . '">
+<td>' . $index . '</td>
+<td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
+<td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
+<td>
+    <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+      <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+      <span>Sakit</span>
+    </label>
+</td>
+<td>
+    <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+      <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+      <span>Izin</span>
+    </label>
+</td>
+<td>
+    <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+      <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+      <span>Alpa</span>
+    </label>
+</td>
+</tr>
+';
               $index++;
             }
             ?>
@@ -421,18 +421,18 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 
     if (isset($_SESSION['show_alert'])) {
       echo '<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        Swal.fire({
-            icon: "success",
-            title: "Sukses!",
-            text: "Absensi berhasil disimpan untuk semua siswa",
-            position: "top",
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>';
+document.addEventListener("DOMContentLoaded", function() {
+Swal.fire({
+icon: "success",
+title: "Sukses!",
+text: "Absensi berhasil disimpan untuk semua siswa",
+position: "top",
+showConfirmButton: false,
+timer: 3000,
+toast: true
+});
+});
+</script>';
 
       // Hapus session alert setelah ditampilkan
       unset($_SESSION['show_alert']);
