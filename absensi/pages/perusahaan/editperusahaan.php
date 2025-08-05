@@ -48,7 +48,7 @@
 <body>
 
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2>Edit Perusahaan</h2>
+		<h2 class="text-center">Edit Perusahaan</h2>
 
 		<hr>
 

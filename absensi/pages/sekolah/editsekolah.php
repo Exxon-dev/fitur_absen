@@ -51,7 +51,7 @@
 <body>
 
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2>Edit Sekolah</h2>
+		<h2 class="text-center">Edit Sekolah</h2>
 
 		<hr>
 

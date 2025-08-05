@@ -149,7 +149,8 @@
                     <?php endif; ?>
                     <input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
                 </div>
-            </div><br>
+            </div>
+            <br>
 
             <div class="form-row">
                 <div class="col text-right">

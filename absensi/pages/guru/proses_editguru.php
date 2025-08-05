@@ -1,5 +1,7 @@
 <?php
 include('../../koneksi.php');
+session_start();
+
 if (isset($_GET['id_guru'])) {
     $id_guru = $_GET['id_guru'];
     $select = mysqli_query($coneksi, "
@@ -17,18 +19,8 @@ if (isset($_GET['id_guru'])) {
     }
 }
 
-if (isset($_POST['submit'])) {
-    $id_guru = $_GET['id_guru'];
-
-    // Ambil data guru lama dari database
-    $getGuru = mysqli_query($coneksi, "
-        SELECT guru.*, sekolah.nama_sekolah 
-        FROM guru 
-        INNER JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
-        WHERE guru.id_guru = '$id_guru'
-    ");
-    $data = mysqli_fetch_assoc($getGuru);
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_guru = $_POST['id_guru'];
 
     $nama_guru = $_POST['nama_guru'];
     $nip = $_POST['nip'];
@@ -39,28 +31,7 @@ if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Default profile lama
-    $profile = $data['profile'] ?? 'default.jpg';
-
-    // Jika ada upload foto baru
-    if (!empty($_FILES['foto']['name'])) {
-        $fotoName = $_FILES['foto']['name'];
-        $fotoTmp = $_FILES['foto']['tmp_name'];
-        $fotoExt = pathinfo($fotoName, PATHINFO_EXTENSION);
-        $fotoBaru = uniqid('guru_') . '.' . $fotoExt;
-        $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
-
-        if (move_uploaded_file($fotoTmp, $uploadPath)) {
-            // Hapus foto lama jika bukan default
-            $oldProfilePath = __DIR__ . "/../image/" . $data['profile'];
-            if (!empty($data['profile']) && file_exists($oldProfilePath) && $data['profile'] !== 'default.jpg') {
-                unlink($oldProfilePath);
-            }
-            $profile = $fotoBaru;
-        }
-    }
-
-    // Update ke database
+    // Update ke database TANPA menyentuh kolom profile
     $sql = mysqli_query($coneksi, "UPDATE guru SET 
         nama_guru='$nama_guru', 
         nip='$nip', 
@@ -69,12 +40,13 @@ if (isset($_POST['submit'])) {
         no_tlp='$no_tlp', 
         id_sekolah='$id_sekolah', 
         username='$username', 
-        password='$password',
-        profile='$profile'
+        password='$password'
         WHERE id_guru='$id_guru'");
 
     if ($sql) {
         $_SESSION['flash_edit'] = 'sukses';
+    } else {
+        $_SESSION['flash_edit'] = 'gagal';
     }
 
     header("Location: ../../index.php?page=guru");

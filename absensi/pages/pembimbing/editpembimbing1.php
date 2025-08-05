@@ -7,12 +7,17 @@ if (isset($_SESSION['id_pembimbing'])) {
 
 // Proses update data pembimbing
 if (isset($_POST['submit'])) {
-    $id_pembimbing = $_POST['id_pembimbing'];
-    $nama_pembimbing = $_POST['nama_pembimbing'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $id_pembimbing      = $_POST['id_pembimbing'];
+    $nama_pembimbing    = $_POST['nama_pembimbing'];
+    $username           = $_POST['username'];
+    $password           = $_POST['password'];
 
-    $sql = mysqli_query($coneksi, "UPDATE pembimbing SET nama_pembimbing='$nama_pembimbing', username='$username', password='$password' WHERE id_pembimbing='$id_pembimbing'");
+    $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
+    nama_pembimbing = '$nama_pembimbing', 
+    username        = '$username', 
+    password        = '$password' 
+    WHERE 
+    id_pembimbing   ='$id_pembimbing'");
 
     if ($sql) {
         header('Location: index.php?page=pembimbing&pesan=sukses');
@@ -108,7 +113,7 @@ if (isset($_POST['submit'])) {
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Pembimbing</h2>
+        <h2 class="text-center">Edit Pembimbing</h2>
         <hr>
 
         <?php
@@ -127,18 +132,33 @@ if (isset($_POST['submit'])) {
 
         <form action="pages/pembimbing/proses_editpembimbing.php" method="post">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
-
-            <div class="form-group">
+        <div class="row">
+            <div class="form-group col-md-6">
                 <label>Nama Pembimbing</label>
                 <input type="text" name="nama_pembimbing" class="form-control"
                     value="<?php echo $data['nama_pembimbing']; ?>" required>
             </div>
-            <div class="form-group">
+            <div class="form-group col-md-6">
+                <label>No. Telepon / HP</label>
+                <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
+            </div>
+            <div class="form-group col-md-6">
+                <label>Alamat</label>
+                <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Jenis Kelamin</label>
+                <select name="jenis_kelamin" class="form-control">
+                    <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                    <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
                 <label>Username</label>
                 <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
                     required>
             </div>
-            <div class="form-group">
+            <div class="form-group col-md-6">
                 <label>Password</label>
                 <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
                     required>
@@ -153,6 +173,7 @@ if (isset($_POST['submit'])) {
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
             </div>
+        </div>
         </form>
 
         <script>
