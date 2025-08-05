@@ -19,7 +19,7 @@ if (isset($_SESSION['logged_in'])) {
 // Query untuk ambil data lengkap siswa
 $query = "
     SELECT 
-        s.nama_siswa, 
+        s.nama_siswa,
         s.nis,
         s.nisn,
         s.pro_keahlian,

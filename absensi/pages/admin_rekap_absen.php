@@ -8,11 +8,31 @@ ini_set('display_errors', 1);
 // Set timezone
 date_default_timezone_set('Asia/Jakarta');
 
+// Check if pembimbing is logged in
+if (!isset($_SESSION['id_pembimbing'])) {
+    header("Location: ../sign-in.php");
+    exit();
+}
+
+$hariInggris = date('l');
+$hariIndo = [
+    'Sunday'    => 'Minggu',
+    'Monday'    => 'Senin',
+    'Tuesday'   => 'Selasa',
+    'Wednesday' => 'Rabu',
+    'Thursday'  => 'Kamis',
+    'Friday'    => 'Jumat',
+    'Saturday'  => 'Sabtu'
+];
+
+$hari = $hariIndo[$hariInggris];
+$id_pembimbing = $_SESSION['id_pembimbing'];
 $tanggal = date('Y-m-d');
 $batas_telat = '08:00:00'; // Batas waktu terlambat
 
-// Get all students with prepared statement
-$query_siswa = mysqli_prepare($coneksi, "SELECT id_siswa, nama_siswa, no_wa FROM siswa ORDER BY nama_siswa");
+// Get only students supervised by this pembimbing
+$query_siswa = mysqli_prepare($coneksi, "SELECT id_siswa, nama_siswa, no_wa, id_pembimbing FROM siswa WHERE id_pembimbing = ? ORDER BY nama_siswa");
+mysqli_stmt_bind_param($query_siswa, "i", $id_pembimbing);
 mysqli_stmt_execute($query_siswa);
 $result_siswa = mysqli_stmt_get_result($query_siswa);
 ?>
@@ -107,7 +127,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             <a href="javascript:window.location.reload()" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-arrow-clockwise"></i> Refresh
             </a>
-        </div>
+        </div><br>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
@@ -137,12 +157,12 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                             $status_class = 'status-belum';
                             $status_icon = '<i class="bi bi-x-circle"></i>';
                             $status_text = 'Belum Absen';
-                            $pesan = "📢 Hai *$nama* ,kamu belum melakukan absen hari ini ($tanggal). Harap segera absen!";
+                            $pesan = "📢 Hai *$nama* ,kamu belum melakukan absen hari $hari ($tanggal). Harap segera absen!";
                         } elseif ($absen['jam_masuk'] > $batas_telat) {
                             $status_class = 'status-telat';
                             $status_icon = '<i class="bi bi-exclamation-triangle"></i>';
                             $status_text = 'Telat';
-                            $pesan = "⚠️ Hai *$nama* , telat dalam melakukan absensi pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi!⚠️";
+                            $pesan = "⚠️ Hai *$nama* , telat dalam melakukan absensi hari $hari ($tanggal) pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi!⚠️";
                         } else {
                             $status_class = 'status-hadir';
                             $status_icon = '<i class="bi bi-check-circle"></i>';

@@ -38,11 +38,8 @@
   mysqli_stmt_execute($stmt);
   $query_siswa = mysqli_stmt_get_result($stmt);
 
-  // Query sekolah dengan prepared statement
-  $stmt = mysqli_prepare($coneksi, "SELECT * FROM sekolah WHERE id_sekolah = ? LIMIT 1");
-  mysqli_stmt_bind_param($stmt, "i", $id_sekolah);
-  mysqli_stmt_execute($stmt);
-  $query_sekolah = mysqli_stmt_get_result($stmt);
+  // Mengambil data sekolah
+  $query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
 
   // Query perusahaan
   $query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
@@ -73,7 +70,7 @@
         --light-color: #f8f9fa;
         --dark-color: #343a40;
       }
-      
+
       body {
         padding-left: 270px;
         transition: padding-left 0.3s;
@@ -189,18 +186,16 @@
       }
 
       /* Mobile Card View */
-      .student-card {
-        background: #fff;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        padding: 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
+      .student-cards {
+        display: none;
       }
 
-      .student-card:hover {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      .student-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
       .student-header {
@@ -208,14 +203,10 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
-        flex-wrap: wrap;
       }
 
       .student-name {
         font-weight: bold;
-        font-size: 1.1rem;
-        color: #333;
-        margin-bottom: 5px;
       }
 
       .radio-section {
@@ -233,6 +224,10 @@
         .main-container {
           margin-right: 15px;
           margin-left: 15px;
+        }
+
+        .student-cards {
+          display: block;
         }
       }
 
@@ -287,9 +282,15 @@
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
       }
+
       h2 {
         color: #007bff;
       }
@@ -305,47 +306,49 @@
 
       <!-- Stats Cards -->
       <div class="container-fluid py-4">
-        <div class="row">
-          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="fas fa-users"></i>
+        <div class="container-fluid py-4">
+          <div class="row">
+            <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+              <div class="card">
+                <div class="card-header p-3 pt-2">
+                  <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">group</i>
+                  </div>
+                  <div class="text-end pt-1">
+                    <p class="text-sm mb-0 text-capitalize">Siswa</p>
+                    <h4 class="mb-0"><?php echo $jumlah_siswa; ?></h4>
+                  </div>
                 </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Siswa</p>
-                  <h4 class="mb-0"><?php echo $jumlah_siswa; ?></h4>
-                </div>
+                <hr class="dark horizontal my-0">
               </div>
-              <hr class="dark horizontal my-0">
             </div>
-          </div>
-          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="fas fa-school"></i>
+            <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+              <div class="card">
+                <div class="card-header p-3 pt-2">
+                  <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">school</i>
+                  </div>
+                  <div class="text-end pt-1">
+                    <p class="text-sm mb-0 text-capitalize">Sekolah</p>
+                    <h4 class="mb-0"><?php echo $jumlah_sekolah; ?></h4>
+                  </div>
                 </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Sekolah</p>
-                  <h4 class="mb-0"><?php echo $jumlah_sekolah; ?></h4>
-                </div>
+                <hr class="dark horizontal my-0">
               </div>
-              <hr class="dark horizontal my-0">
             </div>
-          </div>
-          <div class="col-xl-4 col-sm-6">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="fas fa-building"></i>
+            <div class="col-xl-4 col-sm-6">
+              <div class="card">
+                <div class="card-header p-3 pt-2">
+                  <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">location_city</i>
+                  </div>
+                  <div class="text-end pt-1">
+                    <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
+                    <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
+                  </div>
                 </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
-                  <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
-                </div>
+                <hr class="dark horizontal my-0">
               </div>
-              <hr class="dark horizontal my-0">
             </div>
           </div>
         </div>
@@ -507,12 +510,6 @@
       </div>
     </div>
 
-    <!-- Refresh Indicator -->
-    <div class="refresh-indicator" id="refreshIndicator">
-      <i class="fas fa-sync-alt"></i>
-      <span>Auto-refresh in <span id="countdown">5</span>s</span>
-    </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
@@ -522,7 +519,7 @@
         // Welcome notification
         if (!localStorage.getItem('guruWelcomeShowed')) {
           const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
-          
+
           Swal.fire({
             title: `Selamat datang, ${namaGuru}!`,
             text: "Anda berhasil login ke sistem",
@@ -544,7 +541,7 @@
         const countdownInterval = setInterval(() => {
           seconds--;
           countdownElement.textContent = seconds;
-          
+
           if (seconds <= 0) {
             clearInterval(countdownInterval);
             location.reload();
@@ -578,4 +575,5 @@
       });
     </script>
   </body>
+
   </html>

@@ -19,9 +19,10 @@ if (isset($_POST['submit'])) {
     $id_perusahaan = $_POST['id_perusahaan'];
     $nama_perusahaan = $_POST['nama_perusahaan'];
     $alamat_perusahaan = $_POST['alamat_perusahaan'];
+    $no_tel = $_POST['no_tel'];
 
 
-    $sql = mysqli_query($coneksi, "UPDATE perusahaan SET nama_perusahaan='$nama_perusahaan',alamat_perusahaan='$alamat_perusahaan' WHERE id_perusahaan='$id_perusahaan'") or die(mysqli_error($coneksi));
+    $sql = mysqli_query($coneksi, "UPDATE perusahaan SET nama_perusahaan='$nama_perusahaan',alamat_perusahaan='$alamat_perusahaan', no_tel='$no_tel' WHERE id_perusahaan='$id_perusahaan'") or die(mysqli_error($coneksi));
     if ($sql) {
         $_SESSION['flash_edit'] = 'sukses';
         header('Location: ../../index.php?page=perusahaan');

@@ -200,11 +200,8 @@ if (!isset($_SESSION['id_siswa'])) {
                 </div>
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
-                    <select name="pro_keahlian" class="form-control" required>
-                        <option value="Multimedia">Multimedia"</option>
-                        <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
-                        <option value="Perkantoran">Perkantoran</option>
-                    </select>
+                    <input name="pro_keahlian" class="form-control" value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" required>
+                    </input>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tempat Lahir</label>

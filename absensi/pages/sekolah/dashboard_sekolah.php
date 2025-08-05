@@ -67,6 +67,14 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
+        h3 {
+            color: #007bff
+        }
+
+        h2 {
+            color: #007bff
+        }
+
         /* Card Styles */
         .card {
             border: none;
@@ -85,14 +93,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        .icon-lg {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-        }
+        
 
         /* Status Badges */
         .badge-status {

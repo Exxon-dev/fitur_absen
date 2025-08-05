@@ -1,10 +1,10 @@
 <?php
 include('koneksi.php');
 
-$id_sekolah = $_SESSION['id_sekolah'];
+$id_guru = $_SESSION['id_guru'];
 
 // Cek kalau BELUM login
-if (!isset($_SESSION['id_sekolah'])) {
+if (!isset($_SESSION['id_guru'])) {
     header("Location: sign-in.php");
     exit();
 }
@@ -12,7 +12,7 @@ if (!isset($_SESSION['id_sekolah'])) {
 // // Ambil ID sekolah dari session
 
 // Query untuk mengambil daftar siswa berdasarkan ID sekolah
-$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_sekolah = '$id_sekolah'";
+$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_guru = '$id_guru'";
 $result = mysqli_query($coneksi, $query);
 
 // Cek jika query berhasil
