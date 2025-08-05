@@ -100,6 +100,13 @@
 					<input type="text" name="alamat_perusahaan" class="form-control" value="<?php echo $data['alamat_perusahaan']; ?>" required>
 				</div>
 			</div>
+						<div class="form-group row">
+				<label class="col-sm-2 col-form-label">NO Tel</label>
+				<div class="col-sm-15">
+					<input type="text" name="no_tel" class="form-control" value="<?php echo $data['no_tel']; ?>" required>
+				</div>
+			</div>
+
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">&nbsp;</label>
 				<div class="col text-right">

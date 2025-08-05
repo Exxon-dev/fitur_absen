@@ -127,9 +127,12 @@
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-15">
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" value="<?php echo $data['logo_sekolah'] ?>">
+					<?php if (!empty($data['logo_sekolah'])): ?>
+						<img src="<?php echo $data['logo_sekolah']; ?>" alt="Logo Sekolah" style="max-height: 80px; display: block; margin-bottom: 10px;">
+					<?php endif; ?>
+					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
 				</div>
-			</div>
+			</div><br>
 			<div class="form-row">
 				<div class="col text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>

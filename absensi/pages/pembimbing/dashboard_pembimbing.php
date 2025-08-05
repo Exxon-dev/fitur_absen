@@ -19,6 +19,7 @@ $result = mysqli_stmt_get_result($stmt);
 $pembimbing = mysqli_fetch_assoc($result);
 $nama_pembimbing = $pembimbing ? $pembimbing['nama_pembimbing'] : "Pembimbing";
 
+
 // Mengambil data siswa yang terkait dengan pembimbing yang sedang login
 $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
 
@@ -32,6 +33,7 @@ $query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id
 $jumlah_siswa = mysqli_num_rows($query_siswa);
 $jumlah_sekolah = mysqli_num_rows($query_sekolah);
 $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
+
 ?>
 
 <!DOCTYPE html>
@@ -66,6 +68,56 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       border-radius: 10px;
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h3 {
+      color: #007bff
+    }
+
+    h2 {
+      color: #007bff
+    }
+
+    /* Card Styles */
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      border-radius: 10px 10px 0 0 !important;
+      background-color: white;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile Card View */
+    .student-cards {
+      display: none;
+    }
+
+    .student-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .student-name {
+      font-weight: bold;
     }
 
     .table-responsive {
@@ -180,12 +232,15 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         margin-right: 15px;
         margin-left: 15px;
       }
+
+      .student-cards {
+        display: block;
+      }
     }
   </style>
 </head>
 
 <body>
-
   <!-- Main content -->
   <div class="main-container container-custom">
     <hr>
@@ -237,7 +292,13 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         </div>
       </div>
 
-      <h2 class="text-center my-4">Absensi Siswa</h2>
+      <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+        <div class="text-center"></div>
+        <h2 class="text-primary">Absensi Siswa</h2>
+        <a href="javascript:window.location.reload()" class="btn btn-sm btn-outline-primary">
+          <i class="bi bi-arrow-clockwise"></i> Refresh
+        </a>
+      </div>
 
       <div class="table-responsive">
         <table class="table table-hover table-bordered">
@@ -321,7 +382,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
           </tbody>
         </table>
         <div class="mt-3 text-right">
-          <button type="submit" name="simpan_semua" class="btn btn-success">Simpan Semua</button>
+          <button type="submit" name="simpan_semua" class="btn-primary">Simpan Semua</button>
         </div>
       </div>
     </form>
