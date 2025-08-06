@@ -45,8 +45,60 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
-        .btn-warning {
-            margin-bottom: 20px;
+        .editPerusahaan {
+            color: white;
+            /* Text putih */
+            background-color: goldenrod;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .editPerusahaan:hover {
+            background-color: goldenrod;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
+        .hapusPerusahaan {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusPerusahaan:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -91,8 +143,8 @@ include('koneksi.php');
                         <td>' . $data['nama_perusahaan'] . '</td>
                         <td>' . $data['alamat_perusahaan'] . '</td>
                         <td> 
-                            <a href="index.php?page=editperusahaan&id_perusahaan=' . $data['id_perusahaan'] . '" class="badge badge-warning">Edit</a>
-                            <a href="index.php?page=hapusperusahaan&id_perusahaan=' . $data['id_perusahaan'] . '" class="badge badge-danger">Delete</a>
+                            <a href="index.php?page=editperusahaan&id_perusahaan=' . $data['id_perusahaan'] . '" class="editPerusahaan">Edit</a>
+                            <a href="index.php?page=hapusperusahaan&id_perusahaan=' . $data['id_perusahaan'] . '" class="hapusPerusahaan">Delete</a>
                         </td>
                     </tr>
                     ';

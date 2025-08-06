@@ -76,6 +76,11 @@ $jumlah_guru = mysqli_num_rows($query_guru);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
+    h2 {
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
     /* Card Styles */
     .card {
       border: none;
@@ -138,6 +143,9 @@ $jumlah_guru = mysqli_num_rows($query_guru);
 
 <body class="g-sidenav-show  bg-gray-200">
   <div class="main-container container-custom" style="margin-top: 20px">
+    <div class="text-center">
+      <h2>Dashboard Admin</h2>
+    </div>
     <hr>
     <form method="POST" action="">
       <div class="container-fluid py-4">

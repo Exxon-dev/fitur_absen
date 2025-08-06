@@ -352,38 +352,39 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
               }
 
               echo '
-<tr class="' . ($isReadOnly ? 'readonly' : '') . '">
-<td>' . $index . '</td>
-<td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
-<td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
-<td>
-    <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
-      <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-      <span>Sakit</span>
-    </label>
-</td>
-<td>
-    <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
-      <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-      <span>Izin</span>
-    </label>
-</td>
-<td>
-    <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
-      <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
-      <span>Alpa</span>
-    </label>
-</td>
-</tr>
-';
+            <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
+            <td>' . $index . '</td>
+            <td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
+            <td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
+            <td>
+                <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+                  <input type="radio" id="Sakit_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                  <span>Sakit</span>
+                </label>
+            </td>
+            <td>
+                <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+                  <input type="radio" id="Izin_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                  <span>Izin</span>
+                </label>
+            </td>
+            <td>
+                <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+                  <input type="radio" id="Alpa_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                  <span>Alpa</span>
+                </label>
+            </td>
+            </tr>
+            ';
               $index++;
             }
             ?>
           </tbody>
         </table>
-        <div class="mt-3 text-right">
-          <button type="submit" name="simpan_semua" class="btn-primary">Simpan Semua</button>
-        </div>
+
+      </div>
+      <div class="mt-3 text-right">
+        <button type="submit" name="simpan_semua" class="btn-primary">Simpan Semua</button>
       </div>
     </form>
 

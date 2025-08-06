@@ -299,9 +299,6 @@
 
   <body>
     <div class="main-container container-custom">
-      <div class="text-center">
-        <h2 class="mb-0">Absensi Siswa</h2>
-      </div>
       <hr>
 
       <!-- Stats Cards -->

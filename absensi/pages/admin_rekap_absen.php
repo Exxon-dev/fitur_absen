@@ -136,6 +136,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                         <th>Nama Siswa</th>
                         <th>No WA</th>
                         <th>Status</th>
+                        <th>Jam Masuk</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -146,28 +147,40 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                         $nama = htmlspecialchars($siswa['nama_siswa']);
                         $wa = htmlspecialchars($siswa['no_wa']);
 
-                        // Check attendance with prepared statement
-                        $query_absen = mysqli_prepare($coneksi, "SELECT jam_masuk FROM absen WHERE id_siswa = ? AND tanggal = ?");
+                        // Get attendance data including entry time
+                        $query_absen = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = ? AND tanggal = ?");
                         mysqli_stmt_bind_param($query_absen, "is", $id, $tanggal);
                         mysqli_stmt_execute($query_absen);
                         $result_absen = mysqli_stmt_get_result($query_absen);
                         $absen = mysqli_fetch_assoc($result_absen);
 
-                        if (!$absen) {
+                        // Initialize variables
+                        $jam_masuk_display = '-';
+                        $jam_keluar_display = '-';
+                        $status_class = '';
+                        $status_icon = '';
+                        $status_text = '';
+                        $pesan = null;
+
+                        if ($absen) {
+                            $jam_masuk_display = $absen['jam_masuk'] ?? '-';
+                            $jam_keluar_display = $absen['jam_keluar'] ?? '-';
+
+                            if ($absen['jam_masuk'] > $batas_telat) {
+                                $status_class = 'status-telat';
+                                $status_icon = '<i class="bi bi-exclamation-triangle"></i>';
+                                $status_text = 'Telat';
+                                $pesan = "⚠️ Hai *$nama* , telat dalam melakukan absensi hari $hari ($tanggal) pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi!⚠️";
+                            } else {
+                                $status_class = 'status-hadir';
+                                $status_icon = '<i class="bi bi-check-circle"></i>';
+                                $status_text = 'Hadir';
+                            }
+                        } else {
                             $status_class = 'status-belum';
                             $status_icon = '<i class="bi bi-x-circle"></i>';
                             $status_text = 'Belum Absen';
                             $pesan = "📢 Hai *$nama* ,kamu belum melakukan absen hari $hari ($tanggal). Harap segera absen!";
-                        } elseif ($absen['jam_masuk'] > $batas_telat) {
-                            $status_class = 'status-telat';
-                            $status_icon = '<i class="bi bi-exclamation-triangle"></i>';
-                            $status_text = 'Telat';
-                            $pesan = "⚠️ Hai *$nama* , telat dalam melakukan absensi hari $hari ($tanggal) pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi!⚠️";
-                        } else {
-                            $status_class = 'status-hadir';
-                            $status_icon = '<i class="bi bi-check-circle"></i>';
-                            $status_text = 'Hadir';
-                            $pesan = null;
                         }
                         ?>
                         <tr>
@@ -176,6 +189,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                             <td class="<?= $status_class ?>">
                                 <?= $status_icon ?> <?= $status_text ?>
                             </td>
+                            <td><?= $jam_masuk_display ?></td>
                             <td>
                                 <?php if ($pesan && !empty($wa)): ?>
                                     <button class="btn btn-sm btn-wa" onclick="kirimNotifikasi('<?= addslashes($wa) ?>', '<?= addslashes($pesan) ?>')">

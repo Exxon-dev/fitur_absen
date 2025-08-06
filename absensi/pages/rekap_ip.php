@@ -101,7 +101,7 @@ $num_rows = mysqli_num_rows($query);
     <div class="main-container container-custom">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
             <div class="text-center"></div>
-            <h2 class="text-primary"><i class="bi bi-clock-history"></i> Jam Masuk, Keluar & Rekap IP <?= htmlspecialchars($tanggal) ?></h2>
+            <h2 class="text-primary"><i class="bi bi-clock-history"></i> Rekap IP <?= htmlspecialchars($tanggal) ?></h2>
             <a href="javascript:window.location.reload()" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-arrow-clockwise"></i> Refresh
             </a>
