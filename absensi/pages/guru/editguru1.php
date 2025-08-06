@@ -171,6 +171,7 @@ if (isset($_GET['id_guru'])) {
                     margin-left: 15px;
                 }
             }
+        }
     </style>
 </head>
 
