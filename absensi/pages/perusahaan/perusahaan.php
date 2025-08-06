@@ -45,8 +45,60 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
-        .btn-warning {
-            margin-bottom: 20px;
+        .editPerusahaan {
+            color: white;
+            /* Text putih */
+            background-color: goldenrod;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .editPerusahaan:hover {
+            background-color: goldenrod;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
+        .hapusPerusahaan {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusPerusahaan:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -81,31 +133,35 @@ include('koneksi.php');
                     </tr>
                 </thead>
                 <tbody>
-                <?php
-                $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
-                if (mysqli_num_rows($sql) > 0) {
-                    $no = 1;
-                    while ($data = mysqli_fetch_assoc($sql)) {
-                        $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+                    <?php
+                    $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+                    if (mysqli_num_rows($sql) > 0) {
+                        $no = 1;
+                        while ($data = mysqli_fetch_assoc($sql)) {
+                            $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+                            $deleteUrl = "index.php?page=hapusperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+                            echo '
+                                <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                                    <td>' . $no . '</td>
+                                    <td>' . $data['nama_perusahaan'] . '</td>
+                                    <td>' . $data['pimpinan'] . '</td>
+                                    <td>' . $data['alamat_perusahaan'] . '</td>
+                                    <td>' . $data['no_tlp'] . '</td>
+                                    <td>
+                                        <a href="' . $editUrl . '" class="editPerusahaan">Edit</a>
+                                        <a href="' . $deleteUrl . '" class="hapusPerusahaan">Delete</a>
+                                    </td>
+                                </tr>';
+                            $no++;
+                        }
+                    } else {
                         echo '
-                        <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
-                            <td>' . $no . '</td>
-                            <td>' . $data['nama_perusahaan'] . '</td>
-                            <td>' . $data['pimpinan'] . '</td>
-                            <td>' . $data['alamat_perusahaan'] . '</td>
-                            <td>' . $data['no_tlp'] . '</td>
+                        <tr>
+                            <td colspan="6" class="text-center">Tidak ada data.</td>
                         </tr>';
-                        $no++;
                     }
-                } else {
-                    echo '
-                    <tr>
-                        <td colspan="4" class="text-center">Tidak ada data.</td>
-                    </tr>';
-                }
-                ?>
+                    ?>
                 </tbody>
-
             </table>
         </div>
 
