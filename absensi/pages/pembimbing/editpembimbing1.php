@@ -89,13 +89,32 @@ if (isset($_POST['submit'])) {
             background-color: #0056b3;
         }
 
-        .btn-warning {
-            background-color: #ffc107;
+        .hapusPembimbing {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
             border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
         }
 
-        .btn-warning:hover {
-            background-color: #e0a800;
+        .hapusPembimbing:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -165,7 +184,7 @@ if (isset($_POST['submit'])) {
             </div>
             <div class="form-group row">
                 <div class="col text-left">
-                    <button type="button" class="btn btn-danger" id="btnHapus"
+                    <button type="button" class="hapusPembimbing" id="btnHapus"
                         data-id="<?php echo $data['id_pembimbing']; ?>">Hapus</button>
                 </div>
                 <div class="col text-right">

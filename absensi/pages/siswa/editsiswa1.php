@@ -63,15 +63,38 @@ include('koneksi.php');
 
         .btn-primary:hover {
             background-color: #0056b3;
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
-        .btn-warning {
-            background-color: #ffc107;
+        .hapusSiswa {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
             border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
         }
 
-        .btn-warning:hover {
-            background-color: #e0a800;
+        .hapusSiswa:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         .form-row {
@@ -144,28 +167,13 @@ include('koneksi.php');
                         value="<?php echo htmlspecialchars($data['nama_siswa']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Kelas</label>
-                    <select name="kelas" class="form-control" required>
-                        <option value="<?php echo htmlspecialchars($data['kelas']); ?>">
-                            <?php echo htmlspecialchars($data['kelas']); ?></option>
-                        <option value="12 RPL A">12 RPL A</option>
-                        <option value="12 RPL B">12 RPL B</option>
-                        <option value="12 RPL C">12 RPL C</option>
-                        <option value="12 ELIND A">12 ELIND A</option>
-                        <option value="12 ELIND B">12 ELIND B</option>
-                        <option value="12 ELIND C">12 ELIND C</option>
-                        <option value="12 MEKA A">12 MEKA A</option>
-                        <option value="12 MEKA B">12 MEKA B</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>
                         <option value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>">
                             <?php echo htmlspecialchars($data['pro_keahlian']); ?></option>
-                        <option value="Elektronika">Elektronika</option>
-                        <option value="Perangkat Lunak">Perangkat Lunak</option>
-                        <option value="Mekatronika">Mekatronika</option>
+                        <option value="Multimedia">Multimedia"</option>
+                        <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
+                        <option value="Perkantoran">Perkantoran</option>
                     </select>
                 </div>
                 <div class="form-group col-md-3">
@@ -252,7 +260,7 @@ include('koneksi.php');
 
             <div class="form-group row">
                 <div class="col text-left">
-                    <button type="button" class="btn btn-danger" id="btnHapus"
+                    <button type="button" class="hapusSiswa" id="btnHapus"
                         data-id="<?php echo $data['id_siswa']; ?>">Hapus</button>
                 </div>
                 <div class="col text-right">

@@ -132,36 +132,36 @@ include('koneksi.php');
                         <th>No Telepon</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php
-                    $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
-                    if (mysqli_num_rows($sql) > 0) {
-                        $no = 1;
-                        while ($data = mysqli_fetch_assoc($sql)) {
-                            $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
-                            $deleteUrl = "index.php?page=hapusperusahaan&id_perusahaan=" . $data['id_perusahaan'];
-                            echo '
-                                <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
-                                    <td>' . $no . '</td>
-                                    <td>' . $data['nama_perusahaan'] . '</td>
-                                    <td>' . $data['pimpinan'] . '</td>
-                                    <td>' . $data['alamat_perusahaan'] . '</td>
-                                    <td>' . $data['no_tlp'] . '</td>
-                                    <td>
-                                        <a href="' . $editUrl . '" class="editPerusahaan">Edit</a>
-                                        <a href="' . $deleteUrl . '" class="hapusPerusahaan">Delete</a>
-                                    </td>
-                                </tr>';
-                            $no++;
-                        }
-                    } else {
-                        echo '
-                        <tr>
-                            <td colspan="6" class="text-center">Tidak ada data.</td>
-                        </tr>';
-                    }
-                    ?>
-                </tbody>
+              <tbody>
+              <?php
+              $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+              if (mysqli_num_rows($sql) > 0) {
+                  $no = 1;
+                  while ($data = mysqli_fetch_assoc($sql)) {
+                      $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+                      $deleteUrl = "index.php?page=hapusperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+                      echo '
+                      <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                          <td>' . $no . '</td>
+                          <td>' . $data['nama_perusahaan'] . '</td>
+                          <td>' . $data['pimpinan'] . '</td>
+                          <td>' . $data['alamat_perusahaan'] . '</td>
+                          <td>' . $data['no_tlp'] . '</td>
+                          <td>
+                              <a href="' . $editUrl . '" class="editPerusahaan">Edit</a>
+                              <a href="' . $deleteUrl . '" class="hapusPerusahaan">Delete</a>
+                          </td>
+                      </tr>';
+                      $no++;
+                  }
+              } else {
+                  echo '
+                  <tr>
+                      <td colspan="6" class="text-center">Tidak ada data.</td>
+                  </tr>';
+              }
+              ?>
+              </tbody>
             </table>
         </div>
 

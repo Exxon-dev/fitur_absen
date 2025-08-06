@@ -72,6 +72,34 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .hapusCatatan {
+            color: white;
+            /* Text putih */
+            background-color: #6c757d;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusCatatan:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -127,7 +155,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                     <div class="col text-left">
 
                         <?php if ($catatan_data): ?>
-                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="btn btn-danger" id="btnHapusCatatan">Hapus</a>
+                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
                     <div class="col text-right">

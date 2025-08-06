@@ -5,18 +5,30 @@ include('koneksi.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+if (!isset($_SESSION['id_pembimbing'])) {
+    header("Location: ../sign-in.php");
+    exit();
+}
+
 // Set timezone
 date_default_timezone_set('Asia/Jakarta');
 
 $tanggal = date('Y-m-d');
+$id_pembimbing = $_SESSION['id_pembimbing'];
 
+// Modified query to only show students supervised by this pembimbing
 $query = mysqli_query($coneksi, "
-    SELECT s.nama_siswa, s.no_wa, a.tanggal, a.jam_masuk, a.jam_keluar, a.keterangan, a.ip_address, a.lokasi, a.koordinat
+    SELECT s.nama_siswa, s.no_wa, a.tanggal, a.jam_masuk, a.jam_keluar, 
+           a.keterangan, a.ip_address, a.lokasi, a.koordinat
     FROM absen a
     INNER JOIN siswa s ON a.id_siswa = s.id_siswa
     WHERE a.tanggal = '$tanggal'
+    AND s.id_pembimbing = '$id_pembimbing'
     ORDER BY a.jam_masuk ASC
 ");
+
+// Count number of rows
+$num_rows = mysqli_num_rows($query);
 
 ?>
 <!DOCTYPE html>
@@ -25,7 +37,7 @@ $query = mysqli_query($coneksi, "
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap IP dan Lokaksi</title>
+    <title>Rekap IP dan Lokasi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
@@ -65,6 +77,13 @@ $query = mysqli_query($coneksi, "
             background-color: #e9ecef;
         }
 
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -82,11 +101,11 @@ $query = mysqli_query($coneksi, "
     <div class="main-container container-custom">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
             <div class="text-center"></div>
-            <h2 class="text-primary"><i class="bi bi-clock-history"></i> Jam Masuk & Keluar <?= htmlspecialchars($tanggal) ?></h2>
+            <h2 class="text-primary"><i class="bi bi-clock-history"></i> Rekap IP <?= htmlspecialchars($tanggal) ?></h2>
             <a href="javascript:window.location.reload()" class="btn btn-sm btn-outline-primary">
                 <i class="bi bi-arrow-clockwise"></i> Refresh
             </a>
-        </div>
+        </div><br>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
@@ -103,19 +122,27 @@ $query = mysqli_query($coneksi, "
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $no = 1;
-                    while ($row = mysqli_fetch_assoc($query)): ?>
+                    <?php if ($num_rows > 0): ?>
+                        <?php $no = 1;
+                        while ($row = mysqli_fetch_assoc($query)): ?>
+                            <tr>
+                                <td><?= $no++ ?></td>
+                                <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
+                                <td><?= htmlspecialchars($row['tanggal']) ?></td>
+                                <td><?= $row['jam_masuk'] ?? '-' ?></td>
+                                <td><?= $row['jam_keluar'] ?? '-' ?></td>
+                                <td><?= htmlspecialchars($row['koordinat'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($row['ip_address'] ?? '') ?></td>
+                                <td><?= htmlspecialchars($row['lokasi'] ?? '') ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
                         <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
-                            <td><?= htmlspecialchars($row['tanggal']) ?></td>
-                            <td><?= $row['jam_masuk'] ?? '-' ?></td>
-                            <td><?= $row['jam_keluar'] ?? '-' ?></td>
-                            <td><?= htmlspecialchars($row['koordinat'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['ip_address'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($row['lokasi'] ?? '') ?></td>
+                            <td colspan="8" class="empty-message">
+                                <i class="bi bi-exclamation-circle"></i> Siswa belum absen
+                            </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

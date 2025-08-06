@@ -31,7 +31,6 @@ if (isset($_POST['submit'])) {
     WHERE 
     id_perusahaan='$id_perusahaan'") 
     or die(mysqli_error($coneksi));
-
     if ($sql) {
         $_SESSION['flash_edit'] = 'sukses';
         header('Location: ../../index.php?page=perusahaan');

@@ -10,7 +10,6 @@ if (!$id_siswa) {
 $query = " 
     SELECT 
         s.nama_siswa, 
-        s.kelas, 
         s.pro_keahlian,
         s.tanggal_mulai,
         s.tanggal_selesai,
@@ -53,17 +52,17 @@ $coneksi->close();
     <style type="text/css">
         @page {
             size: A4;
-            margin: 20mm;
+            margin: 15mm;
         }
         .printable {
-            margin: 20px;
+            margin: 18px;
         }
         @media print {
             .no-print {
                 display: none; 
             }
         }
-        .style6 {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px;  }
+        .style6 {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 15px;  }
         .style9 {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; }
         .style10 {font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; }
         .top	{border-top: 1px solid #000000; }
@@ -97,10 +96,6 @@ $coneksi->close();
             <div class="flex mb-2">
                 <span class="w-1/5">Nama Peserta Didik</span>
                 <span class="w-2/5">: <?php echo htmlspecialchars($data['nama_siswa']); ?></span>
-            </div>
-            <div class="flex mb-2 style9">
-                <span class="w-1/5">Kelas</span>
-                <span class="w-2/5">: <?php echo htmlspecialchars($data['kelas']); ?></span>
             </div>
             <div class="flex mb-2 style9">
                 <span class="w-1/5">Program Keahlian</span>
@@ -202,11 +197,12 @@ $coneksi->close();
 
         <div class="flex justify-between mt-8">
             <div>
-                <p class="mt-8 style9">Pembimbing Sekolah</p>
+                <p class="mt-5 style9">Pembimbing Sekolah</p>
                 <p class="mt-16 style9">.......................................................</p>
             </div>
+            <br>
             <div>
-                <p class="style9">.............., .......................... 202.....</p>
+                <p class="style9">Kajoran, ..................... 202.....</p>
                 <p class="style9">Pimpinan/Pembimbing DUDI</p>
                 <p class="mt-16 style9">.......................................................</p>
             </div>
