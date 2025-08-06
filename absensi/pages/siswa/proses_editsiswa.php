@@ -33,7 +33,7 @@ if (isset($_POST['submit'])) {
 	$username = $_POST['username'];
 	$password = $_POST['password'];
     $foto_lama        = $_POST['foto_lama'] ?? 'default.jpg';
-
+	
 	$profile = $foto_lama;
 
 	// Jika ada upload foto baru
