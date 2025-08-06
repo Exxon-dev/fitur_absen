@@ -116,7 +116,7 @@
                 $fotoName   = $_FILES['foto']['name'];
                 $fotoTmp    = $_FILES['foto']['tmp_name'];
                 $fotoExt    = pathinfo($fotoName, PATHINFO_EXTENSION);
-                $fotoBaru   = uniqid('pembimbing_') . '.' . $fotoExt;
+                $fotoBaru   = uniqid('guru_') . '.' . $fotoExt;
                 $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
 
                 if (move_uploaded_file($fotoTmp, $uploadPath)) {
