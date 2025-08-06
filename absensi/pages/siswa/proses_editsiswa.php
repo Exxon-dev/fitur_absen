@@ -33,9 +33,6 @@ if (isset($_POST['submit'])) {
 	$password = $_POST['password'];
     $foto_lama        = $_POST['foto_lama'] ?? 'default.jpg';
 
-
-	$sql = mysqli_query($coneksi, "UPDATE siswa SET nisn='$nisn', nama_siswa='$nama_siswa', pro_keahlian='$pro_keahlian', TL='$TL', TTGL='$TTGL', id_sekolah='$id_sekolah',id_perusahaan='$id_perusahaan', tanggal_mulai='$tanggal_mulai', tanggal_selesai='$tanggal_selesai', id_pembimbing='$id_pembimbing', id_guru='$id_guru', username='$username', password='$password' WHERE id_siswa='$id_siswa'");
-
 	$profile = $foto_lama;
 
 	// Jika ada upload foto baru

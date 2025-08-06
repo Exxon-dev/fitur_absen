@@ -127,11 +127,13 @@ include('koneksi.php');
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
+                        <th>Derektur</th>
                         <th>Alamat</th>
-                        <th>Aksi</th>
+                        <th>No Telepon</th>
                     </tr>
                 </thead>
                 <tbody>
+<<<<<<< HEAD
                     <?php
                     $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
@@ -151,14 +153,33 @@ include('koneksi.php');
                             $no++;
                         }
                     } else {
+=======
+                <?php
+                $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+                if (mysqli_num_rows($sql) > 0) {
+                    $no = 1;
+                    while ($data = mysqli_fetch_assoc($sql)) {
+                        $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+>>>>>>> fitur
                         echo '
-                <tr>
-                    <td colspan="4" class="text-center">Tidak ada data.</td>
-                </tr>
-                ';
+                        <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                            <td>' . $no . '</td>
+                            <td>' . $data['nama_perusahaan'] . '</td>
+                            <td>' . $data['pimpinan'] . '</td>
+                            <td>' . $data['alamat_perusahaan'] . '</td>
+                            <td>' . $data['no_tlp'] . '</td>
+                        </tr>';
+                        $no++;
                     }
-                    ?>
+                } else {
+                    echo '
+                    <tr>
+                        <td colspan="4" class="text-center">Tidak ada data.</td>
+                    </tr>';
+                }
+                ?>
                 </tbody>
+
             </table>
         </div>
 
