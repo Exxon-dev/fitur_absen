@@ -19,6 +19,18 @@
 			color: #007bff;
 		}
 
+				.form-control {
+			border: none;
+			border-bottom: 2px solid #007bff;
+			border-radius: 0;
+			box-shadow: none;
+		}
+
+		.form-control:focus {
+			border-color: #0056b3;
+			box-shadow: none;
+		}
+
 		.main-container {
 			margin-top: 20px;
 			margin-right: 20px;
@@ -51,7 +63,7 @@
 <body>
 
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2>Tambah Sekolah</h2>
+		<h2 class="text-center">Tambah Sekolah</h2>
 		<hr>
 		<form action="pages/sekolah/proses_tambahsekolah.php" method="post" enctype="multipart/form-data">
 			<div class="form-group row">
@@ -59,38 +71,32 @@
 				<div class="col-sm-15">
 					<input type="hidden" name="id_sekolah" class="form-control" size="4">
 				</div>
-			</div>
-			<div class="form-group row">
+
 				<label class="col-sm-2 col-form-label">Nama Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="nama_sekolah" class="form-control" size="4" required>
 				</div>
-			</div>
-			<div class="form-group row">
+
 				<label class="col-sm-2 col-form-label">Alamat Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="alamat_sekolah" class="form-control" size="4" required>
 				</div>
-			</div>
-			<div class="form-group row">
+
 				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="kepala_sekolah" class="form-control" size="4" required>
 				</div>
-			</div>
-			<div class="form-group row">
+
 				<label class="col-sm-2 col-form-label">Username</label>
 				<div class="col-sm-15">
 					<input type="text" name="username" class="form-control" size="4" required>
 				</div>
-			</div>
-			<div class="form-group row">
+
 				<label class="col-sm-2 col-form-label">Password</label>
 				<div class="col-sm-15">
 					<input type="password" name="password" class="form-control" size="4" required>
 				</div>
-			</div>
-			<div class="form-group row">
+
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-15">
 					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
