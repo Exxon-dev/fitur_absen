@@ -3,11 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Pastikan session_start() pertama kali
 session_start();
 ob_start();
-
-// Koneksi database
 require_once('../../koneksi.php');
 
 // Debug koneksi
@@ -16,7 +13,6 @@ if (!$coneksi) {
 }
 
 if (isset($_POST['submit'])) {
-    // Ambil dan amankan input
     $nama_perusahaan    = mysqli_real_escape_string($coneksi, $_POST['nama_perusahaan'] ?? '');
     $pimpinan           = mysqli_real_escape_string($coneksi, $_POST['pimpinan'] ?? '');
     $alamat_perusahaan  = mysqli_real_escape_string($coneksi, $_POST['alamat_perusahaan'] ?? '');

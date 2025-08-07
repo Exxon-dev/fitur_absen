@@ -147,8 +147,10 @@ include('koneksi.php');
                                     <td>' . $data['pimpinan'] . '</td>
                                     <td>' . $data['alamat_perusahaan'] . '</td>
                                     <td>' . $data['no_tlp'] . '</td>
-                                </tr>';
-                            $no++;
+                                    <td>
+                                        <a href="' . $editUrl . '" class="editPerusahaan">Edit</a>
+                                        <a href="' . $deleteUrl . '" class="hapusPerusahaan">Delete</a>
+                                    </td>
                         }
                     } else {
                         echo '
@@ -160,6 +162,7 @@ include('koneksi.php');
                 </tbody>
             </table>
         </div>
+
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
