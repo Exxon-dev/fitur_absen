@@ -9,7 +9,6 @@ include('koneksi.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Perusahaan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
         body {
             padding-left: 270px;
@@ -46,8 +45,73 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
-        .btn-warning {
-            margin-bottom: 20px;
+        .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
+
+        .editPerusahaan {
+            color: white;
+            /* Text putih */
+            background-color: goldenrod;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .editPerusahaan:hover {
+            background-color: goldenrod;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
+        .hapusPerusahaan {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusPerusahaan:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -66,10 +130,9 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
         <h2 class="text-center">Data Perusahaan</h2>
-
         <hr>
+        <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
@@ -77,8 +140,9 @@ include('koneksi.php');
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
+                        <th>Derektur</th>
                         <th>Alamat</th>
-                        <th>Aksi</th>
+                        <th>No Telepon</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,30 +151,30 @@ include('koneksi.php');
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
+                            $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
+                            $deleteUrl = "index.php?page=hapusperusahaan&id_perusahaan=" . $data['id_perusahaan'];
                             echo '
-                    <tr style="text-align:center; cursor:pointer;">
-                        <td>' . $no . '</td>
-                        <td>' . $data['nama_perusahaan'] . '</td>
-                        <td>' . $data['alamat_perusahaan'] . '</td>
-                        <td> 
-                            <a href="index.php?page=editperusahaan&id_perusahaan=' . $data['id_perusahaan'] . '" class="badge badge-warning">Edit</a>
-                            <a href="index.php?page=hapusperusahaan&id_perusahaan=' . $data['id_perusahaan'] . '" class="badge badge-danger">Delete</a>
-                        </td>
-                    </tr>
-                    ';
+                                <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                                    <td>' . $no . '</td>
+                                    <td>' . $data['nama_perusahaan'] . '</td>
+                                    <td>' . $data['pimpinan'] . '</td>
+                                    <td>' . $data['alamat_perusahaan'] . '</td>
+                                    <td>' . $data['no_tlp'] . '</td>
+                                </tr>';
                             $no++;
                         }
                     } else {
                         echo '
-                <tr>
-                    <td colspan="4" class="text-center">Tidak ada data.</td>
-                </tr>
-                ';
+                        <tr>
+                            <td colspan="6" class="text-center">Tidak ada data.</td>
+                        </tr>';
                     }
                     ?>
                 </tbody>
+
             </table>
         </div>
+
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

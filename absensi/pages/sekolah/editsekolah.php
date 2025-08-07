@@ -27,6 +27,18 @@
 			max-width: none;
 		}
 
+		.form-control {
+			border: none;
+			border-bottom: 2px solid #007bff;
+			border-radius: 0;
+			box-shadow: none;
+		}
+
+		.form-control:focus {
+			border-color: #0056b3;
+			box-shadow: none;
+		}
+
 		/* Style asli */
 		.container-custom {
 			background-color: #ffffff;
@@ -51,7 +63,7 @@
 <body>
 
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2>Edit Sekolah</h2>
+		<h2 class="text-center">Edit Sekolah</h2>
 
 		<hr>
 
@@ -81,65 +93,98 @@
 			$logo_sekolah	 = $_FILES['logo_sekolah']['name'];
 
 
-			$sql = mysqli_query($coneksi, "UPDATE sekolah SET nama_sekolah='$nama_sekolah',alamat_sekolah='$alamat_sekolah', kepala_sekolah='$kepala_sekolah', username='$username', password='$password', logo_sekolah='$logo_sekolah' WHERE id_sekolah='$id_sekolah'") or die(mysqli_error($coneksi));
+			$sql = mysqli_query($coneksi, "UPDATE sekolah SET 
+			nama_sekolah='$nama_sekolah',
+			alamat_sekolah='$alamat_sekolah', 
+			kepala_sekolah='$kepala_sekolah',
+			username='$username',
+			password='$password', 
+			logo_sekolah='$logo_sekolah' 
+			WHERE 
+			id_sekolah='$id_sekolah'")
+				or die(mysqli_error($coneksi));
+
 			if ($sql) {
 				echo '<script>alert("Berhasil menambahkan data."); document.location="sekolah.php";</script>';
 			} else {
 				echo '<div class="alert alert-warning">Gagal melakukan proses tambah data.</div>';
 			}
-		} else {
-			echo 'Anda harus memilih file untuk diunggah!!';
 		}
 
 		?>
 
 		<form action="pages/sekolah/proses_editsekolah.php?id_sekolah=<?php echo $id_sekolah; ?>" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="id_sekolah" value="<?php echo $data['id_sekolah']; ?>">
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label"> Nama Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="nama_sekolah" class="form-control" value="<?php echo $data['nama_sekolah']; ?>" required>
 				</div>
-			</div>
-			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Alamat Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="alamat_sekolah" class="form-control" value="<?php echo $data['alamat_sekolah']; ?>" required>
 				</div>
-			</div>
-			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
 				</div>
-			</div>
-			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Username</label>
 				<div class="col-sm-15">
 					<input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>" required>
 				</div>
-			</div>
-			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Password</label>
 				<div class="col-sm-15">
 					<input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>" required>
 				</div>
-			</div>
-			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-15">
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*" value="<?php echo $data['logo_sekolah'] ?>">
+					<?php if (!empty($data['logo_sekolah'])): ?>
+						<img src="<?php echo $data['logo_sekolah']; ?>" alt="Logo Sekolah" style="max-height: 80px; display: block; margin-bottom: 10px;">
+					<?php endif; ?>
+					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
 				</div>
-			</div>
+			</div><br>
 			<div class="form-row">
+				<div class="col text-left">
+					<button type="button" class="btn btn-danger" id="btnHapus"
+						data-id="<?php echo $data['id_sekolah']; ?>">Hapus</button>
+				</div>
 				<div class="col text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
 					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
 				</div>
 			</div>
 		</form>
-
 	</div>
 
+	
+	<script>
+		// SweetAlert untuk konfirmasi hapus
+		document.addEventListener('DOMContentLoaded', function() {
+			const deleteBtn = document.getElementById('btnHapus');
+			if (deleteBtn) {
+				deleteBtn.addEventListener('click', function(e) {
+					e.preventDefault();
+					const id = this.getAttribute('data-id');
+					Swal.fire({
+						title: "Apakah Anda yakin?",
+						text: "Data yang dihapus tidak dapat dikembalikan!",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonColor: "#d33",
+						cancelButtonColor: "#3085d6",
+						confirmButtonText: "Ya, hapus!",
+						cancelButtonText: "Batal"
+					}).then((result) => {
+						if (result.isConfirmed) {
+							window.location.href = `index.php?page=hapusperusahaan&id_perusahaan=${id}`;
+						}
+					});
+				});
+			}
+		});
+	</script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

@@ -2,7 +2,7 @@
 include('koneksi.php');
 session_start();
 
-$id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
+$id_perusahaan = $_SESSION['id_perusahaan'] ?? null;
 
 // Cek jika belum login
 if (!isset($_SESSION['id_pembimbing'])) {
@@ -13,7 +13,7 @@ if (!isset($_SESSION['id_pembimbing'])) {
 // Ambil data siswa (dengan atau tanpa pencarian)
 $search = $_GET['search'] ?? '';
 $query = "SELECT id_siswa, nama_siswa FROM siswa 
-          WHERE id_pembimbing = '$id_pembimbing' 
+          WHERE id_perusahaan = '$id_perusahaan' 
           AND nama_siswa LIKE '%$search%'";
 $result = mysqli_query($coneksi, $query);
 

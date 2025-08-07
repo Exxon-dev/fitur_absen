@@ -76,8 +76,52 @@ $jumlah_guru = mysqli_num_rows($query_guru);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
+    h2 {
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    /* Card Styles */
     .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
       margin-bottom: 30px;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      border-radius: 10px 10px 0 0 !important;
+      background-color: white;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mobile Card View */
+    .student-cards {
+      display: none;
+    }
+
+    .student-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .student-name {
+      font-weight: bold;
     }
 
     @media (max-width: 991px) {
@@ -89,12 +133,19 @@ $jumlah_guru = mysqli_num_rows($query_guru);
         margin-right: 15px;
         margin-left: 15px;
       }
+
+      .student-cards {
+        display: block;
+      }
     }
   </style>
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">
   <div class="main-container container-custom" style="margin-top: 20px">
+    <div class="text-center">
+      <h2>Dashboard Admin</h2>
+    </div>
     <hr>
     <form method="POST" action="">
       <div class="container-fluid py-4">
@@ -113,36 +164,6 @@ $jumlah_guru = mysqli_num_rows($query_guru);
               <hr class="dark horizontal my-0">
             </div>
           </div>
-          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="material-icons opacity-10">person</i>
-                </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Guru</p>
-                  <h4 class="mb-0"><?php echo $jumlah_guru; ?></h4>
-                </div>
-              </div>
-              <hr class="dark horizontal my-0">
-            </div>
-          </div>
-
-          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="material-icons opacity-10">supervisor_account</i>
-                </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Pembimbing</p>
-                  <h4 class="mb-0"><?php echo $jumlah_pembimbing; ?></h4>
-                </div>
-              </div>
-              <hr class="dark horizontal my-0">
-            </div>
-          </div>
-
           <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
             <div class="card">
               <div class="card-header p-3 pt-2">
@@ -166,6 +187,34 @@ $jumlah_guru = mysqli_num_rows($query_guru);
                 <div class="text-end pt-1">
                   <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
                   <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                  <i class="material-icons opacity-10">person</i>
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Guru</p>
+                  <h4 class="mb-0"><?php echo $jumlah_guru; ?></h4>
+                </div>
+              </div>
+              <hr class="dark horizontal my-0">
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                  <i class="material-icons opacity-10">supervisor_account</i>
+                </div>
+                <div class="text-end pt-1">
+                  <p class="text-sm mb-0 text-capitalize">Pembimbing</p>
+                  <h4 class="mb-0"><?php echo $jumlah_pembimbing; ?></h4>
                 </div>
               </div>
               <hr class="dark horizontal my-0">

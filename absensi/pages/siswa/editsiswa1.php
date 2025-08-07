@@ -63,15 +63,38 @@ include('koneksi.php');
 
         .btn-primary:hover {
             background-color: #0056b3;
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
-        .btn-warning {
-            background-color: #ffc107;
+        .hapusSiswa {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
             border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
         }
 
-        .btn-warning:hover {
-            background-color: #e0a800;
+        .hapusSiswa:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         .form-row {
@@ -93,7 +116,7 @@ include('koneksi.php');
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Siswa</h2>
+        <h2 class="text-center">Data Siswa</h2>
         <hr>
 
         <?php
@@ -235,14 +258,19 @@ include('koneksi.php');
                 </div>
             </div>
 
-            <div class="form-group row">
-                <div class="col text-left">
-                    <button type="button" class="btn btn-danger" id="btnHapus"
-                        data-id="<?php echo $data['id_siswa']; ?>">Hapus</button>
-                </div>
-                <div class="col text-right">
-                    <a href="index.php?page=siswa" class="btn btn-warning">KEMBALI</a>
-                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+            <div class="form-group">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                    <!-- Tombol Hapus di kiri -->
+                    <button type="button" class="btn btn-danger hapusSiswa"
+                        id="btnHapus" data-id="<?php echo $data['id_siswa']; ?>">
+                        HAPUS
+                    </button>
+
+                    <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
+                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                        <a href="index.php?page=siswa" class="btn btn-warning mr-2">KEMBALI</a>
+                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                    </div>
                 </div>
             </div>
         </form>

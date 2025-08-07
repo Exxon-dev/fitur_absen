@@ -11,7 +11,6 @@ include('koneksi.php');
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Data Pembimbing dan Guru</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
         /* Penyesuaian posisi */
         body {
@@ -49,6 +48,19 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
+        .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
+
         .btn-warning {
             margin-bottom: 20px;
         }
@@ -69,28 +81,27 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahpembimbing" class="btn btn-primary">Tambah Pembimbing</a>
         <h2 class="text-center">Data Pembimbing</h2>
-
         <hr>
+        <a href="index.php?page=tambahpembimbing" class="btn btn-primary">Tambah Pembimbing</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $sql = mysqli_query($coneksi, "SELECT * FROM pembimbing ORDER BY id_pembimbing ASC") or die(mysqli_error($coneksi));
-                if (mysqli_num_rows($sql) > 0) {
-                    $no = 1;
-                    while ($data = mysqli_fetch_assoc($sql)) {
-                        echo '
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $sql = mysqli_query($coneksi, "SELECT * FROM pembimbing ORDER BY id_pembimbing ASC") or die(mysqli_error($coneksi));
+                    if (mysqli_num_rows($sql) > 0) {
+                        $no = 1;
+                        while ($data = mysqli_fetch_assoc($sql)) {
+                            echo '
                     <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editpembimbing1&id_pembimbing=' . $data['id_pembimbing'] . '\'">
                         <td>' . $no . '</td>
                         <td>' . $data['nama_pembimbing'] . '</td>
@@ -98,42 +109,42 @@ include('koneksi.php');
                         <td>' . $data['password'] . '</td>
                     </tr>
                     ';
-                        $no++;
-                    }
-                } else {
-                    echo '
+                            $no++;
+                        }
+                    } else {
+                        echo '
                 <tr>
                     <td colspan="4" class="text-center">Tidak ada data.</td>
                 </tr>
                 ';
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.2.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.5.2.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <?php
-    // Notifikasi flash message hapus
-    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data pembimbing berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
-        unset($_SESSION['flash_hapus']);
-    }
-    ?>
-    <?php
-    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data pembimbing berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
-        unset($_SESSION['flash_edit']);
-    }
-    ?>
-    <?php
-    // Notifikasi flash message tambah
-    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        <?php
+        // Notifikasi flash message hapus
+        if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
+            echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data pembimbing berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+            unset($_SESSION['flash_hapus']);
+        }
+        ?>
+        <?php
+        if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
+            echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data pembimbing berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
+            unset($_SESSION['flash_edit']);
+        }
+        ?>
+        <?php
+        // Notifikasi flash message tambah
+        if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+            echo "<script>document.addEventListener('DOMContentLoaded',function(){
         Swal.fire({
             icon: 'success',
             title: 'Sukses!',
@@ -144,12 +155,12 @@ include('koneksi.php');
             toast: true
         });
     });</script>";
-        unset($_SESSION['flash_tambah']);
-    }
+            unset($_SESSION['flash_tambah']);
+        }
 
-    // Notifikasi error
-    if (isset($_SESSION['flash_error'])) {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        // Notifikasi error
+        if (isset($_SESSION['flash_error'])) {
+            echo "<script>document.addEventListener('DOMContentLoaded',function(){
         Swal.fire({
             icon: 'error',
             title: 'Gagal!',
@@ -160,12 +171,12 @@ include('koneksi.php');
             toast: true
         });
     });</script>";
-        unset($_SESSION['flash_error']);
-    }
+            unset($_SESSION['flash_error']);
+        }
 
-    // Notifikasi duplikat
-    if (isset($_SESSION['flash_duplikat'])) {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){
+        // Notifikasi duplikat
+        if (isset($_SESSION['flash_duplikat'])) {
+            echo "<script>document.addEventListener('DOMContentLoaded',function(){
         Swal.fire({
             icon: 'warning',
             title: 'Peringatan!',
@@ -176,9 +187,9 @@ include('koneksi.php');
             toast: true
         });
     });</script>";
-        unset($_SESSION['flash_duplikat']);
-    }
-    ?>
+            unset($_SESSION['flash_duplikat']);
+        }
+        ?>
 </body>
 
 </html>

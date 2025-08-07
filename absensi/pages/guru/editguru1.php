@@ -75,23 +75,101 @@ if (isset($_GET['id_guru'])) {
             background-color: #0056b3;
         }
 
-        .btn-warning {
-            background-color: #ffc107;
+        .hapusGuru {
+            color: white;
+            /* Text putih */
+            background-color: #6c757d;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
             border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
         }
 
-        .btn-warning:hover {
-            background-color: #e0a800;
+        .hapusGuru:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
             body {
-                padding-left: 0;
+                padding-left: 270px;
+                transition: padding-left 0.3s;
+                background-color: #f8f9fa;
             }
 
             .main-container {
-                margin-right: 15px;
-                margin-left: 15px;
+                margin-top: 20px;
+                margin-right: 20px;
+                margin-left: 0;
+                width: auto;
+                max-width: none;
+            }
+
+            /* Style asli */
+            .container-custom {
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                margin-bottom: 20px;
+                color: #007bff;
+            }
+
+            .form-control {
+                border: none;
+                border-bottom: 2px solid #007bff;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .form-control:focus {
+                border-color: #0056b3;
+                box-shadow: none;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border: none;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+            .btn-warning {
+                background-color: #ffc107;
+                border: none;
+            }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+            }
+
+            @media (max-width: 991px) {
+                body {
+                    padding-left: 0;
+                }
+
+                .main-container {
+                    margin-right: 15px;
+                    margin-left: 15px;
+                }
             }
         }
     </style>
@@ -99,7 +177,7 @@ if (isset($_GET['id_guru'])) {
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Guru</h2>
+        <h2 class="text-center">Data Guru</h2>
         <hr>
 
 
@@ -151,8 +229,35 @@ if (isset($_GET['id_guru'])) {
                         <input type="text" name="nama_guru" class="form-control" value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
                     </div>
                     <div class="form-group col-md-6">
-                        <label>ID Sekolah</label>
-                        <input type="text" name="id_sekolah" class="form-control" value="<?php echo htmlspecialchars($data['id_sekolah']); ?>" required>
+                        <label>Nip</label>
+                        <input type="text" name="nip" class="form-control" value="<?php echo htmlspecialchars($data['nip']); ?>" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" class="form-control">
+                            <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                            <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Alamat</label>
+                        <input type="text" name="alamat" class="form-control" value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>No. Telepon / HP</label>
+                        <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Nama Sekolah</label>
+                        <select name="id_sekolah" class="form-control" required>
+                            <?php
+                            $querySekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
+                            while ($sekolah = mysqli_fetch_assoc($querySekolah)) {
+                                $selected = ($data['id_sekolah'] == $sekolah['id_sekolah']) ? 'selected' : '';
+                                echo "<option value='{$sekolah['id_sekolah']}' $selected>{$sekolah['nama_sekolah']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Username</label>
@@ -172,6 +277,7 @@ if (isset($_GET['id_guru'])) {
                         <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
                         <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                     </div>
+                </div>
             </form>
         <?php else: ?>
             <div class="alert alert-warning">Data guru tidak ditemukan.</div>

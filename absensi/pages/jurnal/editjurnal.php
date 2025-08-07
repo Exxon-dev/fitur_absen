@@ -71,6 +71,34 @@ $can_edit = ($is_owner || (isset($_SESSION['level']) && $_SESSION['level'] === '
             margin-top: 20px;
         }
 
+        .hapusJurnal {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusJurnal:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -108,7 +136,7 @@ $can_edit = ($is_owner || (isset($_SESSION['level']) && $_SESSION['level'] === '
                         <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan</button>
                     </div>
                     <div class="col text-center">
-                        <button type="button" class="btn btn-danger" id="btnHapus">Hapus</button>
+                        <button type="button" class="hapusJurnal" id="btnHapus">Hapus</button>
                     </div>
                 <?php endif; ?>
                 <div class="col text-right">

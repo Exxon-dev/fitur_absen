@@ -9,7 +9,6 @@ include('koneksi.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Sekolah</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
     <style>
         /* Penyesuaian posisi */
         body {
@@ -47,8 +46,82 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
-        .btn-warning {
-            margin-bottom: 20px;
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .table td,
+        .table th {
+            text-align: left !important;
+        }
+
+        .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
+
+        .editSekolah {
+            color: white;
+            /* Text putih */
+            background-color: goldenrod;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .editSekolah:hover {
+            background-color: goldenrod;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 5px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
+        .hapusSekolah {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusSekolah:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -59,6 +132,7 @@ include('koneksi.php');
             .main-container {
                 margin-right: 15px;
                 margin-left: 15px;
+
             }
         }
     </style>
@@ -67,20 +141,18 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
         <h2 class="text-center">Data Sekolah</h2>
-
         <hr>
+        <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
 
         <div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="table table-bordered">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
                         <th>Nama Sekolah</th>
                         <th>Alamat</th>
                         <th>Kepala Sekolah</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,18 +161,15 @@ include('koneksi.php');
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
+                            $editUrl = "index.php?page=editsekolah&id_sekolah=" . $data['id_sekolah'];
+                            $deleteUrl = "index.php?page=hapussekolah&id_sekolah=" . $data['id_sekolah'];
                             echo '
-                    <tr style="text-align:center; cursor:pointer;">
-                        <td>' . $no . '</td>
-                        <td>' . $data['nama_sekolah'] . '</td>
-                        <td>' . $data['alamat_sekolah'] . '</td>
-                        <td>' . $data['kepala_sekolah'] . '</td>
-                        <td> 
-                            <a href="index.php?page=editsekolah&id_sekolah=' . $data['id_sekolah'] . '" class="badge badge-warning">Edit</a>
-                            <a href="index.php?page=hapussekolah&id_sekolah=' . $data['id_sekolah'] . '" class="badge badge-danger">Delete</a>
-                        </td>
-                    </tr>
-                    ';
+                            <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                                <td>' . $no . '</td>
+                                <td>' . $data['nama_sekolah'] . '</td>
+                                <td>' . $data['alamat_sekolah'] . '</td>
+                                <td>' . $data['kepala_sekolah'] . '</td>
+                            </tr>';
                             $no++;
                         }
                     } else {

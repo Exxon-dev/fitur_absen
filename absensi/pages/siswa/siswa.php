@@ -34,6 +34,10 @@ include('koneksi.php');
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .table-responsive {
+            margin-top: 20px;
+        }
+
         h2 {
             color: #007bff;
         }
@@ -46,6 +50,19 @@ include('koneksi.php');
         .table tbody tr:hover {
             background-color: #e9ecef;
         }
+
+        .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
 
         @media (max-width: 991px) {
             body {
@@ -63,21 +80,21 @@ include('koneksi.php');
 <body>
 
     <div class="main-container container-custom">
-        <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
         <h2 class="text-center">Data Siswa</h2>
         <hr>
+        <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                <th>No</th>
-                <th>NISN</th>
-                <th>Nama</th>
-                <th>Sekolah</th>
-                <th>Tempat Prakerin</th>
-                <th>Tanggal Mulai</th>
-                <th>Tanggal Selesai</th>
-                </tr>
+                    <th>No</th>
+                    <th>NISN</th>
+                    <th>Nama</th>
+                    <th>Sekolah</th>
+                    <th>Tempat Prakerin</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php
@@ -102,7 +119,7 @@ include('koneksi.php');
                             <td>' . htmlspecialchars($data['nisn']) . '</td>
                             <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_perusahaan']) . '</td>
+                            <td>' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
                             <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
                             <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
                         </tr>';

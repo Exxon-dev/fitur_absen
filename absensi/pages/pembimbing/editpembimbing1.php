@@ -7,12 +7,17 @@ if (isset($_SESSION['id_pembimbing'])) {
 
 // Proses update data pembimbing
 if (isset($_POST['submit'])) {
-    $id_pembimbing = $_POST['id_pembimbing'];
-    $nama_pembimbing = $_POST['nama_pembimbing'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $id_pembimbing      = $_POST['id_pembimbing'];
+    $nama_pembimbing    = $_POST['nama_pembimbing'];
+    $username           = $_POST['username'];
+    $password           = $_POST['password'];
 
-    $sql = mysqli_query($coneksi, "UPDATE pembimbing SET nama_pembimbing='$nama_pembimbing', username='$username', password='$password' WHERE id_pembimbing='$id_pembimbing'");
+    $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
+    nama_pembimbing = '$nama_pembimbing', 
+    username        = '$username', 
+    password        = '$password' 
+    WHERE 
+    id_pembimbing   ='$id_pembimbing'");
 
     if ($sql) {
         header('Location: index.php?page=pembimbing&pesan=sukses');
@@ -84,13 +89,32 @@ if (isset($_POST['submit'])) {
             background-color: #0056b3;
         }
 
-        .btn-warning {
-            background-color: #ffc107;
+        .hapusPembimbing {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
             border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
         }
 
-        .btn-warning:hover {
-            background-color: #e0a800;
+        .hapusPembimbing:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -108,7 +132,7 @@ if (isset($_POST['submit'])) {
 
 <body>
     <div class="main-container container-custom">
-        <h2>Edit Pembimbing</h2>
+        <h2 class="text-center">Edit Pembimbing</h2>
         <hr>
 
         <?php
@@ -127,31 +151,53 @@ if (isset($_POST['submit'])) {
 
         <form action="pages/pembimbing/proses_editpembimbing.php" method="post">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label>Nama Pembimbing</label>
+                    <input type="text" name="nama_pembimbing" class="form-control"
+                        value="<?php echo $data['nama_pembimbing']; ?>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>No. Telepon / HP</label>
+                    <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Alamat</label>
+                    <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Jenis Kelamin</label>
+                    <select name="jenis_kelamin" class="form-control">
+                        <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                        <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
+                        required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
+                        required>
+                </div>
+                <div class="form-group">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <!-- Tombol Hapus di kiri -->
+                        <button type="button" class="btn btn-danger hapusPembimbing"
+                            id="btnHapus" data-id="<?php echo $data['id_pembimbing']; ?>">
+                            HAPUS
+                        </button>
 
-            <div class="form-group">
-                <label>Nama Pembimbing</label>
-                <input type="text" name="nama_pembimbing" class="form-control"
-                    value="<?php echo $data['nama_pembimbing']; ?>" required>
-            </div>
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
-                    required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
-                    required>
-            </div>
-            <div class="form-group row">
-                <div class="col text-left">
-                    <button type="button" class="btn btn-danger" id="btnHapus"
-                        data-id="<?php echo $data['id_pembimbing']; ?>">Hapus</button>
+                        <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            <a href="index.php?page=pembimbing" class="btn btn-warning mr-2">KEMBALI</a>
+                            <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        </div>
+                    </div>
                 </div>
-                <div class="col text-right">
-                    <a href="index.php?page=pembimbing" class="btn btn-warning">Kembali</a>
-                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-                </div>
+
             </div>
         </form>
 

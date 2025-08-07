@@ -164,7 +164,7 @@ $_SESSION['status_absen'] = $status;
         }
 
         function kirimDataAbsensi(aksi) {
-            fetch('pages/siswa/proses_absen.php', {
+            fetch('./pages/siswa/proses_absen.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

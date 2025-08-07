@@ -126,19 +126,41 @@ if (!isset($_SESSION['id_siswa'])) {
             $id_guru            = $_POST['id_guru'];
             $username           = $_POST['username'];
             $password           = $_POST['password'];
+            $foto_lama          = $_POST['foto_lama'] ?? 'default.jpg';
+
+            $profile = $foto_lama;
+
+            // Jika ada upload foto baru
+            if (!empty($_FILES['foto']['name'])) {
+                $fotoName   = $_FILES['foto']['name'];
+                $fotoTmp    = $_FILES['foto']['tmp_name'];
+                $fotoExt    = pathinfo($fotoName, PATHINFO_EXTENSION);
+                $fotoBaru   = uniqid('siswa_') . '.' . $fotoExt;
+                $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
+
+                if (move_uploaded_file($fotoTmp, $uploadPath)) {
+                    // Hapus foto lama jika bukan default
+                    $oldProfilePath = __DIR__ . "/../image/" . $foto_lama;
+                    if (!empty($foto_lama) && file_exists($oldProfilePath) && $foto_lama !== 'default.jpg') {
+                        unlink($oldProfilePath);
+                    }
+                    $profile = $fotoBaru;
+                }
+            }
 
             $sql = mysqli_query($coneksi, "UPDATE siswa SET 
-    nis='$nis',
-    nisn='$nisn', 
-    nama_siswa='$nama_siswa', 
-    no_wa='$no_wa',
-    username='$username', 
-    password='$password', 
-    kelas='$kelas', 
-    pro_keahlian='$pro_keahlian',
-    TL='$TL',
-    TTGL='$TTGL'
-WHERE id_siswa='$id_siswa'");
+            profile='$profile',
+            nis='$nis',
+            nisn='$nisn', 
+            nama_siswa='$nama_siswa', 
+            no_wa='$no_wa',
+            username='$username', 
+            password='$password', 
+            kelas='$kelas', 
+            pro_keahlian='$pro_keahlian',
+            TL='$TL',
+            TTGL='$TTGL'
+            WHERE id_siswa='$id_siswa'");
 
             if ($sql) {
                 echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
@@ -154,7 +176,15 @@ WHERE id_siswa='$id_siswa'");
 
         <form action="" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
-
+            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
+            <div class="d-flex justify-content-center mb-3 position-relative" style="width: 100px; height: 100px; margin: auto;">
+                <img id="previewFoto" src="http://localhost/fitur_absen/absensi/pages/image/<?php echo $data['profile']; ?>" alt="Foto Siswa" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                <label for="foto" class="position-absolute"
+                    style="bottom: 0; right: 0;  background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
+                    <i class="fa fa-camera text-white"></i>
+                </label>
+                <input type="file" id="foto" name="foto" style="display: none;">
+            </div>
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
@@ -170,11 +200,8 @@ WHERE id_siswa='$id_siswa'");
                 </div>
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
-                    <select name="pro_keahlian" class="form-control" required>
-                        <option value="Multimedia">Multimedia"</option>
-                        <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
-                        <option value="Perkantoran">Perkantoran</option>
-                    </select>
+                    <input name="pro_keahlian" class="form-control" value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" required>
+                    </input>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tempat Lahir</label>
@@ -256,10 +283,21 @@ WHERE id_siswa='$id_siswa'");
             </div>
         </form>
     </div>
-
+                            
+    <!-- Tambahkan ini di <head> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const imgPreview = document.getElementById('previewFoto');
+            if (file && imgPreview) {
+                imgPreview.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
 </body>
 
 </html>
