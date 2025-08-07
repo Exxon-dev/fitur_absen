@@ -80,7 +80,7 @@
             // Handle logo$logo_sekolah upload
             $logo_sekolah = $data['logo_sekolah'];
             if (!empty($_FILES['logo_sekolah']['name'])) {
-                $target_dir = "uploads/";
+                $target_dir = "../uploads/";
                 if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
                 $filename = time() . '_' . basename($_FILES["logo_sekolah"]["name"]);
                 $target_file = $target_dir . $filename;
