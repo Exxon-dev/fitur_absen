@@ -5,7 +5,7 @@ include('koneksi.php');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-if (!isset($_SESSION['id_pembimbing'])) {
+if (!isset($_SESSION['id_perusahaan'])) {
     header("Location: ../sign-in.php");
     exit();
 }
@@ -14,7 +14,7 @@ if (!isset($_SESSION['id_pembimbing'])) {
 date_default_timezone_set('Asia/Jakarta');
 
 $tanggal = date('Y-m-d');
-$id_pembimbing = $_SESSION['id_pembimbing'];
+$id_perusahaan = $_SESSION['id_perusahaan'];
 
 // Modified query to only show students supervised by this pembimbing
 $query = mysqli_query($coneksi, "
@@ -23,7 +23,7 @@ $query = mysqli_query($coneksi, "
     FROM absen a
     INNER JOIN siswa s ON a.id_siswa = s.id_siswa
     WHERE a.tanggal = '$tanggal'
-    AND s.id_pembimbing = '$id_pembimbing'
+    AND s.id_perusahaan = '$id_perusahaan'
     ORDER BY a.jam_masuk ASC
 ");
 

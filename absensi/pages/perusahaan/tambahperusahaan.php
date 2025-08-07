@@ -13,6 +13,7 @@
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
+		
 		h2 {
 			color: #007bff;
 		}
@@ -44,6 +45,10 @@
 			padding: 20px;
 			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 		}
+<<<<<<< HEAD
+=======
+
+>>>>>>> a17e4a80dd4f29a1ae4c366fe34eab1307d2ab29
         @media (max-width: 991px) {
             body {
                 padding-left: 0;

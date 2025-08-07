@@ -34,6 +34,10 @@ include('koneksi.php');
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .table-responsive {
+            margin-top: 20px;
+        }
+
         h2 {
             color: #007bff;
         }
@@ -70,14 +74,15 @@ include('koneksi.php');
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                <th>No</th>
-                <th>NISN</th>
-                <th>Nama</th>
-                <th>Sekolah</th>
-                <th>Tempat Prakerin</th>
-                <th>Tanggal Mulai</th>
-                <th>Tanggal Selesai</th>
-                </tr>
+                    <tr>
+                        <th>No</th>
+                        <th>NISN</th>
+                        <th>Nama</th>
+                        <th>Sekolah</th>
+                        <th>Tempat Prakerin</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Selesai</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php

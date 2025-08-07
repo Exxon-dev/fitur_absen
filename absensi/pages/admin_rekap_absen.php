@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 date_default_timezone_set('Asia/Jakarta');
 
 // Check if pembimbing is logged in
-if (!isset($_SESSION['id_pembimbing'])) {
+if (!isset($_SESSION['id_perusahaan'])) {
     header("Location: ../sign-in.php");
     exit();
 }
@@ -26,13 +26,13 @@ $hariIndo = [
 ];
 
 $hari = $hariIndo[$hariInggris];
-$id_pembimbing = $_SESSION['id_pembimbing'];
+$id_perusahaan = $_SESSION['id_perusahaan'];
 $tanggal = date('Y-m-d');
 $batas_telat = '08:00:00'; // Batas waktu terlambat
 
 // Get only students supervised by this pembimbing
-$query_siswa = mysqli_prepare($coneksi, "SELECT id_siswa, nama_siswa, no_wa, id_pembimbing FROM siswa WHERE id_pembimbing = ? ORDER BY nama_siswa");
-mysqli_stmt_bind_param($query_siswa, "i", $id_pembimbing);
+$query_siswa = mysqli_prepare($coneksi, "SELECT id_siswa, nama_siswa, no_wa, id_perusahaan FROM siswa WHERE id_perusahaan = ? ORDER BY nama_siswa");
+mysqli_stmt_bind_param($query_siswa, "i", $id_perusahaan);
 mysqli_stmt_execute($query_siswa);
 $result_siswa = mysqli_stmt_get_result($query_siswa);
 ?>
