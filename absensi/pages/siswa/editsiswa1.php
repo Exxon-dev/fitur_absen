@@ -258,14 +258,19 @@ include('koneksi.php');
                 </div>
             </div>
 
-            <div class="form-group row">
-                <div class="col text-left">
-                    <button type="button" class="hapusSiswa" id="btnHapus"
-                        data-id="<?php echo $data['id_siswa']; ?>">Hapus</button>
-                </div>
-                <div class="col text-right">
-                    <a href="index.php?page=siswa" class="btn btn-warning">KEMBALI</a>
-                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+            <div class="form-group">
+                <div class="d-flex flex-wrap justify-content-between align-items-center">
+                    <!-- Tombol Hapus di kiri -->
+                    <button type="button" class="btn btn-danger hapusSiswa"
+                        id="btnHapus" data-id="<?php echo $data['id_siswa']; ?>">
+                        HAPUS
+                    </button>
+
+                    <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
+                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                        <a href="index.php?page=siswa" class="btn btn-warning mr-2">KEMBALI</a>
+                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                    </div>
                 </div>
             </div>
         </form>

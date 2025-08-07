@@ -277,6 +277,7 @@ if (isset($_GET['id_guru'])) {
                         <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
                         <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                     </div>
+                </div>
             </form>
         <?php else: ?>
             <div class="alert alert-warning">Data guru tidak ditemukan.</div>

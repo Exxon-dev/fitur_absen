@@ -45,6 +45,19 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
+        .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
+
         .editPerusahaan {
             color: white;
             /* Text putih */
