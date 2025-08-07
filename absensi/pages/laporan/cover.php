@@ -58,10 +58,13 @@ $stmt->close();
 $coneksi->close();
 
 // Cek logo sekolah
-$logoFile = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/pages/image/' . $data['logo_sekolah'];
-$logoPath = '/fitur_absen/pages/image/' . $data['logo_sekolah'];
-if (!file_exists($logoFile) || empty($data['logo_sekolah'])) {
-    $logoPath = '/fitur_absen/pages/image/default.png';
+$logoFileName = $data['logo_sekolah'] ?? '';
+$logoPath = '/fitur_absen/absensi/pages/image/' . $logoFileName;
+$fullLogoPath = $_SERVER['DOCUMENT_ROOT'] . $logoPath;
+
+// Jika file tidak ada atau nama file kosong, gunakan default
+if (empty($logoFileName) || !file_exists($fullLogoPath)) {
+    $logoPath = '/fitur_absen/absensi/pages/image/logo_sman1.png ';
 }
 
 // Header untuk semua user
@@ -120,7 +123,8 @@ header("Cache-Control: no-cache, must-revalidate");
         </tr>
         <tr>
             <td colspan="2" class="text-center" style="padding-top: 20mm;">
-                <img src="<?php echo $logoPath; ?>" alt="Logo Sekolah" class="table-logo">
+                <img src="<?= htmlspecialchars($logoPath); ?>" alt="Logo Sekolah" class="table-logo" onerror="this.onerror=null; this.src='/fitur_absen/absensi/pages/image/<?php htmlspecialchars($data['logo_sekolah']); ?>';">
+
             </td>
         </tr>
         <tr>
