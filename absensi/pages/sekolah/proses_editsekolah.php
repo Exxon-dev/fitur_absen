@@ -25,16 +25,26 @@ if (isset($_POST['submit'])) {
 	$logo_sekolah = $_FILES['logo_sekolah']['name'];
 
 
-	$sql = mysqli_query($coneksi, "UPDATE sekolah SET nama_sekolah='$nama_sekolah',alamat_sekolah='$alamat_sekolah', kepala_sekolah='$kepala_sekolah', username='$username', password='$password', logo_sekolah='$logo_sekolah' WHERE id_sekolah='$id_sekolah'") or die(mysqli_error($coneksi));
+	$sql = mysqli_query($coneksi, "UPDATE sekolah SET 
+	nama_sekolah='$nama_sekolah',
+	alamat_sekolah='$alamat_sekolah', 
+	kepala_sekolah='$kepala_sekolah', 
+	username='$username', 
+	password='$password', 
+	logo_sekolah='$logo_sekolah'
+	WHERE 
+	id_sekolah='$id_sekolah'")
+		or die(mysqli_error($coneksi));
+
 	if ($sql) {
-        $_SESSION['flash_edit'] = 'sukses';
-    }
-    
-    header("Location: ../../index.php?page=sekolah");
-    exit();
+		$_SESSION['flash_edit'] = 'sukses';
+	}
+
+	header("Location: ../../index.php?page=sekolah");
+	exit();
 } else {
-    header("Location: ../../index.php?page=sekolah");
-    exit();
+	header("Location: ../../index.php?page=sekolah");
+	exit();
 }
 
 ?>

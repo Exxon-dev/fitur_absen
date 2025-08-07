@@ -51,6 +51,19 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
+        .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -74,14 +87,13 @@ include('koneksi.php');
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                    <tr>
-                        <th>No</th>
-                        <th>NISN</th>
-                        <th>Nama</th>
-                        <th>Sekolah</th>
-                        <th>Tempat Prakerin</th>
-                        <th>Tanggal Mulai</th>
-                        <th>Tanggal Selesai</th>
+                    <th>No</th>
+                    <th>NISN</th>
+                    <th>Nama</th>
+                    <th>Sekolah</th>
+                    <th>Tempat Prakerin</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
                     </tr>
                 </thead>
                 <tbody>

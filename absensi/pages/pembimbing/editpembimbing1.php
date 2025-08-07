@@ -151,48 +151,54 @@ if (isset($_POST['submit'])) {
 
         <form action="pages/pembimbing/proses_editpembimbing.php" method="post">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label>Nama Pembimbing</label>
-                <input type="text" name="nama_pembimbing" class="form-control"
-                    value="<?php echo $data['nama_pembimbing']; ?>" required>
-            </div>
-            <div class="form-group col-md-6">
-                <label>No. Telepon / HP</label>
-                <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
-            </div>
-            <div class="form-group col-md-6">
-                <label>Alamat</label>
-                <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
-            </div>
-            <div class="form-group col-md-6">
-                <label>Jenis Kelamin</label>
-                <select name="jenis_kelamin" class="form-control">
-                    <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
-                    <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
-                </select>
-            </div>
-            <div class="form-group col-md-6">
-                <label>Username</label>
-                <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
-                    required>
-            </div>
-            <div class="form-group col-md-6">
-                <label>Password</label>
-                <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
-                    required>
-            </div>
-            <div class="form-group row">
-                <div class="col text-left">
-                    <button type="button" class="hapusPembimbing" id="btnHapus"
-                        data-id="<?php echo $data['id_pembimbing']; ?>">Hapus</button>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label>Nama Pembimbing</label>
+                    <input type="text" name="nama_pembimbing" class="form-control"
+                        value="<?php echo $data['nama_pembimbing']; ?>" required>
                 </div>
-                <div class="col text-right">
-                    <a href="index.php?page=pembimbing" class="btn btn-warning">Kembali</a>
-                    <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                <div class="form-group col-md-6">
+                    <label>No. Telepon / HP</label>
+                    <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                 </div>
+                <div class="form-group col-md-6">
+                    <label>Alamat</label>
+                    <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Jenis Kelamin</label>
+                    <select name="jenis_kelamin" class="form-control">
+                        <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                        <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
+                        required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
+                        required>
+                </div>
+                <div class="form-group">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center">
+                        <!-- Tombol Hapus di kiri -->
+                        <button type="button" class="btn btn-danger hapusPembimbing"
+                            id="btnHapus" data-id="<?php echo $data['id_pembimbing']; ?>">
+                            HAPUS
+                        </button>
+
+                        <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
+                        <div class="d-flex flex-wrap justify-content-end gap-2">
+                            <a href="index.php?page=pembimbing" class="btn btn-warning mr-2">KEMBALI</a>
+                            <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
         </form>
 
         <script>
