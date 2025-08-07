@@ -147,10 +147,8 @@ include('koneksi.php');
                                     <td>' . $data['pimpinan'] . '</td>
                                     <td>' . $data['alamat_perusahaan'] . '</td>
                                     <td>' . $data['no_tlp'] . '</td>
-                                    <td>
-                                        <a href="' . $editUrl . '" class="editPerusahaan">Edit</a>
-                                        <a href="' . $deleteUrl . '" class="hapusPerusahaan">Delete</a>
-                                    </td>
+                                </tr>';
+                            $no++;
                         }
                     } else {
                         echo '
@@ -160,6 +158,7 @@ include('koneksi.php');
                     }
                     ?>
                 </tbody>
+
             </table>
         </div>
 
