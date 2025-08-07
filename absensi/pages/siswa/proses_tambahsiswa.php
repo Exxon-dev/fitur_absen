@@ -11,7 +11,6 @@ if (isset($_POST['submit'])) {
     $nisn = $_POST['nisn'];
     $nama_siswa = $_POST['nama_siswa'];
     $no_wa = $_POST['no_wa'];
-    $kelas = $_POST['kelas'];
     $pro_keahlian = $_POST['pro_keahlian'];
     $TL = $_POST['TL'];
     $TTGL = $_POST['TTGL'];
@@ -38,7 +37,6 @@ if (isset($_POST['submit'])) {
         nisn,
         nama_siswa,
         no_wa,
-        kelas,
         pro_keahlian,
         TL,
         TTGL,
@@ -55,7 +53,6 @@ if (isset($_POST['submit'])) {
         '$nisn',
         '$nama_siswa',
         '$no_wa',
-        '$kelas',
         '$pro_keahlian',
         '$TL',
         '$TTGL',

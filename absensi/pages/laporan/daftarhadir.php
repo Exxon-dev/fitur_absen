@@ -7,11 +7,10 @@ if (!$id_siswa) {
     exit();
 }
 
-
 $query_siswa = "
     SELECT 
         s.nama_siswa, 
-        s.id_siswa 
+        s.nisn
     FROM 
         siswa s 
     WHERE 
@@ -26,7 +25,7 @@ $result_siswa = $stmt_siswa->get_result();
 if ($result_siswa->num_rows > 0) {
     $data_siswa = $result_siswa->fetch_assoc();
     $nama_siswa = htmlspecialchars($data_siswa['nama_siswa']);
-    $id_siswa = htmlspecialchars($data_siswa['id_siswa']);
+    $nisn = htmlspecialchars($data_siswa['nisn']);
 } else {
     echo "Data siswa tidak ditemukan.";
     exit();
@@ -107,22 +106,18 @@ $coneksi->close();
         <div class="text-center mb-8">
             <p class="font-bold style9">DAFTAR HADIR PESERTA DIDIK PRAKTIK KERJA LAPANGAN</p>
         </div>
-        <table   cellspacing="2">
+        <table cellspacing="2">
             <tr class="style9">
                 <td>NAMA</td>
                 <td>: <?php echo $nama_siswa; ?></td>
             </tr>
             <tr class="style9">
-                <td>ID Siswa</td>
-                <td>: <?php echo $id_siswa; ?></td>
+                <td>NISN</td>
+                <td>: <?php echo $nisn; ?></td>
             </tr>   
         </table>
         <table width="96%" border="1" align="center" cellpadding="3" cellspacing="0" class="style9">
             <thead>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
                 <tr height="35">
                     <th class="left bottom top">No</th>
                     <th class="left bottom top">Hari/Tanggal</th>
@@ -145,15 +140,12 @@ $coneksi->close();
                     $no++;
                 }
                 ?>
-                <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                </tr>
+                <tr><td colspan="5">&nbsp;</td></tr>
             </tbody>
         </table>
         <div class="flex justify-end items-center mb-8">
             <div class="text-center">
-                <div class="style9">.........................202...</div>
+                <div class="style9">Kajoran  202...</div>
                 <div class="style9">PEMBIMBING DUDI</div>
                 <br><br><br>
                 <div class="style9">(.............................................)</div>

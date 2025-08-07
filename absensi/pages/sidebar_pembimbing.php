@@ -65,7 +65,7 @@
   <div class="sidenav-header">
     <a class="navbar-brand m-0" href="index.php?page=dashboard_pembimbing">
       <img src="assets/img/LOGOSMK-removebg-preview.png" class="navbar-brand-img h-100" alt="main_logo">
-      <span class="ms-1 font-weight-bold text-white">ABSENS</span>
+      <span class="ms-1 font-weight-bold text-white">ABSENSI PEMBIMBING</span>
     </a>
   </div>
   <hr class="horizontal light mt-0 mb-2">

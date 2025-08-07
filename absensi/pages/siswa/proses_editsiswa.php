@@ -20,7 +20,6 @@ if (isset($_POST['submit'])) {
 	$nis = $_POST['nis'];
 	$nisn = $_POST['nisn'];
 	$nama_siswa = $_POST['nama_siswa'];
-	$kelas = $_POST['kelas'];
 	$pro_keahlian = $_POST['pro_keahlian'];
 	$TL = $_POST['TL'];
 	$TTGL = $_POST['TTGL'];
@@ -33,7 +32,7 @@ if (isset($_POST['submit'])) {
 	$username = $_POST['username'];
 	$password = $_POST['password'];
     $foto_lama        = $_POST['foto_lama'] ?? 'default.jpg';
-	
+
 	$profile = $foto_lama;
 
 	// Jika ada upload foto baru

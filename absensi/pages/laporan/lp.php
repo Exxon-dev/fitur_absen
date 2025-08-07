@@ -10,7 +10,6 @@ if (!$id_siswa) {
 $query = " 
 SELECT 
     s.nama_siswa, 
-    s.kelas, 
     s.NISN,
     s.pro_keahlian,
     p.nama_perusahaan AS id_perusahaan, 
@@ -92,7 +91,6 @@ $coneksi->close();
         <h1 class="text-center font-bold mb-8 style9">LEMBAR PENGESAHAN</h1>
         <p class="mb-4 style9">Laporan praktik kerja lapangan yang telah dilaksanakan oleh : </p>
         <p class="mb-4 style9">Nama : <?php echo htmlspecialchars($data['nama_siswa']); ?></p>
-        <p class="mb-4 style9">Kelas : <?php echo htmlspecialchars($data['kelas']); ?></p>
         <p class="mb-4 style9">NISN : <?php echo htmlspecialchars($data['NISN']); ?></p>
         <p class="mb-4 style9">Program Keahlian : <?php echo htmlspecialchars($data['pro_keahlian']); ?></p>
         <p class="mb-8 style9">Ditulis sebagai syarat kelulusan tahun pelajaran 2024/2025.</p>
