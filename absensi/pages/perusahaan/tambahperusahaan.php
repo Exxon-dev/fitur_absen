@@ -13,7 +13,6 @@
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
-
 		h2 {
 			color: #007bff;
 		}
@@ -45,7 +44,6 @@
 			padding: 20px;
 			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 		}
-
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -60,7 +58,6 @@
 </head>
 
 <body>
-
 	<div class="main-container container-custom" style="margin-top:20px">
 		<h2 class="text-center">Tambah Perusahaan</h2>
 		<hr>
@@ -90,7 +87,6 @@
 			</div>
 		</form>
 	</div>
->>>>>>> fitur
 
             <div class="form-row">
                 <div class="col text-right">

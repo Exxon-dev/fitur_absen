@@ -140,7 +140,7 @@ include('koneksi.php');
                         while ($data = mysqli_fetch_assoc($sql)) {
                             $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
                             $deleteUrl = "index.php?page=hapusperusahaan&id_perusahaan=" . $data['id_perusahaan'];
-                            echo '  
+                            echo '
                                 <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
                                     <td>' . $no . '</td>
                                     <td>' . $data['nama_perusahaan'] . '</td>
@@ -151,8 +151,6 @@ include('koneksi.php');
                                         <a href="' . $editUrl . '" class="editPerusahaan">Edit</a>
                                         <a href="' . $deleteUrl . '" class="hapusPerusahaan">Delete</a>
                                     </td>
-                                </tr>';
-                            $no++;
                         }
                     } else {
                         echo '
