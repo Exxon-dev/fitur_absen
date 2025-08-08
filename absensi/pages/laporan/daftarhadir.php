@@ -1,5 +1,5 @@
 <?php
-include('../../koneksi.php'); 
+include('../../koneksi.php');
 
 $id_siswa = $_GET['id_siswa'] ?? null;
 if (!$id_siswa) {
@@ -61,6 +61,7 @@ $coneksi->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,25 +71,64 @@ $coneksi->close();
             size: A4;
             margin: 20mm;
         }
+
         .printable {
             margin: 20px;
         }
+
         @media print {
             .no-print {
-                display: none; 
+                display: none;
             }
         }
-        .style6 { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 16px; }
-        .style9 { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; }
-        .style27 { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; }
-        .top { border-top: 1px solid #000000; }
-        .bottom { border-bottom: 1px solid #000000; }
-        .left { border-left: 1px solid #000000; }
-        .right { border-right: 1px solid #000000; }
-        .all { border: 1px solid #000000; }
-        .align-justify { text-align: justify; }
-        .align-center { text-align: center; }
-        .align-right { text-align: right; }
+
+        .style6 {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        .style9 {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 11px;
+        }
+
+        .style27 {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .top {
+            border-top: 1px solid #000000;
+        }
+
+        .bottom {
+            border-bottom: 1px solid #000000;
+        }
+
+        .left {
+            border-left: 1px solid #000000;
+        }
+
+        .right {
+            border-right: 1px solid #000000;
+        }
+
+        .all {
+            border: 1px solid #000000;
+        }
+
+        .align-justify {
+            text-align: justify;
+        }
+
+        .align-center {
+            text-align: center;
+        }
+
+        .align-right {
+            text-align: right;
+        }
     </style>
     <script>
         function printReport() {
@@ -101,20 +141,17 @@ $coneksi->close();
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body>
     <div class="printable">
         <div class="text-center mb-8">
             <p class="font-bold style9">DAFTAR HADIR PESERTA DIDIK PRAKTIK KERJA LAPANGAN</p>
         </div>
         <table cellspacing="2">
-            <tr class="style9">
-                <td>NAMA</td>
-                <td>: <?php echo $nama_siswa; ?></td>
-            </tr>
-            <tr class="style9">
-                <td>NISN</td>
-                <td>: <?php echo $nisn; ?></td>
-            </tr>   
+            <div class="style9 mb-4">
+                <p>NAMA: <?php echo $nama_siswa; ?></p>
+                <p>NISN: <?php echo $nisn; ?></p>
+            </div>
         </table>
         <table width="96%" border="1" align="center" cellpadding="3" cellspacing="0" class="style9">
             <thead>
@@ -127,25 +164,27 @@ $coneksi->close();
                 </tr>
             </thead>
             <tbody>
-                <?php 
+                <?php
                 $no = 1;
                 foreach ($kehadiran as $record) {
                     echo "<tr height='25' class='style27'>
                         <td class='top bottom left text-center'>{$no}</td>
                         <td class='top bottom left text-center'>" . htmlspecialchars($record['tanggal']) . "</td>
                         <td class='top bottom left text-center'>" . htmlspecialchars($record['jam_masuk']) . "</td>
-                        <td class='top bottom left text-center'>" . htmlspecialchars($record['jam_keluar']?? '') . "</td>
+                        <td class='top bottom left text-center'>" . htmlspecialchars($record['jam_keluar'] ?? '') . "</td>
                         <td class='top bottom left right text-center'>" . htmlspecialchars($record['keterangan']) . "</td>
                     </tr>";
                     $no++;
                 }
                 ?>
-                <tr><td colspan="5">&nbsp;</td></tr>
+                <tr>
+                    <td colspan="5">&nbsp;</td>
+                </tr>
             </tbody>
         </table>
         <div class="flex justify-end items-center mb-8">
             <div class="text-center">
-                <div class="style9">Kajoran  202...</div>
+                <div class="style9">Kajoran, ..................... 202...</div>
                 <div class="style9">PEMBIMBING DUDI</div>
                 <br><br><br>
                 <div class="style9">(.............................................)</div>
@@ -153,4 +192,5 @@ $coneksi->close();
         </div>
     </div>
 </body>
+
 </html>

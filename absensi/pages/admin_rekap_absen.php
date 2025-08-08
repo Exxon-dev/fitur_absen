@@ -162,7 +162,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
+                    <?php
                     $no = 1;
                     while ($siswa = mysqli_fetch_assoc($result_siswa)): ?>
                         <?php
@@ -183,6 +183,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                         $badge_class = 'badge-belum';
                         $status_icon = '<i class="bi bi-x-circle"></i>';
                         $status_text = 'Belum Absen';
+                        $show_wa_button = false;
                         $pesan = null;
 
                         if ($absen) {
@@ -196,18 +197,21 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                                     $status_icon = '<i class="bi bi-emoji-frown"></i>';
                                     $status_text = 'Sakit';
                                     $pesan = "🤒 Hai *$nama* , status absensi hari $hari ($tanggal) adalah SAKIT. Semoga lekas sembuh! 🤒";
+                                    $show_wa_button = true;
                                     break;
                                 case 'izin':
                                     $badge_class = 'badge-izin';
                                     $status_icon = '<i class="bi bi-info-circle"></i>';
                                     $status_text = 'Izin';
                                     $pesan = "ℹ️ Hai *$nama* , status absensi hari $hari ($tanggal) adalah IZIN. Jangan lupa konfirmasi ke pembimbing! ℹ️";
+                                    $show_wa_button = true;
                                     break;
                                 case 'alpa':
                                     $badge_class = 'badge-belum';
                                     $status_icon = '<i class="bi bi-exclamation-triangle"></i>';
                                     $status_text = 'Alpa';
                                     $pesan = "⚠️ Hai *$nama* , status absensi hari $hari ($tanggal) adalah ALPA. Harap segera konfirmasi ke pembimbing! ⚠️";
+                                    $show_wa_button = true;
                                     break;
                                 default:
                                     if ($absen['jam_masuk'] > $batas_telat) {
@@ -215,15 +219,18 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                                         $status_icon = '<i class="bi bi-clock-history"></i>';
                                         $status_text = 'Telat';
                                         $pesan = "⏰ Hai *$nama* , telat dalam melakukan absensi hari $hari ($tanggal) pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi! ⏰";
+                                        $show_wa_button = true;
                                     } else {
                                         $badge_class = 'badge-hadir';
                                         $status_icon = '<i class="bi bi-check-circle"></i>';
                                         $status_text = 'Hadir';
                                         $pesan = "✅ Hai *$nama* , absensi hari $hari ($tanggal) sudah tercatat. Terima kasih! ✅";
+                                        $show_wa_button = false; // Tidak tampilkan tombol WA untuk yang hadir tepat waktu
                                     }
                             }
                         } else {
                             $pesan = "📢 Hai *$nama* , kamu belum melakukan absen hari $hari ($tanggal). Harap segera absen!";
+                            $show_wa_button = true;
                         }
                         ?>
                         <tr>
@@ -237,7 +244,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                             </td>
                             <td><?= $jam_masuk_display ?></td>
                             <td>
-                                <?php if ($pesan && !empty($wa)): ?>
+                                <?php if ($show_wa_button && $pesan && !empty($wa)): ?>
                                     <button class="btn btn-sm btn-wa" onclick="kirimNotifikasi('<?= addslashes($wa) ?>', '<?= addslashes($pesan) ?>')">
                                         <i class="bi bi-whatsapp"></i> Kirim WA
                                     </button>
@@ -257,7 +264,9 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
     <script>
         async function kirimNotifikasi(no, pesan) {
             // Show confirmation dialog
-            const { isConfirmed } = await Swal.fire({
+            const {
+                isConfirmed
+            } = await Swal.fire({
                 title: 'Kirim Notifikasi?',
                 html: `<p>Kirim pesan ke <b>${no}</b>?</p>
                       <textarea class="form-control mt-2" readonly>${pesan}</textarea>`,
