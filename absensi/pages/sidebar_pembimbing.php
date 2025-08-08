@@ -95,15 +95,15 @@
       <li class="nav-item">
         <a class='nav-link text-white <?php echo ($_GET['page'] == 'catatan') ? 'active' : ''; ?>' href='index.php?page=catatan'>
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">receipt_long</i>
+            <i class="material-icons opacity-10">note</i>
           </div>
-          <span class="nav-link-text ms-1">Data Catatan</span>
+          <span class="nav-link-text ms-1">Catatan</span>
         </a>
       </li>
       <li class="nav-item">
         <a class='nav-link text-white <?php echo ($_GET['page'] == 'rekap_absen') ? 'active' : ''; ?>' href='index.php?page=rekap_absen'>
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">table_view</i>
+            <i class="material-icons opacity-10">list_alt</i>
           </div>
           <span class="nav-link-text ms-1">Rekap Absen</span>
         </a>
@@ -111,7 +111,7 @@
       <li class="nav-item">
         <a class='nav-link text-white <?php echo ($_GET['page'] == 'rekap_ip') ? 'active' : ''; ?>' href='index.php?page=rekap_ip'>
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">table_view</i>
+            <i class="material-icons opacity-10">list_alt</i>
           </div>
           <span class="nav-link-text ms-1">Rekap IP</span>
         </a>
@@ -122,7 +122,7 @@
       <li class="nav-item">
         <a class='nav-link text-white <?php echo ($_GET['page'] == 'laporan2') ? 'active' : ''; ?>' href='index.php?page=laporan2'>
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">table_view</i>
+            <i class="material-icons opacity-10">insert_chart</i>
           </div>
           <span class="nav-link-text ms-1">Laporan</span>
         </a>

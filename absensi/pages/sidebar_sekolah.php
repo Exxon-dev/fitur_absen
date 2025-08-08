@@ -89,16 +89,6 @@
                     <span class="nav-link-text ms-1">Profile Sekolah</span>
                 </a>
             </li>
-            
-            <!-- Jurnal
-            <li class="nav-item">
-                <a class="nav-link text-white" href="index.php?page=jurnal">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">assignment</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Jurnal</span>
-                </a>
-            </li> -->
 
             <!-- Catatan -->
             <li class="nav-item">
@@ -109,16 +99,6 @@
                     <span class="nav-link-text ms-1">Catatan</span>
                 </a>
             </li>
-
-            <!-- Rekap Absen
-            <li class="nav-item">
-                <a class="nav-link text-white <?= ($page == 'rekap_absen') ? 'active' : ''; ?>" href="index.php?page=rekap_absen">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">table_view</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Rekap Absen</span>
-                </a>
-            </li> -->
 
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account Pages</h6>

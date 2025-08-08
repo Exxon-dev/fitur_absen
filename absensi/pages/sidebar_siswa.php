@@ -91,7 +91,7 @@
       <li class="nav-item">
         <a href="index.php?page=catatan" class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] === 'catatan') ? 'active' : ''; ?>">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">assignment</i>
+            <i class="material-icons opacity-10">note</i>
           </div>
           <span class="nav-link-text ms-1">Catatan</span>
         </a>
@@ -104,7 +104,7 @@
       <li class="nav-item">
         <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'laporan') ? 'active' : ''; ?>" href="index.php?page=laporan">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">table_view</i>
+            <i class="material-icons opacity-10">insert_chart</i>
           </div>
           <span class="nav-link-text ms-1">Laporan</span>
         </a>
