@@ -75,6 +75,18 @@ $total_pages = max(1, ceil($total_rows / $limit));
             background-color: #e9ecef;
         }
 
+                .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
         .pagination {
             justify-content: center;
         }
@@ -207,8 +219,7 @@ $total_pages = max(1, ceil($total_rows / $limit));
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <?php
-    // Notifikasi flash message hapus
+    <?php 
     if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
         echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data catatan berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
         unset($_SESSION['flash_hapus']);

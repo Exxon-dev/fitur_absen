@@ -166,6 +166,21 @@ if (isset($_POST['submit'])) {
                     <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
                 </div>
                 <div class="form-group col-md-6">
+                    <label>Perusahaan</label>
+                    <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Perusahaan</option>
+                        <?php
+                        $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                        while ($row = mysqli_fetch_array($data_perusahaan)) {
+                        ?>
+                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>"
+                                <?php if ($row['id_perusahaan'] == $data['id_perusahaan']) echo 'selected'; ?>>
+                                <?php echo htmlspecialchars($row['nama_perusahaan']); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
                         <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>

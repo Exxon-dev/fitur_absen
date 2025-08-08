@@ -77,6 +77,18 @@ $num_rows = mysqli_num_rows($query);
             background-color: #e9ecef;
         }
 
+                .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
         .empty-message {
             text-align: center;
             padding: 20px;

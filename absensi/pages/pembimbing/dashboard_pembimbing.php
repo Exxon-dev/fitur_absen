@@ -1,6 +1,4 @@
 <?php
-ob_start();
-session_start();
 include "koneksi.php";
 
 // Validasi session pembimbing
@@ -206,6 +204,18 @@ $jumlah_perusahaan = $data_perusahaan['total'];
     .tabletbody tr:hover {
       background-color: #e9ecef;
     }
+
+            .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
 
     /* Mobile Card View */
     .student-cards {

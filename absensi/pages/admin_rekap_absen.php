@@ -102,6 +102,18 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             color: white;
         }
 
+                .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
         .tabletbody tr:hover {
             background-color: #e9ecef;
         }

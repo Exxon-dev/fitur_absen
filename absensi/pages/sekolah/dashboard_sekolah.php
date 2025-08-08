@@ -146,6 +146,18 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
             background-color: rgba(0, 123, 255, 0.05);
         }
 
+                .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
+        }
+
         /* Mobile Card View */
         .student-cards {
             display: none;

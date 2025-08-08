@@ -104,11 +104,12 @@
                 <div class="form-group col-md-6">
                     <label>Perusahaan</label>
                     <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Perusahaan</option>
                         <?php
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>" <?php echo ($row['id_perusahaan'] == $row['id_perusahaan']) ? 'selected' : ''; ?>>
+                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>" <?php echo ($row['id_perusahaan'] == $row['id_perusahaan']); ?>>
                                 <?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
                         <?php } ?>
                     </select>

@@ -3,6 +3,7 @@ include('../../koneksi.php');
 
 if (isset($_POST['submit'])) {
     $id_pembimbing    = $_POST['id_pembimbing'];
+    $id_perusahaan    = $_POST['id_perusahaan'];
     $nama_pembimbing  = $_POST['nama_pembimbing'];
     $no_tlp           = $_POST['no_tlp'];
     $alamat           = $_POST['alamat'];
@@ -32,6 +33,7 @@ if (isset($_POST['submit'])) {
     }
 
     $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
+        id_perusahaan = '$id_perusahaan',
         nama_pembimbing = '$nama_pembimbing',
         no_tlp          = '$no_tlp',
         alamat          = '$alamat',
