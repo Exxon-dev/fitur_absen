@@ -11,7 +11,7 @@ if (!$id_siswa || !is_numeric($id_siswa)) {
 }
 
 // Pengecekan session untuk semua role
-if (!isset($_SESSION['id_siswa']) || !isset($_SESSION['level'])) {
+if (!isset($_SESSION['level'])) {
     header("Location: ../sign-in.php");
     exit();
 }
@@ -59,8 +59,8 @@ $coneksi->close();
 
 // Cek logo sekolah
 $logoFileName = $data['logo_sekolah'] ?? '';
-$basePath = '/fitur_absen/absensi/pages/image/';
-$defaultLogo = $basePath . 'default_logo.png';
+$basePath = '/fitur_absen/absensi/';
+$defaultLogo = $basePath . $data['logo_sekolah'] ?? '';
 
 // Debug: Tampilkan nama file logo dari database
 error_log("Logo dari database: " . $logoFileName);
@@ -68,7 +68,7 @@ error_log("Logo dari database: " . $logoFileName);
 // Jika logo ada di database
 if (!empty($logoFileName)) {
     // Jika logo berada di folder uploads
-    if (strpos($logoFileName, '../../uploads/') === 0) {
+    if (strpos($logoFileName, 'uploads/') === 0) {
         $logoPath = '/' . $logoFileName;
     }
     // Jika logo berada di folder image sekolah

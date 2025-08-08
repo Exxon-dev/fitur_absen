@@ -156,7 +156,12 @@ if (!isset($_SESSION['id_siswa'])) {
             no_wa='$no_wa',
             username='$username', 
             password='$password', 
-            kelas='$kelas', 
+            id_sekolah='$id_sekolah',
+            id_perusahaan='$id_perusahaan',
+            tanggal_mulai='$tanggal_mulai',
+            tanggal_selesai='$tanggal_selesai',
+            id_pembimbing='$id_pembimbing',
+            id_guru='$id_guru',
             pro_keahlian='$pro_keahlian',
             TL='$TL',
             TTGL='$TTGL'
