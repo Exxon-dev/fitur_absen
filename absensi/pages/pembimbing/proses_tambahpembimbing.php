@@ -2,7 +2,8 @@
 include('../../koneksi.php');
 
 if (isset($_POST['submit'])) {
-    $nama_pembimbing = $_POST['nama_pembimbing'];
+    $id_perusahaan    = $_POST['id_perusahaan'];
+    $nama_pembimbing  = $_POST['nama_pembimbing'];
     $no_tlp           = $_POST['no_tlp'];
     $alamat           = $_POST['alamat'];
     $jenis_kelamin    = $_POST['jenis_kelamin'];
@@ -14,6 +15,7 @@ if (isset($_POST['submit'])) {
 
     if (mysqli_num_rows($cek) == 0) {
         $sql = mysqli_query($coneksi, "INSERT INTO pembimbing (
+        id_perusahaan,
         nama_pembimbing,
         no_tlp,
         alamat,
@@ -21,6 +23,7 @@ if (isset($_POST['submit'])) {
         username, 
         password) 
         VALUES (
+        '$id_perusahaan', 
         '$nama_pembimbing', 
         '$no_tlp',
         '$alamat',
