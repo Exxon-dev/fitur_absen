@@ -415,7 +415,7 @@ $jumlah_perusahaan = $data_perusahaan['total'];
 
             <?php if (mysqli_num_rows($dataSiswa) > 0) : ?>
               <div class="mt-3 text-right">
-                <button type="submit" name="simpan_semua" class="btn btn-success">Simpan Semua</button>
+                <button type="submit" name="simpan_semua" class="btn btn-primary">Simpan Semua</button>
               </div>
             <?php endif; ?>
           </div>
@@ -469,7 +469,6 @@ $jumlah_perusahaan = $data_perusahaan['total'];
     }
     ?>
   </div>
-
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
