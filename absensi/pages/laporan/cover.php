@@ -11,7 +11,7 @@ if (!$id_siswa || !is_numeric($id_siswa)) {
 }
 
 // Pengecekan session untuk semua role
-if (isset($_SESSION['logged_in'])) {
+if (!isset($_SESSION['id_siswa']) || !isset($_SESSION['level'])) {
     header("Location: ../sign-in.php");
     exit();
 }
@@ -59,15 +59,41 @@ $coneksi->close();
 
 // Cek logo sekolah
 $logoFileName = $data['logo_sekolah'] ?? '';
-$logoPath = '/fitur_absen/absensi/pages/image/' . $logoFileName;
-$fullLogoPath = $_SERVER['DOCUMENT_ROOT'] . $logoPath;
+$basePath = '/fitur_absen/absensi/pages/image/';
+$defaultLogo = $basePath . 'default_logo.png';
 
-// Jika file tidak ada atau nama file kosong, gunakan default
-if (empty($logoFileName) || !file_exists($fullLogoPath)) {
-    $logoPath = '/fitur_absen/absensi/pages/image/logo_sman1.png ';
+// Debug: Tampilkan nama file logo dari database
+error_log("Logo dari database: " . $logoFileName);
+
+// Jika logo ada di database
+if (!empty($logoFileName)) {
+    // Jika logo berada di folder uploads
+    if (strpos($logoFileName, '../../uploads/') === 0) {
+        $logoPath = '/' . $logoFileName;
+    }
+    // Jika logo berada di folder image sekolah
+    else {
+        $logoPath = $basePath . 'logo_sekolah/' . $logoFileName;
+    }
+
+    $fullLogoPath = $_SERVER['DOCUMENT_ROOT'] . $logoPath;
+
+    // Debug: Tampilkan path lengkap yang digunakan
+    error_log("Full path logo: " . $fullLogoPath);
+
+    // Verifikasi file benar-benar ada
+    if (!file_exists($fullLogoPath)) {
+        error_log("File logo tidak ditemukan, menggunakan default");
+        $logoPath = $defaultLogo;
+    }
+} else {
+    error_log("Logo tidak ada di database, menggunakan default");
+    $logoPath = $defaultLogo;
 }
 
-// Header untuk semua user
+// Debug: Tampilkan path logo yang akan digunakan
+error_log("Path logo yang digunakan: " . $logoPath);
+
 header("Content-Type: text/html; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 ?>
@@ -83,7 +109,7 @@ header("Cache-Control: no-cache, must-revalidate");
     <style type="text/css">
         @page {
             size: A4;
-            margin: 20mm;
+            margin: 30mm;
         }
 
         body {
@@ -94,8 +120,8 @@ header("Cache-Control: no-cache, must-revalidate");
         }
 
         .table-logo {
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             object-fit: contain;
             margin: 0 auto;
         }
@@ -122,13 +148,15 @@ header("Cache-Control: no-cache, must-revalidate");
             </td>
         </tr>
         <tr>
-            <td colspan="2" class="text-center" style="padding-top: 20mm;">
-                <img src="<?= htmlspecialchars($logoPath); ?>" alt="Logo Sekolah" class="table-logo" onerror="this.onerror=null; this.src='/fitur_absen/absensi/pages/image/<?php htmlspecialchars($data['logo_sekolah']); ?>';">
-
+            <td colspan="2" class="text-center" style="padding-top: 30mm;">
+                <img src="<?= htmlspecialchars($logoPath); ?>"
+                    alt="Logo <?= htmlspecialchars($data['nama_sekolah']); ?>"
+                    class="table-logo"
+                    onerror="this.onerror=null; this.src='<?= $defaultLogo ?>'">
             </td>
         </tr>
         <tr>
-            <td colspan="2" class="text-center" style="padding-top: 20mm;">
+            <td colspan="2" class="text-center" style="padding-top: 30mm;">
                 <p>Disusun oleh:</p>
                 <p>Nama: <?php echo htmlspecialchars($data['nama_siswa']); ?></p>
                 <p>NIS: <?php echo htmlspecialchars($data['nis']); ?></p>
@@ -155,7 +183,7 @@ header("Cache-Control: no-cache, must-revalidate");
         document.addEventListener('DOMContentLoaded', function() {
             var logo = document.querySelector('.table-logo');
             logo.onerror = function() {
-                this.src = '<?php echo "/fitur_absen/pages/image/default.png"; ?>';
+                this.src = '<?= $defaultLogo ?>';
             };
         });
     </script>

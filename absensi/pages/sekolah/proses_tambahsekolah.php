@@ -27,7 +27,7 @@ if (isset($_POST['submit'])) {
         '$password', 
         '$logo_sekolah')")
         or die(mysqli_error($coneksi));
-
+    
 		if ($sql) {
             $_SESSION['flash_tambah'] = 'sukses';
             header('Location: ../../index.php?page=sekolah');
