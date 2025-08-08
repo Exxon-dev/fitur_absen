@@ -114,7 +114,6 @@ if (!isset($_SESSION['id_siswa'])) {
             $nisn               = $_POST['nisn'];
             $nama_siswa         = $_POST['nama_siswa'];
             $no_wa              = $_POST['no_wa'];
-            $kelas              = $_POST['kelas'];
             $pro_keahlian       = $_POST['pro_keahlian'];
             $TL                 = $_POST['TL'];
             $TTGL               = $_POST['TTGL'];
