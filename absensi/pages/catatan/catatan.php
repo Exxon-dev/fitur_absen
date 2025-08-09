@@ -1,5 +1,4 @@
 <?php
-session_start();
 include('koneksi.php');
 
 // Ambil data dari session
@@ -7,6 +6,7 @@ $level = $_SESSION['level'] ?? '';
 $id_siswa = $_SESSION['id_siswa'] ?? null;
 $id_perusahaan = $_SESSION['id_perusahaan'] ?? null;
 $id_sekolah = $_SESSION['id_sekolah'] ?? null;
+$id_pembimbing = $_SESSION['id_pembimbing'] ?? null;  // Penting: id pembimbing saat login
 
 // Parameter dari URL
 $tanggal = isset($_GET['tanggal']) ? mysqli_real_escape_string($coneksi, $_GET['tanggal']) : date('Y-m-d');
@@ -30,7 +30,7 @@ $where_clause = implode(' AND ', $where_conditions);
 
 // Hitung total data untuk pagination
 $count_sql = "
-    SELECT COUNT(*) AS total
+    SELECT COUNT(DISTINCT siswa.id_siswa) AS total
     FROM siswa
     LEFT JOIN jurnal ON siswa.id_siswa = jurnal.id_siswa AND DATE(jurnal.tanggal) = '$tanggal'
     WHERE $where_clause
@@ -39,7 +39,49 @@ $count_result = mysqli_query($coneksi, $count_sql);
 $total_rows = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = max(1, ceil($total_rows / $limit));
 
-// Query untuk mendapatkan data jurnal
+// Buat subquery untuk ambil catatan pertama sesuai level login
+if ($level === 'pembimbing' && !empty($id_pembimbing)) {
+    // Catatan pembimbing tertentu (filter berdasarkan id_pembimbing)
+    $subquery_catatan = "
+        (
+            SELECT catatan.catatan
+            FROM catatan
+            WHERE catatan.id_jurnal = jurnal.id_jurnal
+            AND catatan.id_pembimbing = '$id_pembimbing'
+            ORDER BY catatan.tanggal ASC
+            LIMIT 1
+        ) AS catatan,
+
+        (
+            SELECT catatan.tanggal
+            FROM catatan
+            WHERE catatan.id_jurnal = jurnal.id_jurnal
+            AND catatan.id_pembimbing = '$id_pembimbing'
+            ORDER BY catatan.tanggal ASC
+            LIMIT 1
+        ) AS waktu_catatan
+    ";
+} else {
+    // Catatan semua pembimbing (tanpa filter id_pembimbing)
+    $subquery_catatan = "
+        (
+            SELECT catatan.catatan
+            FROM catatan
+            WHERE catatan.id_jurnal = jurnal.id_jurnal
+            ORDER BY catatan.tanggal ASC
+            LIMIT 1
+        ) AS catatan,
+
+        (
+            SELECT catatan.tanggal
+            FROM catatan
+            WHERE catatan.id_jurnal = jurnal.id_jurnal
+            ORDER BY catatan.tanggal ASC
+            LIMIT 1
+        ) AS waktu_catatan
+    ";
+}
+
 $sql = "
     SELECT
         siswa.id_siswa,
@@ -47,12 +89,11 @@ $sql = "
         jurnal.id_jurnal,
         jurnal.keterangan AS keterangan_jurnal,
         jurnal.tanggal AS tanggal_jurnal,
-        catatan.catatan,
-        catatan.tanggal AS waktu_catatan
+        $subquery_catatan
     FROM siswa
     LEFT JOIN jurnal ON siswa.id_siswa = jurnal.id_siswa AND DATE(jurnal.tanggal) = '$tanggal'
-    LEFT JOIN catatan ON jurnal.id_jurnal = catatan.id_jurnal
     WHERE $where_clause
+    GROUP BY siswa.id_siswa, jurnal.id_jurnal
     ORDER BY siswa.nama_siswa ASC
     LIMIT $limit OFFSET $offset
 ";
@@ -62,12 +103,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Data Jurnal dan Catatan Harian</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         .clickable-row {
             cursor: pointer;
@@ -75,20 +117,17 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
         body {
             padding-left: 270px;
-            transition: padding-left 0.3s;
             background-color: #f8f9fa;
+            transition: padding-left 0.3s;
         }
 
         .main-container {
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-left: 0;
-            width: auto;
+            margin: 20px 20px 0 0;
             max-width: none;
         }
 
         .container-custom {
-            background-color: #ffffff;
+            background-color: #fff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -101,26 +140,6 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
         .table tbody tr:hover {
             background-color: #e9ecef;
-        }
-
-                .table-responsive {
-            border: none !important;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .table td,
-        .table th {
-            border: 1px solid #dee2e6 !important;
-            vertical-align: middle;
-        }
-
-        .pagination {
-            justify-content: center;
-        }
-
-        .date-picker {
-            max-width: 200px;
         }
 
         .badge-status {
@@ -146,16 +165,16 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             }
 
             .main-container {
-                margin-right: 15px;
-                margin-left: 15px;
+                margin: 0 15px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="main-container container-custom">
         <h2 class="text-center text-primary">Data Jurnal dan Catatan Harian</h2>
-        
+
         <?php if ($level === 'siswa'): ?>
             <div class="form-row mb-3">
                 <div class="col text-left">
@@ -165,34 +184,30 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                 </div>
             </div>
         <?php endif; ?>
-        
-        <hr>
+
+        <hr />
 
         <!-- Form Filter dan Pencarian -->
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <!-- Form Pencarian -->
             <form method="GET" class="form-inline">
-                <div class="form-row">
-                    <input type="hidden" name="page" value="catatan" />
-                    <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" />
-                    <input type="text" name="search" class="form-control mr-2" placeholder="Cari nama siswa..." value="<?= htmlspecialchars($search) ?>">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
-                </div>
+                <input type="hidden" name="page" value="catatan" />
+                <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" />
+                <input type="text" name="search" class="form-control mr-2" placeholder="Cari nama siswa..." value="<?= htmlspecialchars($search) ?>" />
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Cari
+                </button>
             </form>
 
             <!-- Form Filter Tanggal -->
             <form method="GET" class="form-inline">
                 <input type="hidden" name="page" value="catatan" />
-                <div class="form-row">
-                    <label for="tanggal" class="mr-2">Tanggal:</label>
-                    <input type="date" name="tanggal" class="form-control date-picker" value="<?= htmlspecialchars($tanggal) ?>">
-                    <button type="submit" class="btn btn-primary ml-2">Filter</button>
-                    <?php if ($tanggal != date('Y-m-d')): ?>
-                        <a href="index.php?page=catatan" class="btn btn-secondary ml-2">Hari Ini</a>
-                    <?php endif; ?>
-                </div>
+                <label for="tanggal" class="mr-2">Tanggal:</label>
+                <input type="date" name="tanggal" class="form-control date-picker" value="<?= htmlspecialchars($tanggal) ?>" />
+                <button type="submit" class="btn btn-primary ml-2">Filter</button>
+                <?php if ($tanggal != date('Y-m-d')): ?>
+                    <a href="index.php?page=catatan" class="btn btn-secondary ml-2">Hari Ini</a>
+                <?php endif; ?>
             </form>
         </div>
 
@@ -223,10 +238,8 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             $status = empty($row['keterangan_jurnal']) ? 'Belum ada jurnal' : 'Sudah membuat jurnal';
                             $badge_class = empty($row['keterangan_jurnal']) ? 'badge-belum' : 'badge-ada';
 
-                            // Tentukan link berdasarkan level pengguna
-                            $href = ($level === 'pembimbing') ? 
-                                "index.php?page=tambahcatatan&id_jurnal=$id_jurnal" : 
-                                "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
+                            // Link tambah catatan
+                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
                                 <td><?= $no ?></td>
@@ -277,91 +290,15 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         </nav>
     </div>
 
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <?php 
-    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'info',title:'Sukses!',text:'Data catatan berhasil dihapus',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
-        unset($_SESSION['flash_hapus']);
-    }
-    ?>
-    <?php
-    if (isset($_SESSION['flash_edit']) && $_SESSION['flash_edit'] == 'sukses') {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){Swal.fire({icon:'success',title:'Sukses!',text:'Data catatan berhasil di update',position:'top',showConfirmButton:false,timer:3000,toast:true});});</script>";
-        unset($_SESSION['flash_edit']);
-    }
-    ?>
-    <?php
-    // Notifikasi flash message tambah
-    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Data catatan berhasil ditambahkan',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });</script>";
-        unset($_SESSION['flash_tambah']);
-    }
-
-    // Notifikasi error
-    if (isset($_SESSION['flash_error'])) {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '" . addslashes($_SESSION['flash_error']) . "',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });</script>";
-        unset($_SESSION['flash_error']);
-    }
-
-    // Notifikasi duplikat
-    if (isset($_SESSION['flash_duplikat'])) {
-        echo "<script>document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan!',
-            text: Catatan sudah terdaftar',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });</script>";
-        unset($_SESSION['flash_duplikat']);
-    }
-    ?>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Handle clickable row
             $(".clickable-row").click(function() {
-                if ($(this).data("href")) {
-                    window.location = $(this).data("href");
-                }
+                var href = $(this).data("href");
+                if (href) window.location = href;
             });
-
-            // Tambahkan efek hover untuk row
-            $(".clickable-row").hover(
-                function() {
-                    $(this).css('background-color', '#f1f1f1');
-                },
-                function() {
-                    $(this).css('background-color', '');
-                }
-            );
         });
     </script>
 </body>
+
 </html>
