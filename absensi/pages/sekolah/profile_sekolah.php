@@ -24,6 +24,18 @@
             max-width: none;
         }
 
+                .form-control {
+            border: none;
+            border-bottom: 2px solid #007bff;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #0056b3;
+            box-shadow: none;
+        }
+
         /* Style asli */
         .container-custom {
             background-color: #ffffff;
