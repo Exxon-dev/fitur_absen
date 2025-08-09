@@ -71,7 +71,7 @@
 				<div class="col-sm-15">
 					<input type="hidden" name="id_sekolah" class="form-control" size="4">
 				</div>
-
+				
 				<label class="col-sm-2 col-form-label">Nama Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="nama_sekolah" class="form-control" size="4" required>

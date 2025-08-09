@@ -35,8 +35,27 @@ if (!$jurnal_data) {
     header('Location: index.php?page=catatan&pesan=gagal&error=' . urlencode('Data jurnal tidak ditemukan'));
     exit();
 }
-$catatan_result = mysqli_query($coneksi, "SELECT * FROM catatan WHERE id_jurnal = '$id_jurnal'");
-$catatan_data = mysqli_fetch_assoc($catatan_result);
+// ambil catatan (letakkan sebelum HTML)
+$catatan_result = mysqli_query(
+    $coneksi,
+    "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
+     FROM catatan c
+     LEFT JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+     WHERE c.id_jurnal = '$id_jurnal'
+     ORDER BY c.id_catatan ASC"
+);
+
+// masukkan ke array supaya tidak kehilangan baris saat looping
+$catatan_list = [];
+if ($catatan_result) {
+    while ($r = mysqli_fetch_assoc($catatan_result)) {
+        $catatan_list[] = $r;
+    }
+}
+$catatan_data = $catatan_list[0] ?? null; // baris pertama, kalau ada
+
+
+
 $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
 $level = $_SESSION['level'] ?? '';
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
@@ -137,19 +156,23 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Catatan</label>
-                <div class="col-sm-15">
-                    <?php if ($level === 'pembimbing'): ?>
-                        <textarea name="catatan" class="form-control" rows="4"
-                            required><?= htmlspecialchars($catatan_data['catatan'] ?? '') ?></textarea>
-                    <?php else: ?>
-                        <textarea class="form-control" rows="4"
-                            readonly><?= htmlspecialchars($catatan_data['catatan'] ?? '') ?></textarea>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <?php if ($catatan_data): ?>
+                <input type="hidden" name="id_catatan" value="<?= htmlspecialchars($catatan_data['id_catatan']) ?>">
+            <?php endif; ?>
 
+            <?php if ($level === 'pembimbing'): ?>
+                <textarea name="catatan" class="form-control mb-3" rows="4" placeholder="Tulis catatan..." required></textarea>
+            <?php endif; ?>
+
+            <?php foreach ($catatan_list as $row): ?>
+                <div style="background:#f1f1f1;padding:10px;margin-bottom:8px;border-radius:5px;">
+                    <strong><?= htmlspecialchars($row['nama_pembimbing'] ?? 'Tidak diketahui') ?>:</strong>
+                    <?= nl2br(htmlspecialchars($row['catatan'] ?? '')) ?>
+                    <br>
+                    <small><em><?= htmlspecialchars($row['tanggal_catatan'] ?? '') ?></em></small>
+                </div>
+            <?php endforeach; ?>
+                <br>
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
@@ -158,11 +181,13 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                             <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
+
                     <div class="col text-right">
                         <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
                         <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                     </div>
                 </div>
+
             <?php else: ?>
                 <div class="form-group row">
                     <div class="col text-right">

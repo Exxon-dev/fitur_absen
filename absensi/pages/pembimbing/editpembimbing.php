@@ -101,6 +101,7 @@
 
         if (isset($_POST['submit'])) {
             $id_pembimbing    = $_POST['id_pembimbing'];
+            $id_perusahaan    = $_POST['id_perusahaan'];
             $nama_pembimbing  = $_POST['nama_pembimbing'];
             $no_tlp           = $_POST['no_tlp'];
             $alamat           = $_POST['alamat'];
@@ -133,6 +134,7 @@
                 nama_pembimbing = '$nama_pembimbing',
                 no_tlp          = '$no_tlp',
                 alamat          = '$alamat',
+                id_perusahaan   = '$id_perusahaan',
                 jenis_kelamin   = '$jenis_kelamin',
                 username        = '$username', 
                 profile         = '$profile', 
@@ -178,6 +180,21 @@
                     <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
                 </div>
                 <div class="form-group col-md-6">
+                    <label>Perusahaan</label>
+                    <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Perusahaan</option>
+                        <?php
+                        $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                        while ($row = mysqli_fetch_array($data_perusahaan)) {
+                        ?>
+                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>"
+                                <?php if ($row['id_perusahaan'] == $data['id_perusahaan']) echo 'selected'; ?>>
+                                <?php echo htmlspecialchars($row['nama_perusahaan']); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
                         <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
@@ -201,6 +218,7 @@
         </form>
     </div>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>

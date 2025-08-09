@@ -1,7 +1,5 @@
 <?php
-ob_start();
 require_once('../../koneksi.php');
-session_start();
 $role = $_SESSION['role'] ?? '';
 $id_catatan = $_GET['id_catatan'] ?? '';
 

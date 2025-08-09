@@ -75,16 +75,36 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             margin-top: 20px;
         }
 
-        .status-hadir {
-            color: #28a745;
+        .badge-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
         }
 
-        .status-telat {
-            color: #ffc107;
+        .badge-hadir {
+            background-color: #C8E6C9;
+            color: #1B5E20;
         }
 
-        .status-belum {
-            color: #dc3545;
+        .badge-telat {
+            background-color: #FFECB3;
+            color: #FF8F00;
+        }
+
+        .badge-belum {
+            background-color: #FFCDD2;
+            color: #B71C1C;
+        }
+
+        .badge-sakit {
+            background-color: #FFE0B2;
+            color: #E65100;
+        }
+
+        .badge-izin {
+            background-color: #BBDEFB;
+            color: #0D47A1;
         }
 
         .btn-wa {
@@ -100,6 +120,18 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
         .table-light th {
             background-color: #007bff;
             color: white;
+        }
+
+                .table-responsive {
+            border: none !important;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
         }
 
         .tabletbody tr:hover {
@@ -133,6 +165,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
+                        <th>No</th>
                         <th>Nama Siswa</th>
                         <th>No WA</th>
                         <th>Status</th>
@@ -141,14 +174,16 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($siswa = mysqli_fetch_assoc($result_siswa)): ?>
+                    <?php
+                    $no = 1;
+                    while ($siswa = mysqli_fetch_assoc($result_siswa)): ?>
                         <?php
                         $id = $siswa['id_siswa'];
                         $nama = htmlspecialchars($siswa['nama_siswa']);
                         $wa = htmlspecialchars($siswa['no_wa']);
 
-                        // Get attendance data including entry time
-                        $query_absen = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = ? AND tanggal = ?");
+                        // Get attendance data including entry time and keterangan
+                        $query_absen = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar, keterangan FROM absen WHERE id_siswa = ? AND tanggal = ?");
                         mysqli_stmt_bind_param($query_absen, "is", $id, $tanggal);
                         mysqli_stmt_execute($query_absen);
                         $result_absen = mysqli_stmt_get_result($query_absen);
@@ -157,41 +192,71 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
                         // Initialize variables
                         $jam_masuk_display = '-';
                         $jam_keluar_display = '-';
-                        $status_class = '';
-                        $status_icon = '';
-                        $status_text = '';
+                        $badge_class = 'badge-belum';
+                        $status_icon = '<i class="bi bi-x-circle"></i>';
+                        $status_text = 'Belum Absen';
+                        $show_wa_button = false;
                         $pesan = null;
 
                         if ($absen) {
                             $jam_masuk_display = $absen['jam_masuk'] ?? '-';
                             $jam_keluar_display = $absen['jam_keluar'] ?? '-';
+                            $keterangan = $absen['keterangan'] ?? 'Hadir';
 
-                            if ($absen['jam_masuk'] > $batas_telat) {
-                                $status_class = 'status-telat';
-                                $status_icon = '<i class="bi bi-exclamation-triangle"></i>';
-                                $status_text = 'Telat';
-                                $pesan = "⚠️ Hai *$nama* , telat dalam melakukan absensi hari $hari ($tanggal) pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi!⚠️";
-                            } else {
-                                $status_class = 'status-hadir';
-                                $status_icon = '<i class="bi bi-check-circle"></i>';
-                                $status_text = 'Hadir';
+                            switch ($keterangan) {
+                                case 'sakit':
+                                    $badge_class = 'badge-sakit';
+                                    $status_icon = '<i class="bi bi-emoji-frown"></i>';
+                                    $status_text = 'Sakit';
+                                    $pesan = "🤒 Hai *$nama* , status absensi hari $hari ($tanggal) adalah SAKIT. Semoga lekas sembuh! 🤒";
+                                    $show_wa_button = true;
+                                    break;
+                                case 'izin':
+                                    $badge_class = 'badge-izin';
+                                    $status_icon = '<i class="bi bi-info-circle"></i>';
+                                    $status_text = 'Izin';
+                                    $pesan = "ℹ️ Hai *$nama* , status absensi hari $hari ($tanggal) adalah IZIN. Jangan lupa konfirmasi ke pembimbing! ℹ️";
+                                    $show_wa_button = true;
+                                    break;
+                                case 'alpa':
+                                    $badge_class = 'badge-belum';
+                                    $status_icon = '<i class="bi bi-exclamation-triangle"></i>';
+                                    $status_text = 'Alpa';
+                                    $pesan = "⚠️ Hai *$nama* , status absensi hari $hari ($tanggal) adalah ALPA. Harap segera konfirmasi ke pembimbing! ⚠️";
+                                    $show_wa_button = true;
+                                    break;
+                                default:
+                                    if ($absen['jam_masuk'] > $batas_telat) {
+                                        $badge_class = 'badge-telat';
+                                        $status_icon = '<i class="bi bi-clock-history"></i>';
+                                        $status_text = 'Telat';
+                                        $pesan = "⏰ Hai *$nama* , telat dalam melakukan absensi hari $hari ($tanggal) pada pukul {$absen['jam_masuk']}. Jangan sampai telat lagi! ⏰";
+                                        $show_wa_button = true;
+                                    } else {
+                                        $badge_class = 'badge-hadir';
+                                        $status_icon = '<i class="bi bi-check-circle"></i>';
+                                        $status_text = 'Hadir';
+                                        $pesan = "✅ Hai *$nama* , absensi hari $hari ($tanggal) sudah tercatat. Terima kasih! ✅";
+                                        $show_wa_button = false; // Tidak tampilkan tombol WA untuk yang hadir tepat waktu
+                                    }
                             }
                         } else {
-                            $status_class = 'status-belum';
-                            $status_icon = '<i class="bi bi-x-circle"></i>';
-                            $status_text = 'Belum Absen';
-                            $pesan = "📢 Hai *$nama* ,kamu belum melakukan absen hari $hari ($tanggal). Harap segera absen!";
+                            $pesan = "📢 Hai *$nama* , kamu belum melakukan absen hari $hari ($tanggal). Harap segera absen!";
+                            $show_wa_button = true;
                         }
                         ?>
                         <tr>
+                            <td><?= $no++ ?></td>
                             <td><?= $nama ?></td>
                             <td><?= substr($wa, 0, 6) ?>...</td>
-                            <td class="<?= $status_class ?>">
-                                <?= $status_icon ?> <?= $status_text ?>
+                            <td>
+                                <span class="badge-status <?= $badge_class ?>">
+                                    <?= $status_icon ?> <?= $status_text ?>
+                                </span>
                             </td>
                             <td><?= $jam_masuk_display ?></td>
                             <td>
-                                <?php if ($pesan && !empty($wa)): ?>
+                                <?php if ($show_wa_button && $pesan && !empty($wa)): ?>
                                     <button class="btn btn-sm btn-wa" onclick="kirimNotifikasi('<?= addslashes($wa) ?>', '<?= addslashes($pesan) ?>')">
                                         <i class="bi bi-whatsapp"></i> Kirim WA
                                     </button>
@@ -216,7 +281,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             } = await Swal.fire({
                 title: 'Kirim Notifikasi?',
                 html: `<p>Kirim pesan ke <b>${no}</b>?</p>
-                  <textarea class="form-control mt-2" readonly>${pesan}</textarea>`,
+                      <textarea class="form-control mt-2" readonly>${pesan}</textarea>`,
                 icon: 'question',
                 showCancelButton: true,
                 cancelButtonText: 'Batal',

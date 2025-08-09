@@ -84,19 +84,37 @@
         <h2 class="text-center">Tambah Pembimbing</h2>
         <hr>
         <form action="pages/pembimbing/proses_tambahpembimbing.php" method="post" enctype="multipart/form-data">
+
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label>Nama Pembimbing</label>
                     <input type="text" name="nama_pembimbing" class="form-control" required>
                 </div>
+
                 <div class="form-group col-md-6">
                     <label>No. Telepon/HP</label>
                     <input type="text" name="no_tlp" class="form-control" required>
                 </div>
+
                 <div class="form-group col-md-6">
                     <label>Alamat</label>
                     <input type="text" name="alamat" class="form-control" required>
                 </div>
+
+                <div class="form-group col-md-6">
+                    <label>Perusahaan</label>
+                    <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Perusahaan</option>
+                        <?php
+                        $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                        while ($row = mysqli_fetch_array($data_perusahaan)) {
+                        ?>
+                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>" <?php echo ($row['id_perusahaan'] == $row['id_perusahaan']); ?>>
+                                <?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+
                 <div class="form-group col-md-6">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
@@ -105,17 +123,18 @@
                         <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                     </select>
                 </div>
-            </div>
-            <div class="form-row">
+
                 <div class="form-group col-md-6">
                     <label>Username</label>
                     <input type="text" name="username" class="form-control" required>
                 </div>
+
                 <div class="form-group col-md-6">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>
             </div>
+
             <div class="form-group row">
                 <div class="col text-right">
                     <a href="index.php?page=pembimbing" class="btn btn-warning">KEMBALI</a>
