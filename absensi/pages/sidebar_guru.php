@@ -1,63 +1,3 @@
-<style>
-  /* Tombol Burger */
-    .menu-toggle {
-        position: fixed;
-        top: 15px;
-        right: 30px;
-        /* ini gantiin left: 15px */
-        background: #344767;
-        border: none;
-        z-index: 1100;
-        color: white;
-        font-size: 24px;
-        padding: 5px 10px;
-        border-radius: 5px;
-        display: none;
-        cursor: pointer;
-    }
-
-
-    /* Overlay (muncul pas sidebar aktif di mobile) */
-    #sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        z-index: 1049;
-    }
-
-    /* Responsive behavior */
-    @media (max-width: 991px) {
-        .menu-toggle {
-            display: block;
-        }
-
-        #sidenav-main {
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 1051;
-            position: fixed;
-        }
-
-        #sidenav-main.active {
-            transform: translateX(0);
-        }
-
-        #sidebar-overlay.active {
-            display: block;
-        }
-    }
-</style>
-
-<!-- Tombol burger -->
-<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-
-<!-- Overlay untuk mobile -->
-<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
-
 <!-- SIDEBAR GURU -->
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" id="sidenav-main">
   <div class="sidenav-header">
@@ -78,6 +18,14 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link text-white <?php echo ($_GET['page'] == 'absensi_siswa') ? 'active' : ''; ?>" href="index.php?page=absensi_siswa">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">dashboard</i>
+          </div>
+          <span class="nav-link-text ms-1">Absensi Siswa</span>
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'editguru') !== false) ? 'active' : ''; ?>" href="index.php?page=editguru&id_guru=<?php echo $_SESSION['id_guru'] ?>">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
@@ -93,9 +41,6 @@
           <span class="nav-link-text ms-1">Catatan</span>
         </a>
       </li>
-      <li class="nav-item mt-3">
-        <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
-      </li>
       <li class="nav-item">
         <a class="nav-link text-white <?php echo ($_GET['page'] == 'laporan1') ? 'active' : ''; ?>" href="index.php?page=laporan1">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -103,25 +48,17 @@
           </div>
           <span class="nav-link-text ms-1">Laporan</span>
         </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="./pages/sign-up_aksi.php">
-          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">login</i>
-          </div>
-          <span class="nav-link-text ms-1">Sign Out</span>
-        </a>
-      </li>
+      </li> 
     </ul>
   </div>
 </aside>
 
-<script>
-  function toggleSidebar() {
-    const sidebar = document.getElementById('sidenav-main');
-    const overlay = document.getElementById('sidebar-overlay');
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidenav-main');
+      const overlay = document.getElementById('sidebar-overlay');
 
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
-  }
-</script>
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+  </script>
