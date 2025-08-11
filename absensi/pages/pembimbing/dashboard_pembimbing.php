@@ -78,9 +78,11 @@ $jumlah_perusahaan = $data_perusahaan['total'];
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+
     h3 {
       color: #007bff
     }
+
     h2 {
       color: #007bff
     }
@@ -205,17 +207,17 @@ $jumlah_perusahaan = $data_perusahaan['total'];
       background-color: #e9ecef;
     }
 
-            .table-responsive {
-            border: none !important;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+    .table-responsive {
+      border: none !important;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-        .table td,
-        .table th {
-            border: 1px solid #dee2e6 !important;
-            vertical-align: middle;
-        }
+    .table td,
+    .table th {
+      border: 1px solid #dee2e6 !important;
+      vertical-align: middle;
+    }
 
     /* Mobile Card View */
     .student-cards {

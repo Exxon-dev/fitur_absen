@@ -9,7 +9,7 @@ if (!isset($_SESSION['id_guru'])) {
 
 $id_guru = $_SESSION['id_guru'];
 
-// Ambil data guru (termasuk nama) dengan prepared statement
+// Ambil data guru dengan prepared statement
 $stmt = mysqli_prepare($coneksi, "SELECT id_sekolah, nama_guru FROM guru WHERE id_guru = ?");
 mysqli_stmt_bind_param($stmt, "i", $id_guru);
 mysqli_stmt_execute($stmt);
@@ -17,252 +17,137 @@ $result = mysqli_stmt_get_result($stmt);
 $dataGuru = mysqli_fetch_assoc($result);
 
 if (!$dataGuru) {
-  echo "<script>
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Data guru tidak ditemukan',
-      }).then(() => {
-        window.location.href = 'sign-in.php';
-      });
-    </script>";
+  // Jika data guru tidak ditemukan, arahkan ke login
+  header("Location: sign-in.php");
   exit();
 }
 
 $id_sekolah = $dataGuru['id_sekolah'];
 $nama_guru = $dataGuru['nama_guru'];
 
-$tanggal = date('Y-m-d');
-
 // Ambil nama sekolah
 $query_sekolah = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '$id_sekolah'");
 $sekolah = mysqli_fetch_assoc($query_sekolah);
 $nama_sekolah = $sekolah['nama_sekolah'] ?? 'Sekolah';
 
-// Query untuk mendapatkan data siswa dengan prepared statement
-$stmt = mysqli_prepare($coneksi, "SELECT * FROM siswa WHERE id_sekolah = ? ORDER BY id_siswa ASC");
-mysqli_stmt_bind_param($stmt, "i", $id_sekolah);
-mysqli_stmt_execute($stmt);
-$query_siswa = mysqli_stmt_get_result($stmt);
+// Ambil jumlah data siswa
+$query_siswa = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM siswa WHERE id_sekolah = '$id_sekolah'");
+$siswaData = mysqli_fetch_assoc($query_siswa);
+$jumlah_siswa = $siswaData['jumlah'] ?? 0;
 
-// Mengambil data sekolah
-$query_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah ASC") or die(mysqli_error($coneksi));
+// Ambil jumlah sekolah
+$query_sekolah_all = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM sekolah");
+$sekolahData = mysqli_fetch_assoc($query_sekolah_all);
+$jumlah_sekolah = $sekolahData['jumlah'] ?? 0;
 
-// Query perusahaan
-$query_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
-
-$jumlah_siswa = mysqli_num_rows($query_siswa);
-$jumlah_sekolah = mysqli_num_rows($query_sekolah);
-$jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
+// Ambil jumlah perusahaan
+$query_perusahaan = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM perusahaan");
+$perusahaanData = mysqli_fetch_assoc($query_perusahaan);
+$jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absensi Siswa - <?php echo htmlspecialchars($nama_guru); ?></title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Guru - <?php echo htmlspecialchars($nama_guru); ?></title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Improved CSS with better organization */
-    :root {
-      --primary-color: #007bff;
-      --success-color: #28a745;
-      --info-color: #17a2b8;
-      --warning-color: #ffc107;
-      --danger-color: #dc3545;
-      --light-color: #f8f9fa;
-      --dark-color: #343a40;
-    }
-
     body {
       padding-left: 270px;
-      transition: padding-left 0.3s;
-      background-color: var(--light-color);
+      /* tetap untuk desktop */
+      background-color: #f8f9fa;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      /* pastikan margin default hilang */
     }
 
     .main-container {
-      margin-top: 20px;
-      margin-right: 20px;
-      margin-left: 0;
-      width: auto;
-      max-width: none;
-    }
-
-    .container-custom {
-      background-color: #ffffff;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin: 20px;
     }
 
     h3 {
       color: #007bff;
       font-weight: 600;
+      margin-bottom: 15px;
     }
 
-
-    /* Status Badges */
-    .badge-status {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.9em;
-      font-weight: bold;
-      display: inline-block;
-      text-align: center;
-      min-width: 70px;
-    }
-
-    .badge-sakit {
-      background-color: #FFE0B2;
-      color: #E65100;
-    }
-
-    .badge-izin {
-      background-color: #BBDEFB;
-      color: #0D47A1;
-    }
-
-    .badge-alpa {
-      background-color: #FFCDD2;
-      color: #B71C1C;
-    }
-
-    .badge-hadir {
-      background-color: #C8E6C9;
-      color: #1B5E20;
-    }
-
-    .badge-belum {
-      background-color: #E0E0E0;
-      color: #424242;
-    }
-
-    /* Radio Buttons */
-    .radio-label {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 15px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .radio-label:hover {
-      opacity: 0.8;
-    }
-
-    .radio-label.disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    input[type="radio"] {
-      transform: scale(1.3);
-      margin-right: 6px;
-    }
-
-    /* Table Styles */
-    .table-responsive {
-      margin-top: 20px;
-    }
-
-    .table thead th {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-    }
-
-    .table tbody tr:hover {
-      background-color: rgba(0, 123, 255, 0.05);
-    }
-
-    /* Card Styles */
     .card {
-      border: none;
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
     }
 
     .card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
     }
 
-    .card-header {
-      border-radius: 10px 10px 0 0 !important;
-      background-color: white;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    /* Mobile Card View */
-    .student-cards {
-      display: none;
-    }
-
-    .student-card {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .student-header {
+    .icon-circle {
+      width: 50px;
+      height: 50px;
+      background: #007bff;
+      border-radius: 50%;
+      color: white;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 10px;
+      font-size: 28px;
+      margin-right: 15px;
     }
 
-    .student-name {
-      font-weight: bold;
+    .card-title {
+      font-weight: 700;
+      font-size: 1.2rem;
     }
 
-    .radio-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .card-number {
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: #333;
     }
 
-    /* Responsive Styles */
-    @media (max-width: 991px) {
+    /* === Media Query untuk layar kecil (mobile) === */
+    @media (max-width: 768px) {
       body {
         padding-left: 0;
+        /* hilangkan padding kiri agar sidebar tidak mengganggu */
       }
 
       .main-container {
-        margin-right: 15px;
-        margin-left: 15px;
+        margin: 10px;
+        /* kurangi margin agar muat */
       }
 
-      .student-cards {
-        display: block;
-      }
-    }
-
-    @media (max-width: 768px) {
-      h2 {
-        font-size: 1.5rem;
+      .icon-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+        margin-right: 10px;
       }
 
-      .card-header {
-        padding: 15px !important;
+      .card-title {
+        font-size: 1rem;
       }
 
-      .card-header h4 {
+      .card-number {
         font-size: 1.2rem;
       }
 
-      .student-card {
-        padding: 12px;
+      .body-card {
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+        margin-bottom: 20px;
       }
 
-      .radio-section {
-        flex-direction: column;
+      .chart {
+        height: 170px;
+        position: relative;
       }
 
       .radio-label {
@@ -312,58 +197,74 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 </head>
 
 <body>
-  <div class="main-container container-custom">
-    <div class="text-center">
-      <h3>Dashboard Guru</h3>
-      <h3><?php echo htmlspecialchars($nama_sekolah, ENT_QUOTES); ?></h3>
-    </div>
-    <hr>
+  <div class="main-container">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">group</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Siswa</p>
+                <h4 class="mb-0"><?php echo $jumlah_siswa; ?></h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
 
-    <!-- Stats Cards -->
-    <div class="container-fluid py-4">
-      <div class="container-fluid py-4">
+        <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">school</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Sekolah</p>
+                <h4 class="mb-0"><?php echo $jumlah_sekolah; ?></h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">location_city</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
+                <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
         <div class="row">
-          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+          <div class="col-lg-8 col-md-9 mt-4 mb-4">
             <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="material-icons opacity-10">group</i>
+              <div class="card-body">
+                <h6 class="mb-0 text-center">Grafik Absensi Siswa PKL</h6>
+                <div class="pe-2">
+                  <div class="chart" style="height: 170px; position: relative;">
+                    <canvas id="chart-line" class="chart-canvas"></canvas>
+                  </div>
                 </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Siswa</p>
-                  <h4 class="mb-0"><?php echo $jumlah_siswa; ?></h4>
-                </div>
+                <hr class="dark horizontal">
               </div>
-              <hr class="dark horizontal my-0">
             </div>
           </div>
-          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="material-icons opacity-10">school</i>
-                </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Sekolah</p>
-                  <h4 class="mb-0"><?php echo $jumlah_sekolah; ?></h4>
-                </div>
-              </div>
-              <hr class="dark horizontal my-0">
-            </div>
-          </div>
-          <div class="col-xl-4 col-sm-6">
-            <div class="card">
-              <div class="card-header p-3 pt-2">
-                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                  <i class="material-icons opacity-10">location_city</i>
-                </div>
-                <div class="text-end pt-1">
-                  <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
-                  <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
-                </div>
-              </div>
-              <hr class="dark horizontal my-0">
-            </div>
+          <div class="col-md-4 mt-6">
+            <ul class="chart-legend clearfix">
+              <li ><i class="far fa-circle text-danger"></i>Alpa  : 15</li>
+              <li><i class="far fa-circle text-success"></i>Hadir : 20</li>
+              <li><i class="far fa-circle text-warning"></i>Izin  : 5</li>
+              <li><i class="far fa-circle text-info"></i>Sakit    : 7</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -526,69 +427,29 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       ?>
     </div>
   </div>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Welcome notification
-      if (!localStorage.getItem('guruWelcomeShowed')) {
-        const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
-
-        Swal.fire({
-          title: `Selamat datang, ${namaGuru}!`,
-          text: "Anda berhasil login ke sistem",
-          icon: 'success',
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          toast: true,
-          background: '#f8f9fa'
-        });
-
-        localStorage.setItem('guruWelcomeShowed', 'true');
-      }
-
-      // Countdown for auto-refresh
-      let seconds = 30;
-      const countdownElement = document.getElementById('countdown');
-      const countdownInterval = setInterval(() => {
-        seconds--;
-        countdownElement.textContent = seconds;
-
-        if (seconds <= 0) {
-          clearInterval(countdownInterval);
-          location.reload();
+    const ctx = document.getElementById('chart-line').getContext('2d');
+    const chartLine = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['S', 'S', 'R', 'K', 'J', 'S', 'M', ], // contoh label
+        datasets: [{
+          label: 'Sales',
+          data: [10, 20, 15, 30, 25, 35, 40],
+          borderColor: '#3e95cd',
+          fill: false,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
         }
-      }, 1000);
-
-      // Show notification if any
-      <?php if (isset($_GET['pesan'])): ?>
-        <?php if ($_GET['pesan'] == 'sukses'): ?>
-          Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Operasi berhasil dilakukan',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 2000,
-            toast: true
-          });
-        <?php elseif ($_GET['pesan'] == 'gagal'): ?>
-          Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-          });
-        <?php endif; ?>
-      <?php endif; ?>
+      }
     });
   </script>
 </body>

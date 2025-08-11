@@ -42,6 +42,9 @@
             case 'guru':
                 include "pages/guru/guru.php";
                 break;
+            case 'absensi_siswa':
+                include "pages/guru/absensi_siswa.php";
+                break;
             case 'tambahguru':
                 include "pages/guru/tambahguru.php";
                 break;
