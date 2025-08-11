@@ -92,7 +92,7 @@ if (!isset($_SESSION['id_siswa'])) {
 <body>
     <div class="main-container container-custom">
         <div class="text-center">
-            <h2>Edit Siswa</h2>
+            <h2>Profile Siswa</h2>
         </div>
         <hr>
 

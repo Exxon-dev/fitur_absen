@@ -306,7 +306,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 
     h2 {
       color: #007bff;
-      font-weight: 550;
+      font-weight: 550
     }
   </style>
 </head>
@@ -387,7 +387,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         </thead>
         <tbody>
           <?php
-          $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+          $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_sekolah = '$id_sekolah' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
           $index = 1;
           $today = date('Y-m-d');
 

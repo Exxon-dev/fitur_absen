@@ -37,7 +37,7 @@ if ($result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Jurnal</title>
+    <title><?= isset($jurnal_hari_ini) ? 'Update' : 'Tambah' ?> Jurnal</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
@@ -102,7 +102,7 @@ if ($result) {
     </div>
 
     <div class="main-container container-custom">
-        <h2 class="mb-4">Tambah Jurnal Harian</h2>
+        <h2 class="mb-4"><?= isset($jurnal_hari_ini) ? 'Update' : 'Tambah' ?> Jurnal Harian</h2>
 
         <form id="jurnalForm" action="pages/jurnal/proses_tambahjurnal.php" method="POST">
             <div class="form-group">
@@ -121,7 +121,7 @@ if ($result) {
             <div class="form-group text-right">
                 <a href="index.php?page=catatan" class="btn btn-warning ml-2">Kembali</a>
                 <button type="submit" class="btn btn-primary">
-                    <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Simpan Jurnal' ?>
+                    <?= isset($jurnal_hari_ini) ? 'Update Jurnal' : 'Simpan Jurnal' ?>
                 </button>
             </div>
         </form>
@@ -145,12 +145,12 @@ if ($result) {
 
                 Swal.fire({
                     title: 'Konfirmasi',
-                    text: "Apakah Anda yakin ingin menyimpan jurnal ini?",
+                    text: "Apakah Anda yakin ingin <?= isset($jurnal_hari_ini) ? 'mengupdate' : 'menyimpan' ?> jurnal ini?",
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Simpan',
+                    confirmButtonText: '<?= isset($jurnal_hari_ini) ? 'Update' : 'Simpan' ?>',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
