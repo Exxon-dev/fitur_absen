@@ -134,7 +134,7 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 
 <body>
     <div class="main-container container-custom">
-        <h2>Tambah Catatan</h2>
+        <h2 class="text-center text-primary">Tambah Catatan</h2>
         <hr>
         <form id="formTambahCatatan" action="pages/catatan/proses_tambahcatatan.php" method="post">
             <?php if ($catatan_data): ?>

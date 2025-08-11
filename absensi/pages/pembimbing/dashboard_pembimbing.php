@@ -440,7 +440,7 @@ $jumlah_perusahaan = $data_perusahaan['total'];
             $result = mysqli_query($coneksi, $updateQuery);
           } else {
             // Insert data baru
-            $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jamMasuk')";
+            $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk, jam_keluar) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jamMasuk', '$jamKeluar')";
             $result = mysqli_query($coneksi, $insertQuery);
           }
         }

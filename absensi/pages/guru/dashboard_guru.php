@@ -32,6 +32,12 @@ if (!$dataGuru) {
 $id_sekolah = $dataGuru['id_sekolah'];
 $nama_guru = $dataGuru['nama_guru'];
 
+$tanggal = date('Y-m-d');
+
+// Ambil nama sekolah
+$query_sekolah = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '$id_sekolah'");
+$sekolah = mysqli_fetch_assoc($query_sekolah);
+$nama_sekolah = $sekolah['nama_sekolah'] ?? 'Sekolah';
 
 // Query untuk mendapatkan data siswa dengan prepared statement
 $stmt = mysqli_prepare($coneksi, "SELECT * FROM siswa WHERE id_sekolah = ? ORDER BY id_siswa ASC");
@@ -93,6 +99,12 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+
+    h3 {
+      color: #007bff;
+      font-weight: 600;
+    }
+
 
     /* Status Badges */
     .badge-status {
@@ -294,6 +306,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
 
     h2 {
       color: #007bff;
+      font-weight: 550
     }
   </style>
 </head>
@@ -356,6 +369,8 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
       </div>
     </div>
 
+    <h2 class="text-center my-4">Absensi Siswa <?= htmlspecialchars($tanggal) ?></h2>
+
     <!-- Desktop Table View -->
     <div class="table-responsive d-none d-md-block">
       <table class="table table-hover">
@@ -372,7 +387,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
         </thead>
         <tbody>
           <?php
-          $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+          $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_sekolah = '$id_sekolah' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
           $index = 1;
           $today = date('Y-m-d');
 
@@ -445,7 +460,7 @@ $jumlah_perusahaan = mysqli_num_rows($query_perusahaan);
     <!-- Mobile Card View -->
     <div class="student-cards d-block d-md-none">
       <?php
-      $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_sekolah = '$id_sekolah' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+      $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
       $index = 1;
       $today = date('Y-m-d');
 

@@ -118,7 +118,7 @@
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>
                         <option value="">Pilih Program Keahlian</option>
-                        <option value="Multimedia">Multimedia"</option>
+                        <option value="Multimedia">Multimedia</option>
                         <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
                         <option value="Perkantoran">Perkantoran</option>
                     </select>
