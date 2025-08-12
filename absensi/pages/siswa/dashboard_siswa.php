@@ -88,7 +88,9 @@ $_SESSION['status_absen'] = $status;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100%;
+            margin-top: 200px;
+            padding: 0;
             flex-direction: column;
         }
 

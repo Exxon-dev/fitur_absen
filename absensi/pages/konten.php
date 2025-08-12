@@ -60,6 +60,9 @@
             case 'pembimbing':
                 include "pages/pembimbing/pembimbing.php";
                 break;
+            case 'pembimbing_absen':
+                include "pages/pembimbing/absensi_siswa.php";
+                break;
             case 'tambahpembimbing':
                 include "pages/pembimbing/tambahpembimbing.php";
                 break;
