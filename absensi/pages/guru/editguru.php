@@ -1,17 +1,176 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 include('koneksi.php');
+
 // Cek id_guru dari GET
-if (isset($_GET['id_guru'])) {
+if (!isset($_GET['id_guru'])) {
+    header("Location: index.php?page=guru");
+    exit();
+}
+
+// Get guru data with school join
+$id_guru = $_GET['id_guru'];
+$select = mysqli_query($coneksi, "SELECT guru.*, sekolah.nama_sekolah 
+                                 FROM guru 
+                                 JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
+                                 WHERE guru.id_guru='$id_guru'") 
+                                 or die(mysqli_error($coneksi));
+
+if (mysqli_num_rows($select) == 0) {
+    echo '<div class="alert alert-warning">ID guru tidak ada dalam database.</div>';
+    exit();
+} else {
+    $data = mysqli_fetch_assoc($select);
+}
+
+// Process form submission
+if (isset($_POST['submit'])) {
     $id_guru = $_GET['id_guru'];
-    $select = mysqli_query($coneksi, "SELECT * FROM guru WHERE id_guru='$id_guru'");
-    if (mysqli_num_rows($select) == 0) {
-        // Jika data tidak ditemukan, redirect ke guru.php
-        echo '<script>window.location.replace("index.php?page=guru");</script>';
+    $nama_guru = $_POST['nama_guru'];
+    $nip = $_POST['nip'];
+    $jenis_kelamin = $_POST['jenis_kelamin'];
+    $alamat = $_POST['alamat'];
+    $no_tlp = $_POST['no_tlp'];
+    $id_sekolah = $_POST['id_sekolah'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $foto_lama = $_POST['foto_lama'] ?? 'default.png';
+
+    $profile = $foto_lama;
+
+    // Handle file upload
+    if (!empty($_FILES['foto']['name'])) {
+        // Define upload directory - use absolute server path
+        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/';
+        
+        $fotoName = $_FILES['foto']['name'];
+        $fotoTmp = $_FILES['foto']['tmp_name'];
+        $fotoSize = $_FILES['foto']['size'];
+        $fotoError = $_FILES['foto']['error'];
+        $fotoExt = strtolower(pathinfo($fotoName, PATHINFO_EXTENSION));
+
+        // Ekstensi yang diizinkan
+        $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
+        $maxFileSize = 2 * 1024 * 1024; // 2MB
+
+        if (in_array($fotoExt, $allowedExt)) {
+            if ($fotoError === UPLOAD_ERR_OK) {
+                if ($fotoSize <= $maxFileSize) {
+                    // Create directory if it doesn't exist
+                    if (!file_exists($uploadDir)) {
+                        if (!mkdir($uploadDir, 0755, true)) {
+                            echo '<script>
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error Folder",
+                                    text: "Gagal membuat folder upload",
+                                    position: "top"
+                                });
+                            </script>';
+                            exit();
+                        }
+                    }
+
+                    $fotoBaru = uniqid('guru_', true) . '.' . $fotoExt;
+                    $uploadPath = $uploadDir . $fotoBaru;
+                    
+                    if (move_uploaded_file($fotoTmp, $uploadPath)) {
+                        // Hapus foto lama jika bukan default
+                        if (!empty($foto_lama) && $foto_lama !== 'default.png') {
+                            $oldPath = $uploadDir . $foto_lama;
+                            if (file_exists($oldPath)) {
+                                unlink($oldPath);
+                            }
+                        }
+                        $profile = $fotoBaru;
+                    } else {
+                        echo '<script>
+                            Swal.fire({
+                                icon: "error",
+                                title: "Upload Gagal",
+                                text: "Gagal menyimpan file",
+                                position: "top"
+                            });
+                        </script>';
+                    }
+                } else {
+                    echo '<script>
+                        Swal.fire({
+                            icon: "error",
+                            title: "File Terlalu Besar",
+                            text: "Ukuran file maksimal 2MB",
+                            position: "top"
+                        });
+                    </script>';
+                }
+            } else {
+                $errorMsg = getUploadError($fotoError);
+                echo '<script>
+                    Swal.fire({
+                        icon: "error",
+                        title: "Upload Gagal",
+                        text: "'.$errorMsg.'",
+                        position: "top"
+                    });
+                </script>';
+            }
+        } else {
+            echo '<script>
+                Swal.fire({
+                    icon: "error",
+                    title: "Format Tidak Didukung",
+                    text: "Hanya menerima file JPG, JPEG, PNG, atau GIF",
+                    position: "top"
+                });
+            </script>';
+        }
+    }
+
+    $sql = mysqli_query($coneksi, "UPDATE guru SET 
+        nama_guru='$nama_guru', 
+        nip='$nip', 
+        jenis_kelamin='$jenis_kelamin', 
+        alamat='$alamat', 
+        no_tlp='$no_tlp', 
+        id_sekolah='$id_sekolah', 
+        username='$username', 
+        password='$password',
+        profile='$profile'
+        WHERE id_guru='$id_guru'")
+        or die(mysqli_error($coneksi));
+
+    if ($sql) {
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data guru berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editguru&id_guru=' . $id_guru . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
-        $data = mysqli_fetch_assoc($select);
+        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
+    }
+}
+
+function getUploadError($errorCode) {
+    switch ($errorCode) {
+        case UPLOAD_ERR_INI_SIZE:
+            return "Ukuran file melebihi limit server";
+        case UPLOAD_ERR_FORM_SIZE:
+            return "Ukuran file melebihi limit form";
+        case UPLOAD_ERR_PARTIAL:
+            return "File hanya terupload sebagian";
+        case UPLOAD_ERR_NO_FILE:
+            return "Tidak ada file yang diupload";
+        case UPLOAD_ERR_NO_TMP_DIR:
+            return "Folder temporary tidak ada";
+        case UPLOAD_ERR_CANT_WRITE:
+            return "Gagal menulis ke disk";
+        case UPLOAD_ERR_EXTENSION:
+            return "Upload dihentikan oleh ekstensi PHP";
+        default:
+            return "Error tidak diketahui (Code: $errorCode)";
     }
 }
 ?>
@@ -22,13 +181,19 @@ if (isset($_GET['id_guru'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Guru</title>
+    <title>Profil Guru - <?php echo htmlspecialchars($data['nama_guru']); ?></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <style>
-        /* Penyesuaian posisi */
+        :root {
+            --primary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+
         body {
             padding-left: 270px;
             transition: padding-left 0.3s;
@@ -43,7 +208,6 @@ if (isset($_GET['id_guru'])) {
             max-width: none;
         }
 
-        /* Style asli */
         .container-custom {
             background-color: #ffffff;
             border-radius: 10px;
@@ -56,207 +220,435 @@ if (isset($_GET['id_guru'])) {
             color: #007bff;
         }
 
-        .form-control {
-            border: none;
-            border-bottom: 2px solid #007bff;
-            border-radius: 0;
-            box-shadow: none;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
-        .form-control:focus {
-            border-color: #0056b3;
-            box-shadow: none;
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary);
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .profile-info {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--dark);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            padding: 10px;
+            background-color: var(--light);
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
         }
 
         .btn-primary {
-            background-color: #007bff;
-            border: none;
+            background-color: var(--primary);
+            color: white;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #2980b9;
         }
 
         .btn-warning {
-            background-color: #ffc107;
-            border: none;
+            background-color: var(--warning);
+            color: white;
         }
 
         .btn-warning:hover {
-            background-color: #e0a800;
+            background-color: #e67e22;
         }
 
-        @media (max-width: 991px) {
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .edit-mode {
+            display: none;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .file-upload {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .file-upload:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 768px) {
             body {
                 padding-left: 0;
             }
 
-            .main-container {
-                margin-right: 15px;
-                margin-left: 15px;
+            .main-content {
+                margin-left: 0;
             }
+
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tambahan untuk form yang sejajar */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .form-col {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding-right: 15px;
+            padding-left: 15px;
+            box-sizing: border-box;
+        }
+
+        .info-value.editable {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+        }
+
+        .info-value.editable input,
+        .info-value.editable select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: white;
+        }
+
+        .swal2-title-custom {
+            font-size: 16px !important;
+            color: #333 !important;
+        }
+
+        .swal2-popup.swal2-toast {
+            padding: 10px 15px !important;
+            width: auto !important;
+            max-width: 400px !important;
         }
     </style>
 </head>
 
 <body>
-    <div class="main-container container-custom">
-        <h2 class="text-center">Edit Guru</h2>
-        <hr>
-        <?php
-        if (isset($_POST['submit'])) {
-            $id_guru = $_GET['id_guru'];
+    <div class="main-content">
+        <h2>Profil Guru</h2>
 
-            // Ambil data guru lama dari database
-            $getGuru = mysqli_query($coneksi, "
-                SELECT guru.*, sekolah.nama_sekolah 
-                FROM guru 
-                INNER JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
-                WHERE guru.id_guru = '$id_guru'
-            ");
-            $data = mysqli_fetch_assoc($getGuru);
+        <form action="" method="post" enctype="multipart/form-data" id="profile-form">
+            <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
+            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
 
-            $nama_guru = $_POST['nama_guru'];
-            $nip = $_POST['nip'];
-            $jenis_kelamin = $_POST['jenis_kelamin'];
-            $alamat = $_POST['alamat'];
-            $no_tlp = $_POST['no_tlp'];
-            $id_sekolah = $_POST['id_sekolah'];
-            $username = $_POST['username'];
-            $password = $_POST['password'];
+            <div class="profile-container">
+                <div class="profile-card">
+                    <!-- Tampilkan foto profil -->
+                    <div class="profile-picture-container">
+                        <?php
+                        $imageDir = '/fitur_absen/absensi/pages/image/';
+                        $defaultImage = $imageDir . 'default.png';
+                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
+                        
+                        echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
+                        ?>
 
-            // Default profile lama
-            $profile = $data['profile'] ?? 'default.jpg';
-
-            // Jika ada upload foto baru
-            if (!empty($_FILES['foto']['name'])) {
-                $fotoName = $_FILES['foto']['name'];
-                $fotoTmp = $_FILES['foto']['tmp_name'];
-                $fotoExt = pathinfo($fotoName, PATHINFO_EXTENSION);
-                $fotoBaru = uniqid('guru_') . '.' . $fotoExt;
-                $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
-
-               
-                if (move_uploaded_file($fotoTmp, $uploadPath)) {
-                    // Debug foto lama
-                    $oldProfilePath = __DIR__ . "/../image/" . $data['profile'];
-                    // Coba hapus
-                    if (!empty($data['profile']) && file_exists($oldProfilePath) && $data['profile'] !== 'default.jpg') {
-                        if (unlink($oldProfilePath)) {
-                        }
-                    }
-
-                    $profile = $fotoBaru;
-                }
-            }
-
-            // Update ke database
-            $sql = mysqli_query($coneksi, "UPDATE guru SET 
-                nama_guru='$nama_guru', 
-                nip='$nip', 
-                jenis_kelamin='$jenis_kelamin', 
-                alamat='$alamat', 
-                no_tlp='$no_tlp', 
-                id_sekolah='$id_sekolah', 
-                username='$username', 
-                password='$password',
-                profile='$profile'
-                WHERE id_guru='$id_guru'");
-
-            if ($sql) {
-                echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-                echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data guru berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editguru&id_guru=' . $id_guru . '&pesan=sukses";},1200);</script>';
-                exit();
-            } else {
-                $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
-                echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-                echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
-            }
-        }
-        ?>
-
-
-        <?php if (isset($data) && $data): ?>
-            <form action="" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
-                <div class="d-flex justify-content-center mb-3 position-relative" style="width: 100px; height: 100px; margin: auto;">
-                    <img id="previewFoto" src="/fitur_absen/absensi/pages/image/<?php echo $data['profile'] ?? 'default.jpg'; ?>" alt="Foto Guru" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-                    <label for="foto" class="position-absolute"
-                        style="bottom: 0; right: 0;  background-color: rgba(0, 0, 0, 0.6); border-radius: 100%; padding: 6px; cursor: pointer;">
-                        <i class="fa fa-camera text-white"></i>
-                    </label>
-                    <input type="file" id="foto" name="foto" style="display: none;">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Nama Guru</label>
-                        <input type="text" name="nama_guru" class="form-control" value="<?php echo htmlspecialchars($data['nama_guru'] ?? ''); ?>" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>NIP</label>
-                        <input type="text" name="nip" class="form-control" value="<?php echo htmlspecialchars($data['nip'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Jenis Kelamin</label>
-                        <select name="jenis_kelamin" class="form-control">
-                            <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
-                            <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Alamat</label>
-                        <input type="text" name="alamat" class="form-control" value="<?php echo htmlspecialchars($data['alamat'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>No. Telepon / HP</label>
-                        <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Nama Sekolah</label>
-                        <select name="id_sekolah" class="form-control" required>
-                            <?php
-                            $querySekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
-                            while ($sekolah = mysqli_fetch_assoc($querySekolah)) {
-                                $selected = ($data['id_sekolah'] == $sekolah['id_sekolah']) ? 'selected' : '';
-                                echo "<option value='{$sekolah['id_sekolah']}' $selected>{$sekolah['nama_sekolah']}</option>";
-                            }
-                            ?>
-                        </select>
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="foto" id="file-input" accept="image/*" onchange="previewImage(this)">
+                            <label for="file-input" class="file-upload">
+                                <i class="fas fa-camera"></i> Ganti Foto
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-6">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username'] ?? ''); ?>" required>
+                    <div id="view-mode">
+                        <h3><?php echo htmlspecialchars($data['nama_guru']); ?></h3>
+                        <p><?php echo htmlspecialchars($data['nip']); ?></p>
+                        <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
+
+                        <button type="button" class="btn btn-warning" onclick="enableEdit()">
+                            <i class="fas fa-edit"></i> Edit Profil
+                        </button>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password'] ?? ''); ?>" required>
+
+                    <div id="edit-mode" class="edit-mode">
+                        <div class="form-group">
+                            <label for="nama_guru">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="nama_guru" name="nama_guru"
+                                value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                value="<?php echo htmlspecialchars($data['username']); ?>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                        </div>
+
+                        <button type="submit" name="submit" class="btn btn-primary">Simpan
+                        </button>
+
+                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
+                        </button>
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <div class="col text-right">
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                <div class="profile-info">
+                    <h3><i class="fas fa-info-circle"></i> Informasi Guru</h3>
+
+                    <div class="form-row">
+                        <!-- Left Column -->
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="info-label">NIP</label>
+                                <div class="info-value editable">
+                                    <input type="text" name="nip" class="form-control"
+                                        value="<?php echo htmlspecialchars($data['nip']); ?>" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="info-label">Jenis Kelamin</label>
+                                <div class="info-value editable">
+                                    <select name="jenis_kelamin" class="form-control" required>
+                                        <option value="Laki-laki" <?php if ($data['jenis_kelamin'] == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                                        <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="info-label">Alamat</label>
+                                <div class="info-value editable">
+                                    <input type="text" name="alamat" class="form-control"
+                                        value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="info-label">No. Telepon</label>
+                                <div class="info-value editable">
+                                    <input type="text" name="no_tlp" class="form-control"
+                                        value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="info-label">Sekolah</label>
+                                <div class="info-value editable">
+                                    <select name="id_sekolah" class="form-control" required>
+                                        <?php
+                                        $sekolah_query = mysqli_query($coneksi, "SELECT * FROM sekolah");
+                                        while ($sekolah = mysqli_fetch_assoc($sekolah_query)) {
+                                            $selected = ($sekolah['id_sekolah'] == $data['id_sekolah']) ? 'selected' : '';
+                                            echo '<option value="' . $sekolah['id_sekolah'] . '" ' . $selected . '>' . htmlspecialchars($sekolah['nama_sekolah']) . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </form>
-        <?php else: ?>
-            <div class="alert alert-warning">Data guru tidak ditemukan.</div>
-        <?php endif; ?>
+            </div>
+        </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.3/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.getElementById('foto').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const imgPreview = document.getElementById('previewFoto');
-        if (file && imgPreview) {
-            imgPreview.src = URL.createObjectURL(file);
+        // Fungsi untuk preview gambar sebelum upload dengan SweetAlert2
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // Update preview gambar
+                    document.getElementById('profile-picture').src = e.target.result;
+
+                    // Tampilkan notifikasi dengan SweetAlert2
+                    const fileName = input.files[0].name;
+                    const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2); // dalam MB
+
+                    Swal.fire({
+                        title: 'Foto Baru Dipilih',
+                        text: `Nama: ${fileName} (${fileSize} MB)`,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        toast: true,
+                        background: '#ffffff',
+                        customClass: {
+                            title: 'swal2-title-custom'
+                        }
+                    });
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
         }
-    });
+
+        // Fungsi untuk mengaktifkan mode edit
+        function enableEdit() {
+            document.getElementById('view-mode').style.display = 'none';
+            document.getElementById('edit-mode').style.display = 'block';
+
+            // Ubah semua info-value menjadi editable
+            const infoValues = document.querySelectorAll('.info-value');
+            infoValues.forEach(el => {
+                el.classList.add('editable');
+            });
+        }
+
+        // Fungsi untuk menonaktifkan mode edit
+        function disableEdit() {
+            document.getElementById('view-mode').style.display = 'block';
+            document.getElementById('edit-mode').style.display = 'none';
+
+            // Kembalikan info-value ke mode readonly
+            // const infoValues = document.querySelectorAll('.info-value');
+            // infoValues.forEach(el => {
+            //     el.classList.remove('editable');
+            // });
+        }
+
+        // Preview gambar saat memilih file
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    document.getElementById('profile-picture').src = e.target.result;
+                }
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Auto-hide alert setelah 5 detik
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 5000);
     </script>
 </body>
 

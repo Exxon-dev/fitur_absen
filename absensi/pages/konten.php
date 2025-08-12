@@ -6,6 +6,9 @@
             case 'dashboard':
                 include "pages/dashboard.php";
                 break;
+            case 'profile_admin':
+                include "pages/profile_admin.php";
+                break;
             case 'rekap_absen':
                 include "pages/admin_rekap_absen.php";
                 break;

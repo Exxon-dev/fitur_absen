@@ -79,6 +79,14 @@
           <span class="nav-link-text ms-1">Dashboard</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'profile_admin') ? 'active' : ''; ?>" href="index.php?page=profile_admin&id_admin=<?php echo isset($_SESSION['Id']) ? $_SESSION['Id'] : ''; ?>">
+          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons opacity-10">person</i>
+          </div>
+          <span class="nav-link-text ms-1">Profile Admin</span>
+        </a>
+      </li>
       <!-- Basis Data -->
       <li class="nav-item">
         <a class="nav-link text-white" href="index.php?page=siswa">
@@ -124,7 +132,7 @@
       <li class="nav-item mt-3">
         <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account Pages</h6>
       </li>
-      
+
       <!-- Sign Out -->
       <li class="nav-item">
         <a class="nav-link text-white" href="./pages/sign-up_aksi.php">
