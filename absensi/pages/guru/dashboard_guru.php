@@ -149,6 +149,49 @@ $jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
         height: 170px;
         position: relative;
       }
+
+      .radio-label {
+        margin-bottom: 10px;
+      }
+
+      input[type="radio"] {
+        transform: scale(1.1);
+      }
+    }
+
+    /* Refresh Indicator */
+    .refresh-indicator {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 50px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .refresh-indicator i {
+      margin-right: 8px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    h2 {
+      color: #007bff;
+      font-weight: 550
     }
   </style>
 </head>
@@ -184,7 +227,7 @@ $jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
               </div>
             </div>
             <hr class="dark horizontal my-0">
-          </div>
+           </div>
         </div>
 
         <div class="col-xl-4 col-sm-6">
@@ -217,14 +260,83 @@ $jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
           </div>
           <div class="col-md-4 mt-6">
             <ul class="chart-legend clearfix">
-              <li ><i class="far fa-circle text-danger"></i>Alpa  : 15</li>
+              <li><i class="far fa-circle text-danger"></i>Alpa : 15</li>
               <li><i class="far fa-circle text-success"></i>Hadir : 20</li>
-              <li><i class="far fa-circle text-warning"></i>Izin  : 5</li>
-              <li><i class="far fa-circle text-info"></i>Sakit    : 7</li>
+              <li><i class="far fa-circle text-warning"></i>Izin : 5</li>
+              <li><i class="far fa-circle text-info"></i>Sakit : 7</li>
             </ul>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="student-cards d-block d-md-none">
+      <?php
+      $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+      $index = 1;
+      $today = date('Y-m-d');
+
+      while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
+        $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
+        $attendance = mysqli_fetch_assoc($attendanceQuery);
+
+        $keterangan = $attendance['keterangan'] ?? null;
+        $badgeClass = 'badge-belum';
+        $statusText = 'Belum Absen';
+
+        if ($keterangan) {
+          switch ($keterangan) {
+            case 'sakit':
+              $badgeClass = 'badge-sakit';
+              $statusText = 'Sakit';
+              break;
+            case 'izin':
+              $badgeClass = 'badge-izin';
+              $statusText = 'Izin';
+              break;
+            case 'alpa':
+              $badgeClass = 'badge-alpa';
+              $statusText = 'Alpa';
+              break;
+            default:
+              $badgeClass = 'badge-hadir';
+              $statusText = 'Hadir';
+          }
+        }
+
+        echo '
+          <div class="student-card">
+            <div class="student-header">
+              <div>
+                <div class="student-name">' . $index . '. ' . htmlspecialchars($siswa['nama_siswa']) . '</div>
+              </div>
+              <span class="badge-status ' . $badgeClass . '">' . $statusText . '</span>
+            </div>
+            
+            <div class="radio-section">
+              <label class="radio-label disabled">
+                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="hadir" ' . (!$keterangan || $keterangan === 'hadir' ? 'checked' : '') . ' disabled>
+                <span>Hadir</span>
+              </label>
+              <label class="radio-label disabled">
+                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
+                <span>Sakit</span>
+              </label>
+              <label class="radio-label disabled">
+                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ' disabled>
+                <span>Izin</span>
+              </label>
+              <label class="radio-label disabled">
+                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ' disabled>
+                <span>Alpa</span>
+              </label>
+            </div>
+          </div>
+          ';
+        $index++;
+      }
+      ?>
     </div>
   </div>
   <script>
