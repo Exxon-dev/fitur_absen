@@ -45,7 +45,6 @@ $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            /* hilangkan margin default */
         }
 
         .body-card {
@@ -127,7 +126,8 @@ $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_
 <body class="row">
     <div class="body">
         <div class="body-card">
-            <div class="container my-4">
+            <div class="container my-70">
+                <a href="index.php?page=tambah_siswa" class="btn btn-primary"><i class="fas fa-plus"></i>tambah</a>
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <thead class="thead-primary bg-primary text-white">
