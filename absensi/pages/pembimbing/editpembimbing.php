@@ -82,10 +82,8 @@
 </head>
 
 <body>
+    <h2>Profile Pembimbing</h2>
     <div class="main-container container-custom">
-        <h2>Profile Pembimbing</h2>
-        <hr>
-
         <?php
         if (isset($_GET['id_pembimbing'])) {
             $id_pembimbing = $_GET['id_pembimbing'];
