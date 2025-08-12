@@ -227,7 +227,7 @@ $jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
               </div>
             </div>
             <hr class="dark horizontal my-0">
-          </div>
+           </div>
         </div>
 
         <div class="col-xl-4 col-sm-6">
@@ -260,10 +260,10 @@ $jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
           </div>
           <div class="col-md-4 mt-6">
             <ul class="chart-legend clearfix">
-              <li ><i class="far fa-circle text-danger"></i>Alpa  : 15</li>
+              <li><i class="far fa-circle text-danger"></i>Alpa : 15</li>
               <li><i class="far fa-circle text-success"></i>Hadir : 20</li>
-              <li><i class="far fa-circle text-warning"></i>Izin  : 5</li>
-              <li><i class="far fa-circle text-info"></i>Sakit    : 7</li>
+              <li><i class="far fa-circle text-warning"></i>Izin : 5</li>
+              <li><i class="far fa-circle text-info"></i>Sakit : 7</li>
             </ul>
           </div>
         </div>
