@@ -443,75 +443,37 @@ function getUploadError($errorCode)
 </head>
 
 <body>
-    <h2>Profile Pembimbing</h2>
-    <div class="main-container container-custom">
-        <?php
-        if (isset($_GET['id_pembimbing'])) {
-            $id_pembimbing = $_GET['id_pembimbing'];
-            $select = mysqli_query($coneksi, "SELECT * FROM pembimbing WHERE id_pembimbing='$id_pembimbing'") or die(mysqli_error($coneksi));
+    <div class="main-content">
+        <h2>Profil Pembimbing</h2>
 
-            if (mysqli_num_rows($select) == 0) {
-                echo '<div class="alert alert-warning">ID Pembimbing tidak ada dalam database.</div>';
-                exit();
-            } else {
-                $data = mysqli_fetch_assoc($select);
-            }
-        }
+        <form action="" method="post" enctype="multipart/form-data" id="profile-form">
+            <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
+            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
 
-        if (isset($_POST['submit'])) {
-            $id_pembimbing    = $_POST['id_pembimbing'];
-            $id_perusahaan    = $_POST['id_perusahaan'];
-            $nama_pembimbing  = $_POST['nama_pembimbing'];
-            $no_tlp           = $_POST['no_tlp'];
-            $alamat           = $_POST['alamat'];
-            $jenis_kelamin    = $_POST['jenis_kelamin'];
-            $username         = $_POST['username'];
-            $password         = $_POST['password'];
-            $foto_lama        = $_POST['foto_lama'] ?? 'default.jpg';
+            <div class="profile-container">
+                <div class="profile-card">
+                    <!-- Tampilkan foto profil -->
+                    <div class="profile-picture-container">
+                        <?php
+                        $foto_path = "image/" . htmlspecialchars($data['profile']);
+                        $default_path = "fitur_absen/absensi/pages/image/default.png";
 
-            $profile = $foto_lama;
+                        // Cek apakah file foto ada
+                        if (!empty($data['profile']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/' . $foto_path)) {
+                            echo '<img src="' . $foto_path . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
+                        } else {
+                            echo '<img src="' . $default_path . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
+                        }
+                        ?>
 
-            // Jika ada upload foto baru
-            if (!empty($_FILES['foto']['name'])) {
-                $fotoName   = $_FILES['foto']['name'];
-                $fotoTmp    = $_FILES['foto']['tmp_name'];
-                $fotoExt    = pathinfo($fotoName, PATHINFO_EXTENSION);
-                $fotoBaru   = uniqid('guru_') . '.' . $fotoExt;
-                $uploadPath = __DIR__ . "/../image/" . $fotoBaru;
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="foto" id="file-input" accept="image/*" onchange="previewImage(this)">
+                            <label for="file-input" class="file-upload">
+                                <i class="fas fa-camera"></i> Ganti Foto
+                            </label>
+                        </div>
+                    </div>
 
-                if (move_uploaded_file($fotoTmp, $uploadPath)) {
-                    // Hapus foto lama jika bukan default
-                    $oldProfilePath = __DIR__ . "/../image/" . $foto_lama;
-                    if (!empty($foto_lama) && file_exists($oldProfilePath) && $foto_lama !== 'default.jpg') {
-                        unlink($oldProfilePath);
-                    }
-                    $profile = $fotoBaru;
-                }
-            }
-
-            $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
-                nama_pembimbing = '$nama_pembimbing',
-                no_tlp          = '$no_tlp',
-                alamat          = '$alamat',
-                id_perusahaan   = '$id_perusahaan',
-                jenis_kelamin   = '$jenis_kelamin',
-                username        = '$username', 
-                profile         = '$profile', 
-                password        = '$password'
-                WHERE id_pembimbing = '$id_pembimbing'")
-                or die(mysqli_error($coneksi));
-
-            if ($sql) {
-                echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-                echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data pembimbing berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editpembimbing&id_pembimbing=' . $id_pembimbing . '&pesan=sukses";},1200);</script>';
-                exit();
-            } else {
-                $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
-                echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-                echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
-            }
-        }
-        ?>
                     <div id="view-mode">
                         <h3><?php echo htmlspecialchars($data['nama_pembimbing']); ?></h3>
                         <p><?php echo htmlspecialchars($data['alamat']); ?></p>
