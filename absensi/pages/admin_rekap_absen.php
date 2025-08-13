@@ -122,7 +122,7 @@ $result_siswa = mysqli_stmt_get_result($query_siswa);
             color: white;
         }
 
-                .table-responsive {
+        .table-responsive {
             border: none !important;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
