@@ -53,6 +53,7 @@ $_SESSION['status_absen'] = $status;
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
         }
+
         .main-container {
             margin-top: 20px;
             margin-right: 20px;
@@ -60,6 +61,7 @@ $_SESSION['status_absen'] = $status;
             width: auto;
             max-width: none;
         }
+
         #btnAbsensi {
             padding: 25px 40px;
             font-size: 24px;
@@ -121,6 +123,7 @@ $_SESSION['status_absen'] = $status;
                 opacity: 0;
             }
         }
+
         @media (max-width: 768px) {
             body {
                 padding-left: 0;
@@ -162,21 +165,26 @@ $_SESSION['status_absen'] = $status;
             ripple.style.top = `${event.clientY - rect.top}px`;
             setTimeout(() => ripple.remove(), 600);
 
-            // Konfirmasi
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: statusSaatIni === 'belum' ? 'Absen masuk sekarang?' : 'Absen pulang sekarang?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    kirimDataAbsensi(statusSaatIni === 'belum' ? 'simpan_masuk' : 'simpan_keluar');
-                }
-            });
+            if (statusSaatIni === 'belum') {
+                // Untuk absen masuk, langsung proses tanpa konfirmasi
+                kirimDataAbsensi('simpan_masuk');
+            } else {
+                // Untuk absen pulang, tetap pakai konfirmasi
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Absen pulang sekarang?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        kirimDataAbsensi('simpan_keluar');
+                    }
+                });
+            }
         }
 
         function kirimDataAbsensi(aksi) {

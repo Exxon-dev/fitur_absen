@@ -2,7 +2,7 @@
 <aside id="sidenav-main" class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" data-color="dark">
   <div class="sidenav-header">
     <a class="navbar-brand m-0" href="#">
-      <span class="ms-1 font-weight-bold text-white">ADMIN</span>
+      <span class="ms-1 font-weight-bold text-white">ADMIN ABSENSI</span>
     </a>
   </div>
 
