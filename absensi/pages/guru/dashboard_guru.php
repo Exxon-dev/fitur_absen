@@ -36,14 +36,24 @@ $siswaData = mysqli_fetch_assoc($query_siswa);
 $jumlah_siswa = $siswaData['jumlah'] ?? 0;
 
 // Ambil jumlah sekolah
-$query_sekolah_all = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM sekolah");
-$sekolahData = mysqli_fetch_assoc($query_sekolah_all);
-$jumlah_sekolah = $sekolahData['jumlah'] ?? 0;
+$tanggal = date('Y-m-d');
 
-// Ambil jumlah perusahaan
-$query_perusahaan = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM perusahaan");
-$perusahaanData = mysqli_fetch_assoc($query_perusahaan);
-$jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
+$sql = "SELECT COUNT(DISTINCT a.id_siswa) AS jumlah_absen 
+        FROM absen a 
+        JOIN siswa s ON a.id_siswa = s.id_siswa 
+        WHERE s.id_sekolah = ? AND a.tanggal = ?";
+
+$stmt = mysqli_prepare($coneksi, $sql);
+mysqli_stmt_bind_param($stmt, "is", $id_sekolah, $tanggal);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_assoc($result);
+
+$jumlah_siswa_absen = $row['jumlah_absen'] ?? 0;
+
+$query_catatan = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM catatan WHERE id_catatan != ''");
+$catatanData = mysqli_fetch_assoc($query_catatan);
+$jumlah_catatan = $catatanData['jumlah'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -219,27 +229,27 @@ $jumlah_perusahaan = $perusahaanData['jumlah'] ?? 0;
           <div class="card">
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">school</i>
+                <i class="material-icons opacity-10">assignment</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Sekolah</p>
-                <h4 class="mb-0"><?php echo $jumlah_sekolah; ?></h4>
+                <p class="text-sm mb-0 text-capitalize">Siswa Absen</p>
+                <h4 class="mb-0"><?php echo $jumlah_siswa_absen; ?></h4>
               </div>
             </div>
             <hr class="dark horizontal my-0">
-           </div>
+          </div>
         </div>
 
         <div class="col-xl-4 col-sm-6">
           <div class="card">
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">location_city</i>
+                <i class="material-icons opacity-10">note_add</i>
               </div>
-              <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
-                <h4 class="mb-0"><?php echo $jumlah_perusahaan; ?></h4>
-              </div>
+<div class="text-end pt-1">
+    <p class="text-sm mb-0 text-capitalize">Catatan Siswa</p>
+    <h4 class="mb-0"><?php echo $jumlah_catatan; ?></h4>
+</div>
             </div>
             <hr class="dark horizontal my-0">
           </div>

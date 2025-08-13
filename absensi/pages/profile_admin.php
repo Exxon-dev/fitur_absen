@@ -8,11 +8,11 @@ include('koneksi.php');
 // Cek id admin dari session atau GET
 if (!isset($_GET['id'])) {
     // Jika tidak ada parameter id, coba dari session
-    if (!isset($_SESSION['Id'])) {
+    if (!isset($_SESSION['id'])) {
         header("Location: index.php?page=admin");
         exit();
-    }
-    $id_admin = $_SESSION['Id'];
+    } 
+    $id_admin = $_SESSION['id'];
 } else {
     $id_admin = $_GET['id'];
 }

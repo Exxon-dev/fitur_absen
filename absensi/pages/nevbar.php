@@ -54,9 +54,13 @@
                     $id_pembimbing = $_SESSION['id_pembimbing'] ?? '';
                     $profile_link = "index.php?page=editpembimbing&id_pembimbing=$id_pembimbing";
                     break;
+                  case 'admin':
+                    $id = $_SESSION['id'] ?? '';
+                    $profile_link = "index.php?page=editsiswa&id=$id";
+                    break;
                   // tambahkan role lain jika perlu
                   default:
-                    $profile_link = "#";
+                    $profile_link = "image/default.png";
                 }
               }
               ?>
