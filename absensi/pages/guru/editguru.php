@@ -56,7 +56,7 @@ if (isset($_POST['submit'])) {
             $target_file = $target_dir . $new_filename;
 
             // Check file size (max 2MB)
-            if ($_FILES['profile']['size'] > 2000000) {
+            if ($_FILES['profile']['size'] > 9000000) {
                 echo '<script>alert("Ukuran file terlalu besar. Maksimal 2MB.");</script>';
             } else {
                 // Allow certain file formats
@@ -109,11 +109,11 @@ if (isset($_POST['submit'])) {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no">
     <title>Profil Guru - <?php echo htmlspecialchars($data['nama_guru']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-    <!-- <style>
+    <style>
         body {
             padding-left: 270px;
             background-color: #f8f9fa;
@@ -154,6 +154,12 @@ if (isset($_POST['submit'])) {
             object-fit: cover;
             border: 5px solid #3498db;
             margin: 0 auto 15px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+            }
         }
 
         .profile-info {
@@ -199,265 +205,6 @@ if (isset($_POST['submit'])) {
         #file-input {
             display: none;
         }
-    </style> -->
-    <style>
-        :root {
-            --primary: #3498db;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #f8f9fa;
-            --dark: #343a40;
-        }
-
-        body {
-            padding-left: 270px;
-            transition: padding-left 0.3s;
-            background-color: #f8f9fa;
-        }
-
-        .main-container {
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-left: 0;
-            width: auto;
-            max-width: none;
-        }
-
-        .container-custom {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            margin-bottom: 20px;
-            color: #007bff;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-
-        .profile-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        .profile-card {
-            background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .profile-picture {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--primary);
-            margin: 0 auto 15px;
-            display: block;
-        }
-
-        .profile-info {
-            background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-group {
-            margin-bottom: 15px;
-        }
-
-        .info-label {
-            font-weight: bold;
-            color: var(--dark);
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            padding: 10px;
-            background-color: var(--light);
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background-color: #e67e22;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .edit-mode {
-            display: none;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .file-upload {
-            display: inline-block;
-            padding: 8px 15px;
-            background-color: var(--primary);
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .file-upload:hover {
-            background-color: #2980b9;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding-left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .profile-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Tambahan untuk form yang sejajar */
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-right: -15px;
-            margin-left: -15px;
-        }
-
-        .form-col {
-            flex: 0 0 50%;
-            max-width: 50%;
-            padding-right: 15px;
-            padding-left: 15px;
-            box-sizing: border-box;
-        }
-
-        .info-value.editable {
-            padding: 0;
-            background-color: transparent;
-            border: none;
-        }
-
-        .info-value.editable input,
-        .info-value.editable select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: white;
-        }
-
-        .swal2-title-custom {
-            font-size: 16px !important;
-            color: #333 !important;
-        }
-
-        .swal2-popup.swal2-toast {
-            padding: 10px 15px !important;
-            width: auto !important;
-            max-width: 400px !important;
-        }
     </style>
 </head>
 
@@ -481,7 +228,7 @@ if (isset($_POST['submit'])) {
                     </div>
 
                     <div id="view-mode">
-                        <h3><?php echo htmlspecialchars($data['nama_guru']); ?></h3>
+                        <h4><?php echo htmlspecialchars($data['nama_guru']); ?></h4>
                         <p><?php echo htmlspecialchars($data['nip']); ?></p>
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
@@ -492,24 +239,24 @@ if (isset($_POST['submit'])) {
 
                     <div id="edit-mode" class="edit-mode">
 
-                        <div class="form-group">
+                        <div class="form-group text-left">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
                                 value="<?php echo htmlspecialchars($data['username']); ?>" required>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group text-left">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
                                 value="<?php echo htmlspecialchars($data['password']); ?>" required>
                         </div>
 
-                        
+
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">
                             <i class="fas fa-times"></i> Batal
                         </button>
                         <button type="submit" name="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Simpan
+                            <i class="fas fa-save"></i> Update
                         </button>
                     </div>
                 </div>

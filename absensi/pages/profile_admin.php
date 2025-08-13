@@ -8,11 +8,11 @@ include('koneksi.php');
 // Cek id admin dari session atau GET
 if (!isset($_GET['id'])) {
     // Jika tidak ada parameter id, coba dari session
-    if (!isset($_SESSION['Id'])) {
+    if (!isset($_SESSION['id'])) {
         header("Location: index.php?page=admin");
         exit();
-    }
-    $id_admin = $_SESSION['Id'];
+    } 
+    $id_admin = $_SESSION['id'];
 } else {
     $id_admin = $_GET['id'];
 }
@@ -451,7 +451,7 @@ function getUploadError($errorCode) {
                         <?php
                         $imageDir = '/fitur_absen/absensi/pages/image/';
                         $defaultImage = $imageDir . 'default.png';
-                        $profileImage = (isset($data['profile']) && !empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
+                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
                         
                         echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>
