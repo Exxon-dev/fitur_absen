@@ -49,12 +49,17 @@ $_SESSION['status_absen'] = $status;
     <style>
         /* CSS styles tetap sama seperti sebelumnya */
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
-            margin: 0;
-            padding: 0;
+            padding-left: 270px;
+            transition: padding-left 0.3s;
+            background-color: #f8f9fa;
         }
-
+        .main-container {
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+        }
         #btnAbsensi {
             padding: 25px 40px;
             font-size: 24px;
@@ -90,7 +95,7 @@ $_SESSION['status_absen'] = $status;
             align-items: center;
             height: 100%;
             margin-top: 200px;
-            padding: 0;
+            padding: 130px;
             flex-direction: column;
         }
 
@@ -116,11 +121,20 @@ $_SESSION['status_absen'] = $status;
                 opacity: 0;
             }
         }
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-tengah">
+    <div class="container-tengah container-custom">
         <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
             onclick="prosesAbsensi()">
             <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>

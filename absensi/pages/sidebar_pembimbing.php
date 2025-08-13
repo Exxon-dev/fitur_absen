@@ -31,7 +31,7 @@
         <a class="nav-link text-white <?= $isActive ? 'active' : '' ?>"
           href="index.php?page=pembimbing_absen">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">dashboard</i>
+            <i class="material-icons opacity-10">assignment</i>
           </div>
           <span class="nav-link-text ms-1">Absensi Siswa</span>
         </a>

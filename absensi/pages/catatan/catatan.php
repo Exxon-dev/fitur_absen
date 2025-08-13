@@ -179,7 +179,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <?php endif; ?>
 
             <!-- Form Pencarian (hanya untuk pembimbing dan guru) -->
-            <?php if ($level === 'pembimbing' || $level === 'guru' || $level === 'sekolah'): ?>
+            <?php if ($level === 'pembimbing' || $level === 'guru'): ?>
                 <form method="GET" class="form-inline">
                     <input type="hidden" name="page" value="catatan" />
                     <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" />
