@@ -62,7 +62,7 @@
               ?>
               <!-- bagian dropdown profile -->
               <a class="dropdown-item border-radius-md" href="<?= htmlspecialchars($profile_link) ?>">
-                  <i class="fas fa-user-circle me-2"></i> Logout
+                  <i class="fas fa-user-circle me-2"></i> Profile
               </a>
 
             </li>
