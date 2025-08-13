@@ -40,19 +40,19 @@
               <?php
               $profile_link = '#'; // default
 
-              if (isset($_SESSION['role'])) {
-                switch ($_SESSION['role']) {
+              if (isset($_SESSION['level'])) {
+                switch ($_SESSION['level']) {
                   case 'guru':
-                    $id = $_SESSION['id_guru'] ?? '';
-                    $profile_link = "index.php?page=editguru&id_guru=$id";
+                    $id_guru = $_SESSION['id_guru'] ?? '';
+                    $profile_link = "index.php?page=editguru&id_guru=$id_guru";
                     break;
                   case 'siswa':
-                    $id = $_SESSION['id_siswa'] ?? '';
-                    $profile_link = "index.php?page=editsiswa&id_siswa=$id";
+                    $id_siswa = $_SESSION['id_siswa'] ?? '';
+                    $profile_link = "index.php?page=editsiswa&id_siswa=$id_siswa";
                     break;
                   case 'pembimbing':
-                    $id = $_SESSION['id_pembimbing'] ?? '';
-                    $profile_link = "index.php?page=editpembimbing&id_pembimbing=$id";
+                    $id_pembimbing = $_SESSION['id_pembimbing'] ?? '';
+                    $profile_link = "index.php?page=editpembimbing&id_pembimbing=$id_pembimbing";
                     break;
                   // tambahkan role lain jika perlu
                   default:
@@ -76,4 +76,4 @@
       </ul>
     </div>
   </div>
-</nav>
+</nav> 
