@@ -41,22 +41,30 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
 <html lang="en">
 
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard Pembimbing</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
   <style>
     body {
-      padding-left: 250px;
+      padding-left: 270px;
+      transition: padding-left 0.3s;
       background-color: #f8f9fa;
-      margin: 0;
-      overflow: auto;
     }
 
     .main-container {
-      margin: 20px;
+      margin-top: 20px;
+      margin-right: 20px;
+      margin-left: 0;
+      max-width: none;
     }
-      
+
+    .container-custom {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
 
     .card {
       border-radius: 10px;

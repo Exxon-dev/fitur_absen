@@ -50,18 +50,18 @@ if (isset($_POST['submit'])) {
         $fotoSize = $_FILES['foto']['size'];
         $fotoError = $_FILES['foto']['error'];
         $fotoExt = strtolower(pathinfo($fotoName, PATHINFO_EXTENSION));
-        
+
         // Ekstensi yang diizinkan
         $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
         $maxFileSize = 2 * 1024 * 1024; // 2MB
-        
+
         if (in_array($fotoExt, $allowedExt)) {
             if ($fotoError === UPLOAD_ERR_OK) {
                 if ($fotoSize <= $maxFileSize) {
                     $fotoBaru = uniqid('siswa_', true) . '.' . $fotoExt;
                     $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/';
                     $uploadPath = $uploadDir . $fotoBaru;
-                    
+
                     // Buat folder jika belum ada
                     if (!file_exists($uploadDir)) {
                         if (!mkdir($uploadDir, 0755, true)) {
@@ -112,7 +112,7 @@ if (isset($_POST['submit'])) {
                     Swal.fire({
                         icon: "error",
                         title: "Upload Gagal",
-                        text: "'.$errorMsg.'",
+                        text: "' . $errorMsg . '",
                         position: "top"
                     });
                 </script>';
@@ -159,7 +159,8 @@ if (isset($_POST['submit'])) {
     }
 }
 
-function getUploadError($errorCode) {
+function getUploadError($errorCode)
+{
     switch ($errorCode) {
         case UPLOAD_ERR_INI_SIZE:
             return "Ukuran file melebihi limit server";
@@ -464,15 +465,11 @@ function getUploadError($errorCode) {
                     <!-- Tampilkan foto profil -->
                     <div class="profile-picture-container">
                         <?php
-                        $foto_path = "image/" . htmlspecialchars($data['profile']);
-                        $default_path = "fitur_absen/absensi/pages/image/default.png";
+                        $imageDir = '/fitur_absen/absensi/pages/image/';
+                        $defaultImage = $imageDir . 'default.png';
+                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
 
-                        // Cek apakah file foto ada
-                        if (!empty($data['profile']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/' . $foto_path)) {
-                            echo '<img src="' . $foto_path . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
-                        } else {
-                            echo '<img src="' . $default_path . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
-                        }
+                        echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>
 
                         <div class="file-upload-wrapper">
@@ -706,12 +703,6 @@ function getUploadError($errorCode) {
         function disableEdit() {
             document.getElementById('view-mode').style.display = 'block';
             document.getElementById('edit-mode').style.display = 'none';
-
-            // Kembalikan info-value ke mode readonly
-            // const infoValues = document.querySelectorAll('.info-value');
-            // infoValues.forEach(el => {
-            //     el.classList.remove('editable');
-            // });
         }
 
         // Preview gambar saat memilih file

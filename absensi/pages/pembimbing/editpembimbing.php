@@ -455,15 +455,11 @@ function getUploadError($errorCode)
                     <!-- Tampilkan foto profil -->
                     <div class="profile-picture-container">
                         <?php
-                        $foto_path = "image/" . htmlspecialchars($data['profile']);
-                        $default_path = "fitur_absen/absensi/pages/image/default.png";
-
-                        // Cek apakah file foto ada
-                        if (!empty($data['profile']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/' . $foto_path)) {
-                            echo '<img src="' . $foto_path . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
-                        } else {
-                            echo '<img src="' . $default_path . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
-                        }
+                        $imageDir = '/fitur_absen/absensi/pages/image/';
+                        $defaultImage = $imageDir . 'default.png';
+                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
+                        
+                        echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>
 
                         <div class="file-upload-wrapper">

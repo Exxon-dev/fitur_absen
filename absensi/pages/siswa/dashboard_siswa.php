@@ -49,10 +49,17 @@ $_SESSION['status_absen'] = $status;
     <style>
         /* CSS styles tetap sama seperti sebelumnya */
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f7fa;
-            margin: 0;
-            padding: 0;
+            padding-left: 270px;
+            transition: padding-left 0.3s;
+            background-color: #f8f9fa;
+        }
+
+        .main-container {
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
         }
 
         #btnAbsensi {
@@ -90,7 +97,7 @@ $_SESSION['status_absen'] = $status;
             align-items: center;
             height: 100%;
             margin-top: 200px;
-            padding: 0;
+            padding: 130px;
             flex-direction: column;
         }
 
@@ -116,11 +123,21 @@ $_SESSION['status_absen'] = $status;
                 opacity: 0;
             }
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-tengah">
+    <div class="container-tengah container-custom">
         <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
             onclick="prosesAbsensi()">
             <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
@@ -148,21 +165,26 @@ $_SESSION['status_absen'] = $status;
             ripple.style.top = `${event.clientY - rect.top}px`;
             setTimeout(() => ripple.remove(), 600);
 
-            // Konfirmasi
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: statusSaatIni === 'belum' ? 'Absen masuk sekarang?' : 'Absen pulang sekarang?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    kirimDataAbsensi(statusSaatIni === 'belum' ? 'simpan_masuk' : 'simpan_keluar');
-                }
-            });
+            if (statusSaatIni === 'belum') {
+                // Untuk absen masuk, langsung proses tanpa konfirmasi
+                kirimDataAbsensi('simpan_masuk');
+            } else {
+                // Untuk absen pulang, tetap pakai konfirmasi
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Absen pulang sekarang?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        kirimDataAbsensi('simpan_keluar');
+                    }
+                });
+            }
         }
 
         function kirimDataAbsensi(aksi) {

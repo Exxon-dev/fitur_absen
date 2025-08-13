@@ -451,7 +451,7 @@ function getUploadError($errorCode) {
                         <?php
                         $imageDir = '/fitur_absen/absensi/pages/image/';
                         $defaultImage = $imageDir . 'default.png';
-                        $profileImage = (isset($data['profile']) && !empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
+                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
                         
                         echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>

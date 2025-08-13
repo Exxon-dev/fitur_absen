@@ -133,7 +133,7 @@ if (!isset($_SESSION['id_siswa'])) {
 <body>
 
     <div class="main-container container-custom">
-        <h1>Buka Laporan Siswa</h1>
+        <h1>Laporan Siswa</h1>
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="POST" onsubmit="openTab(event)">
@@ -154,7 +154,7 @@ if (!isset($_SESSION['id_siswa'])) {
                 <option value="bl">Lembar Bimbingan Laporan</option>
             </select>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4">Unduh Laporan</button>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Lihat Laporan</button>
         </form>
     </div>
 
