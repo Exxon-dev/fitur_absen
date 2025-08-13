@@ -6,6 +6,9 @@
             case 'dashboard':
                 include "pages/dashboard.php";
                 break;
+            case 'profile_admin':
+                include "pages/profile_admin.php";
+                break;
             case 'rekap_absen':
                 include "pages/admin_rekap_absen.php";
                 break;
@@ -27,6 +30,9 @@
             case 'tambahsiswa':
                 include "pages/siswa/tambahsiswa.php";
                 break;
+            case 'tambah_siswa':
+                include "pages/guru/tambah_siswa.php";
+                break;
             case 'editsiswa':
                 include "pages/siswa/editsiswa.php";
                 break;
@@ -42,6 +48,9 @@
             case 'guru':
                 include "pages/guru/guru.php";
                 break;
+            case 'absensi_siswa':
+                include "pages/guru/absensi_siswa.php";
+                break;
             case 'tambahguru':
                 include "pages/guru/tambahguru.php";
                 break;
@@ -56,6 +65,9 @@
                 break;
             case 'pembimbing':
                 include "pages/pembimbing/pembimbing.php";
+                break;
+            case 'pembimbing_absen':
+                include "pages/pembimbing/absensi_siswa.php";
                 break;
             case 'tambahpembimbing':
                 include "pages/pembimbing/tambahpembimbing.php";
