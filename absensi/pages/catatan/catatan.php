@@ -5,7 +5,7 @@ include('koneksi.php');
 $level = $_SESSION['level'] ?? '';
 $id_siswa = $_SESSION['id_siswa'] ?? null;
 $id_perusahaan = $_SESSION['id_perusahaan'] ?? null;
-$id_sekolah = $_SESSION['id_sekolah'] ?? null;
+$id_guru = $_SESSION['id_guru'] ?? null;
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 
 // Parameter dari URL - format tanggal Y-m-d
@@ -38,8 +38,8 @@ if ($level === 'siswa') {
     if ($search) {
         $where_conditions[] = "siswa.nama_siswa LIKE '%$search%'";
     }
-} elseif ($level === 'guru' || $level === 'sekolah') {
-    $where_conditions[] = "siswa.id_sekolah = '$id_sekolah'";
+} elseif ($level === 'guru') {
+    $where_conditions[] = "siswa.id_guru = '$id_guru'";
     if ($search) {
         $where_conditions[] = "siswa.nama_siswa LIKE '%$search%'";
     }

@@ -1,36 +1,34 @@
 <?php
+ob_start(); // Mulai output buffering di line pertama
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 include('koneksi.php');
 
-// Cek id admin dari session atau GET
-if (!isset($_GET['id'])) {
-    // Jika tidak ada parameter id, coba dari session
-    if (!isset($_SESSION['Id'])) {
-        header("Location: index.php?page=admin");
-        exit();
-    }
-    $id_admin = $_SESSION['Id'];
-} else {
-    $id_admin = $_GET['id'];
-}
-
-// Get admin data
-$select = mysqli_query($coneksi, "SELECT * FROM users WHERE Id='$id_admin' AND level='admin'") 
-                                 or die(mysqli_error($coneksi));
-
-if (mysqli_num_rows($select) == 0) {
-    echo '<div class="alert alert-warning">ID admin tidak ada dalam database.</div>';
+// Cek apakah admin sudah login
+if (!isset($_SESSION['username'])) {
+    header("Location: sign-in.php");
     exit();
-} else {
-    $data = mysqli_fetch_assoc($select);
 }
 
-// Process form submission
+$username_admin = $_GET['username'] ?? $_SESSION['username'];
+
+// Ambil data admin berdasarkan username
+$sql = "SELECT * FROM users WHERE username = ?";
+$stmt = $coneksi->prepare($sql);
+$stmt->bind_param("s", $username_admin);
+$stmt->execute();
+$result = $stmt->get_result();
+$admin = $result->fetch_assoc();
+
+if (!$admin) {
+    echo '<div class="alert alert-warning">Data admin tidak ditemukan!</div>';
+    exit();
+}
+
+// Proses update data
 if (isset($_POST['submit'])) {
-    $id_admin = $_POST['id'];
     $nama = $_POST['nama'];
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -40,9 +38,6 @@ if (isset($_POST['submit'])) {
 
     // Handle file upload
     if (!empty($_FILES['foto']['name'])) {
-        // Define upload directory - use absolute server path
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/';
-        
         $fotoName = $_FILES['foto']['name'];
         $fotoTmp = $_FILES['foto']['tmp_name'];
         $fotoSize = $_FILES['foto']['size'];
@@ -56,7 +51,11 @@ if (isset($_POST['submit'])) {
         if (in_array($fotoExt, $allowedExt)) {
             if ($fotoError === UPLOAD_ERR_OK) {
                 if ($fotoSize <= $maxFileSize) {
-                    // Create directory if it doesn't exist
+                    $fotoBaru = uniqid('admin_', true) . '.' . $fotoExt;
+                    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/';
+                    $uploadPath = $uploadDir . $fotoBaru;
+
+                    // Buat folder jika belum ada
                     if (!file_exists($uploadDir)) {
                         if (!mkdir($uploadDir, 0755, true)) {
                             echo '<script>
@@ -71,9 +70,6 @@ if (isset($_POST['submit'])) {
                         }
                     }
 
-                    $fotoBaru = uniqid('admin_', true) . '.' . $fotoExt;
-                    $uploadPath = $uploadDir . $fotoBaru;
-                    
                     if (move_uploaded_file($fotoTmp, $uploadPath)) {
                         // Hapus foto lama jika bukan default
                         if (!empty($foto_lama) && $foto_lama !== 'default.png') {
@@ -109,7 +105,7 @@ if (isset($_POST['submit'])) {
                     Swal.fire({
                         icon: "error",
                         title: "Upload Gagal",
-                        text: "'.$errorMsg.'",
+                        text: "' . $errorMsg . '",
                         position: "top"
                     });
                 </script>';
@@ -126,19 +122,23 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    $sql = mysqli_query($coneksi, "UPDATE users SET 
-        username='$username', 
-        password='$password', 
-        nama='$nama'
-        WHERE Id='$id_admin' AND level='admin'")
-        or die(mysqli_error($coneksi));
+    // Update data admin
+    if (!empty($password)) {
+        $update_sql = "UPDATE users SET nama=?, username=?, password=?, profile=? WHERE username=?";
+        $stmt_update = $coneksi->prepare($update_sql);
+        $stmt_update->bind_param("sssss", $nama, $username, $password, $profile, $username_admin);
+    } else {
+        $update_sql = "UPDATE users SET nama=?, username=?, profile=? WHERE username=?";
+        $stmt_update = $coneksi->prepare($update_sql);
+        $stmt_update->bind_param("ssss", $nama, $username, $profile, $username_admin);
+    }
 
-    if ($sql) {
+    if ($stmt_update->execute()) {
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data admin berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editadmin&id=' . $id_admin . '&pesan=sukses";},1200);</script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data admin berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=profile_admin&username=' . $username_admin . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
-        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
+        $err = htmlspecialchars($stmt_update->error, ENT_QUOTES);
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
     }
@@ -172,7 +172,7 @@ function getUploadError($errorCode) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Admin - <?php echo htmlspecialchars($data['nama']); ?></title>
+    <title>Profil Admin - <?php echo htmlspecialchars($admin['nama']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
@@ -391,7 +391,7 @@ function getUploadError($errorCode) {
             }
         }
 
-        /* Tambahan untuk form yang sejalar */
+        /* Tambahan untuk form yang sejajar */
         .form-row {
             display: flex;
             flex-wrap: wrap;
@@ -441,8 +441,8 @@ function getUploadError($errorCode) {
         <h2>Profil Admin</h2>
 
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
-            <input type="hidden" name="id" value="<?php echo $id_admin; ?>">
-            <input type="hidden" name="foto_lama" value="<?php echo isset($data['profile']) ? $data['profile'] : 'default.png'; ?>">
+            <input type="hidden" name="username" value="<?php echo $username_admin; ?>">
+            <input type="hidden" name="foto_lama" value="<?php echo isset($admin['profile']) ? $admin['profile'] : 'default.png'; ?>">
 
             <div class="profile-container">
                 <div class="profile-card">
@@ -451,7 +451,7 @@ function getUploadError($errorCode) {
                         <?php
                         $imageDir = '/fitur_absen/absensi/pages/image/';
                         $defaultImage = $imageDir . 'default.png';
-                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
+                        $profileImage = (!empty($admin['profile'])) ? $imageDir . $admin['profile'] : $defaultImage;
                         
                         echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>
@@ -465,9 +465,8 @@ function getUploadError($errorCode) {
                     </div>
 
                     <div id="view-mode">
-                        <h3><?php echo htmlspecialchars($data['nama']); ?></h3>
-                        <p>Admin Sistem</p>
-                        <p><?php echo htmlspecialchars($data['username']); ?></p>
+                        <h3><?php echo htmlspecialchars($admin['nama']); ?></h3>
+                        <p>Administrator</p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
                             <i class="fas fa-edit"></i> Edit Profil
@@ -478,25 +477,25 @@ function getUploadError($errorCode) {
                         <div class="form-group">
                             <label for="nama">Nama Lengkap</label>
                             <input type="text" class="form-control" id="nama" name="nama"
-                                value="<?php echo htmlspecialchars($data['nama']); ?>" required>
+                                value="<?php echo htmlspecialchars($admin['nama']); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
-                                value="<?php echo htmlspecialchars($data['username']); ?>" required>
+                                value="<?php echo htmlspecialchars($admin['username']); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
-                                value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                                value="<?php echo htmlspecialchars($admin['password']); ?>">
                         </div>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Simpan
-                        </button>
-
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
+                        </button>
+                        
+                        <button type="submit" name="submit" class="btn btn-primary">Simpan
                         </button>
                     </div>
                 </div>
@@ -510,7 +509,7 @@ function getUploadError($errorCode) {
                             <div class="form-group">
                                 <label class="info-label">Level Akses</label>
                                 <div class="info-value">
-                                    Admin Sistem
+                                    Administrator Sistem
                                 </div>
                             </div>
                         </div>
@@ -568,24 +567,12 @@ function getUploadError($errorCode) {
         function enableEdit() {
             document.getElementById('view-mode').style.display = 'none';
             document.getElementById('edit-mode').style.display = 'block';
-
-            // Ubah semua info-value menjadi editable
-            const infoValues = document.querySelectorAll('.info-value');
-            infoValues.forEach(el => {
-                el.classList.add('editable');
-            });
         }
 
         // Fungsi untuk menonaktifkan mode edit
         function disableEdit() {
             document.getElementById('view-mode').style.display = 'block';
             document.getElementById('edit-mode').style.display = 'none';
-
-            // Kembalikan info-value ke mode readonly
-            // const infoValues = document.querySelectorAll('.info-value');
-            // infoValues.forEach(el => {
-            //     el.classList.remove('editable');
-            // });
         }
 
         // Preview gambar saat memilih file
@@ -609,3 +596,6 @@ function getUploadError($errorCode) {
 </body>
 
 </html>
+<?php
+ob_end_flush(); // Akhiri output buffering
+?>
