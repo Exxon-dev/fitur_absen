@@ -543,8 +543,8 @@ function getUploadError($errorCode)
                         </div>
 
                         <!-- Right Column -->
-                         <div class="form-col">
-                         <div class="form-group">
+                        <div class="form-col">
+                            <div class="form-group">
                                 <label class="info-label">Jenis Kelamin</label>
                                 <div class="info-value editable">
                                     <select name="jenis_kelamin" class="form-control" required>
@@ -553,7 +553,7 @@ function getUploadError($errorCode)
                                     </select>
                                 </div>
                             </div>
-                        
+
                             <div class="form-group">
                                 <label class="info-label">Perusahaan</label>
                                 <div class="info-value editable">

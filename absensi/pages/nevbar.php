@@ -40,34 +40,38 @@
               <?php
               $profile_link = '#'; // default
 
-              if (isset($_SESSION['role'])) {
-                switch ($_SESSION['role']) {
+              if (isset($_SESSION['level'])) {
+                switch ($_SESSION['level']) {
                   case 'guru':
-                    $id = $_SESSION['id_guru'] ?? '';
-                    $profile_link = "index.php?page=editguru&id_guru=$id";
+                    $id_guru = $_SESSION['id_guru'] ?? '';
+                    $profile_link = "index.php?page=editguru&id_guru=$id_guru";
                     break;
                   case 'siswa':
-                    $id = $_SESSION['id_siswa'] ?? '';
-                    $profile_link = "index.php?page=editsiswa&id_siswa=$id";
+                    $id_siswa = $_SESSION['id_siswa'] ?? '';
+                    $profile_link = "index.php?page=editsiswa&id_siswa=$id_siswa";
                     break;
                   case 'pembimbing':
-                    $id = $_SESSION['id_pembimbing'] ?? '';
-                    $profile_link = "index.php?page=editpembimbing&id_pembimbing=$id";
+                    $id_pembimbing = $_SESSION['id_pembimbing'] ?? '';
+                    $profile_link = "index.php?page=editpembimbing&id_pembimbing=$id_pembimbing";
+                    break;
+                  case 'admin':
+                    $id = $_SESSION['id'] ?? '';
+                    $profile_link = "index.php?page=editsiswa&id=$id";
                     break;
                   // tambahkan role lain jika perlu
                   default:
-                    $profile_link = "#";
+                    $profile_link = "image/default.png";
                 }
               }
               ?>
               <!-- bagian dropdown profile -->
               <a class="dropdown-item border-radius-md" href="<?= htmlspecialchars($profile_link) ?>">
-                  <i class="fas fa-user-circle me-2"></i> Logout
+                  <i class="fas fa-user-circle me-2"></i> Profile
               </a>
 
             </li>
             <li>
-              <a class="dropdown-item border-radius-md" href="./pages/sign-up_aksi.php">
+              <a id="logoutBtn" class="dropdown-item border-radius-md" href="./pages/sign-up_aksi.php">
                   <i class="fas fa-sign-out-alt me-2"></i> Logout
               </a>
             </li>
@@ -76,4 +80,25 @@
       </ul>
     </div>
   </div>
-</nav>
+</nav> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('logoutBtn').addEventListener('click', function(event) {
+    event.preventDefault(); // Jangan langsung logout
+
+    Swal.fire({
+        title: 'Yakin mau logout?',
+        text: "Anda akan keluar dari aplikasi!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = './pages/sign-up_aksi.php'; // arahkan logout
+        }
+    });
+});
+</script>

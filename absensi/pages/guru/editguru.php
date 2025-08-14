@@ -1,23 +1,18 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 include('koneksi.php');
 
-// Cek id_guru dari GET
+// Validasi ID guru
 if (!isset($_GET['id_guru'])) {
     header("Location: index.php?page=guru");
     exit();
 }
 
-// Get guru data with school join
 $id_guru = $_GET['id_guru'];
 $select = mysqli_query($coneksi, "SELECT guru.*, sekolah.nama_sekolah 
                                  FROM guru 
                                  JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
-                                 WHERE guru.id_guru='$id_guru'") 
-                                 or die(mysqli_error($coneksi));
+                                 WHERE guru.id_guru='$id_guru'")
+    or die(mysqli_error($coneksi));
 
 if (mysqli_num_rows($select) == 0) {
     echo '<div class="alert alert-warning">ID guru tidak ada dalam database.</div>';
@@ -26,7 +21,7 @@ if (mysqli_num_rows($select) == 0) {
     $data = mysqli_fetch_assoc($select);
 }
 
-// Process form submission
+// Handle form submission
 if (isset($_POST['submit'])) {
     $id_guru = $_GET['id_guru'];
     $nama_guru = $_POST['nama_guru'];
@@ -37,95 +32,50 @@ if (isset($_POST['submit'])) {
     $id_sekolah = $_POST['id_sekolah'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $foto_lama = $_POST['foto_lama'] ?? 'default.png';
-
-    $profile = $foto_lama;
 
     // Handle file upload
-    if (!empty($_FILES['foto']['name'])) {
-        // Define upload directory - use absolute server path
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/';
-        
-        $fotoName = $_FILES['foto']['name'];
-        $fotoTmp = $_FILES['foto']['tmp_name'];
-        $fotoSize = $_FILES['foto']['size'];
-        $fotoError = $_FILES['foto']['error'];
-        $fotoExt = strtolower(pathinfo($fotoName, PATHINFO_EXTENSION));
+    $profile = $data['profile']; // Default to existing profile picture
 
-        // Ekstensi yang diizinkan
-        $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
-        $maxFileSize = 2 * 1024 * 1024; // 2MB
+    if ($_FILES['profile']['name']) {
+        $target_dir = "../uploads/profiles/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
 
-        if (in_array($fotoExt, $allowedExt)) {
-            if ($fotoError === UPLOAD_ERR_OK) {
-                if ($fotoSize <= $maxFileSize) {
-                    // Create directory if it doesn't exist
-                    if (!file_exists($uploadDir)) {
-                        if (!mkdir($uploadDir, 0755, true)) {
-                            echo '<script>
-                                Swal.fire({
-                                    icon: "error",
-                                    title: "Error Folder",
-                                    text: "Gagal membuat folder upload",
-                                    position: "top"
-                                });
-                            </script>';
-                            exit();
-                        }
-                    }
+        $file_name = basename($_FILES['profile']['name']);
+        $target_file = $target_dir . $file_name;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-                    $fotoBaru = uniqid('guru_', true) . '.' . $fotoExt;
-                    $uploadPath = $uploadDir . $fotoBaru;
-                    
-                    if (move_uploaded_file($fotoTmp, $uploadPath)) {
-                        // Hapus foto lama jika bukan default
-                        if (!empty($foto_lama) && $foto_lama !== 'default.png') {
-                            $oldPath = $uploadDir . $foto_lama;
-                            if (file_exists($oldPath)) {
-                                unlink($oldPath);
-                            }
-                        }
-                        $profile = $fotoBaru;
-                    } else {
-                        echo '<script>
-                            Swal.fire({
-                                icon: "error",
-                                title: "Upload Gagal",
-                                text: "Gagal menyimpan file",
-                                position: "top"
-                            });
-                        </script>';
-                    }
-                } else {
-                    echo '<script>
-                        Swal.fire({
-                            icon: "error",
-                            title: "File Terlalu Besar",
-                            text: "Ukuran file maksimal 2MB",
-                            position: "top"
-                        });
-                    </script>';
-                }
-            } else {
-                $errorMsg = getUploadError($fotoError);
-                echo '<script>
-                    Swal.fire({
-                        icon: "error",
-                        title: "Upload Gagal",
-                        text: "'.$errorMsg.'",
-                        position: "top"
-                    });
-                </script>';
-            }
+        // Check if image file is a actual image
+        $check = getimagesize($_FILES['profile']['tmp_name']);
+        if ($check === false) {
+            echo '<script>alert("File yang diupload bukan gambar.");</script>';
         } else {
-            echo '<script>
-                Swal.fire({
-                    icon: "error",
-                    title: "Format Tidak Didukung",
-                    text: "Hanya menerima file JPG, JPEG, PNG, atau GIF",
-                    position: "top"
-                });
-            </script>';
+            // Generate unique filename
+            $new_filename = "guru_" . $id_guru . "_" . time() . "." . $imageFileType;
+            $target_file = $target_dir . $new_filename;
+
+            // Check file size (max 2MB)
+            if ($_FILES['profile']['size'] > 9000000) {
+                echo '<script>alert("Ukuran file terlalu besar. Maksimal 2MB.");</script>';
+            } else {
+                // Allow certain file formats
+                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                    echo '<script>alert("Hanya file JPG, JPEG, PNG & GIF yang diizinkan.");</script>';
+                } else {
+                    // Delete old file if exists
+                    if ($data['profile'] && file_exists("../" . $data['profile'])) {
+                        unlink("../" . $data['profile']);
+                    }
+
+                    // Try to upload file
+                    if (move_uploaded_file($_FILES['profile']['tmp_name'], $target_file)) {
+                        $profile = "uploads/profiles/" . $new_filename;
+                    } else {
+                        echo '<script>alert("Terjadi kesalahan saat mengupload file.");</script>';
+                    }
+                }
+            }
         }
     }
 
@@ -152,27 +102,6 @@ if (isset($_POST['submit'])) {
         echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
     }
 }
-
-function getUploadError($errorCode) {
-    switch ($errorCode) {
-        case UPLOAD_ERR_INI_SIZE:
-            return "Ukuran file melebihi limit server";
-        case UPLOAD_ERR_FORM_SIZE:
-            return "Ukuran file melebihi limit form";
-        case UPLOAD_ERR_PARTIAL:
-            return "File hanya terupload sebagian";
-        case UPLOAD_ERR_NO_FILE:
-            return "Tidak ada file yang diupload";
-        case UPLOAD_ERR_NO_TMP_DIR:
-            return "Folder temporary tidak ada";
-        case UPLOAD_ERR_CANT_WRITE:
-            return "Gagal menulis ke disk";
-        case UPLOAD_ERR_EXTENSION:
-            return "Upload dihentikan oleh ekstensi PHP";
-        default:
-            return "Error tidak diketahui (Code: $errorCode)";
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -180,32 +109,14 @@ function getUploadError($errorCode) {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no">
     <title>Profil Guru - <?php echo htmlspecialchars($data['nama_guru']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
-        :root {
-            --primary: #3498db;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --light: #f8f9fa;
-            --dark: #343a40;
-        }
-
         body {
             padding-left: 270px;
-            transition: padding-left 0.3s;
             background-color: #f8f9fa;
-        }
-
-        .main-container {
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-left: 0;
-            width: auto;
-            max-width: none;
         }
 
         .container-custom {
@@ -213,41 +124,19 @@ function getUploadError($errorCode) {
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
             margin-bottom: 20px;
-            color: #007bff;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
         }
 
         .profile-container {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         .profile-card {
@@ -263,9 +152,14 @@ function getUploadError($errorCode) {
             height: 150px;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid var(--primary);
+            border: 5px solid #3498db;
             margin: 0 auto 15px;
-            display: block;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+            }
         }
 
         .profile-info {
@@ -275,132 +169,6 @@ function getUploadError($errorCode) {
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .info-group {
-            margin-bottom: 15px;
-        }
-
-        .info-label {
-            font-weight: bold;
-            color: var(--dark);
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            padding: 10px;
-            background-color: var(--light);
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-        }
-
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background-color: #e67e22;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .edit-mode {
-            display: none;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .file-upload {
-            display: inline-block;
-            padding: 8px 15px;
-            background-color: var(--primary);
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .file-upload:hover {
-            background-color: #2980b9;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding-left: 0;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .profile-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Tambahan untuk form yang sejajar */
         .form-row {
             display: flex;
             flex-wrap: wrap;
@@ -416,65 +184,52 @@ function getUploadError($errorCode) {
             box-sizing: border-box;
         }
 
-        .info-value.editable {
-            padding: 0;
-            background-color: transparent;
-            border: none;
+        .edit-mode {
+            display: none;
         }
 
-        .info-value.editable input,
-        .info-value.editable select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+        .file-upload {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
             border-radius: 4px;
-            box-sizing: border-box;
-            background-color: white;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .swal2-title-custom {
-            font-size: 16px !important;
-            color: #333 !important;
+        .file-upload:hover {
+            background-color: #2980b9;
         }
 
-        .swal2-popup.swal2-toast {
-            padding: 10px 15px !important;
-            width: auto !important;
-            max-width: 400px !important;
+        #file-input {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="main-content">
-        <h2>Profil Guru</h2>
-
+    <div>
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
-            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
-
             <div class="profile-container">
                 <div class="profile-card">
-                    <!-- Tampilkan foto profil -->
+                    <h2>Profile Guru</h2>
+                    <br>
                     <div class="profile-picture-container">
-                        <?php
-                        $imageDir = '/fitur_absen/absensi/pages/image/';
-                        $defaultImage = $imageDir . 'default.png';
-                        $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
-                        
-                        echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
-                        ?>
-
-                        <div class="file-upload-wrapper">
-                            <input type="file" name="foto" id="file-input" accept="image/*" onchange="previewImage(this)">
-                            <label for="file-input" class="file-upload">
-                                <i class="fas fa-camera"></i> Ganti Foto
-                            </label>
-                        </div>
+                        <img src="<?php echo $data['profile'] ? '../' . htmlspecialchars($data['profile']) : '../image/default.png'; ?>"
+                            alt="Foto Profil"
+                            id="profile-picture"
+                            class="profile-picture">
+                        <input type="file" id="file-input" name="profile" accept="image/*">
+                        <br>
+                        <label for="file-input" class="file-upload">
+                            <i class="fas fa-camera"></i> Ganti Foto
+                        </label>
                     </div>
 
                     <div id="view-mode">
-                        <h3><?php echo htmlspecialchars($data['nama_guru']); ?></h3>
+                        <h4><?php echo htmlspecialchars($data['nama_guru']); ?></h4>
                         <p><?php echo htmlspecialchars($data['nip']); ?></p>
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
@@ -484,88 +239,79 @@ function getUploadError($errorCode) {
                     </div>
 
                     <div id="edit-mode" class="edit-mode">
-                        <div class="form-group">
-                            <label for="nama_guru">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="nama_guru" name="nama_guru"
-                                value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
-                        </div>
 
-                        <div class="form-group">
+                        <div class="form-group text-left">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
                                 value="<?php echo htmlspecialchars($data['username']); ?>" required>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group text-left">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
                                 value="<?php echo htmlspecialchars($data['password']); ?>" required>
                         </div>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Simpan
-                        </button>
 
-                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
+                        <button type="button" class="btn btn-danger" onclick="disableEdit()">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                        <button type="submit" name="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update
                         </button>
                     </div>
                 </div>
 
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Informasi Guru</h3>
-
+                    <h3><i class="fas fa-info-circle"></i> Data Guru</h3>
                     <div class="form-row">
                         <!-- Left Column -->
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="info-label">NIP</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="nip" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nip']); ?>" required>
-                                </div>
+                                <label>NIP</label>
+                                <input type="text" name="nip" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="info-label">Jenis Kelamin</label>
-                                <div class="info-value editable">
-                                    <select name="jenis_kelamin" class="form-control" required>
-                                        <option value="Laki-laki" <?php if ($data['jenis_kelamin'] == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
-                                        <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
-                                    </select>
-                                </div>
+                                <label>Jenis Kelamin</label>
+                                <select name="jenis_kelamin" class="form-control" required>
+                                    <option value="Laki-laki" <?php if ($data['jenis_kelamin'] == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                                    <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                                </select>
                             </div>
 
                             <div class="form-group">
-                                <label class="info-label">Alamat</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="alamat" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
-                                </div>
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
                         </div>
 
                         <!-- Right Column -->
                         <div class="form-col">
                             <div class="form-group">
-                                <label class="info-label">No. Telepon</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="no_tlp" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
-                                </div>
+                                <label>No. Telepon</label>
+                                <input type="text" name="no_tlp" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label class="info-label">Sekolah</label>
-                                <div class="info-value editable">
-                                    <select name="id_sekolah" class="form-control" required>
-                                        <?php
-                                        $sekolah_query = mysqli_query($coneksi, "SELECT * FROM sekolah");
-                                        while ($sekolah = mysqli_fetch_assoc($sekolah_query)) {
-                                            $selected = ($sekolah['id_sekolah'] == $data['id_sekolah']) ? 'selected' : '';
-                                            echo '<option value="' . $sekolah['id_sekolah'] . '" ' . $selected . '>' . htmlspecialchars($sekolah['nama_sekolah']) . '</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                                <label>Sekolah</label>
+                                <select name="id_sekolah" class="form-control" required>
+                                    <?php
+                                    $sekolah_query = mysqli_query($coneksi, "SELECT * FROM sekolah");
+                                    while ($sekolah = mysqli_fetch_assoc($sekolah_query)) {
+                                        $selected = ($sekolah['id_sekolah'] == $data['id_sekolah']) ? 'selected' : '';
+                                        echo '<option value="' . $sekolah['id_sekolah'] . '" ' . $selected . '>' . htmlspecialchars($sekolah['nama_sekolah']) . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_guru">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
+                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
                             </div>
                         </div>
                     </div>
@@ -577,73 +323,44 @@ function getUploadError($errorCode) {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Fungsi untuk preview gambar sebelum upload dengan SweetAlert2
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    // Update preview gambar
-                    document.getElementById('profile-picture').src = e.target.result;
-
-                    // Tampilkan notifikasi dengan SweetAlert2
-                    const fileName = input.files[0].name;
-                    const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2); // dalam MB
-
-                    Swal.fire({
-                        title: 'Foto Baru Dipilih',
-                        text: `Nama: ${fileName} (${fileSize} MB)`,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        toast: true,
-                        background: '#ffffff',
-                        customClass: {
-                            title: 'swal2-title-custom'
-                        }
-                    });
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // Fungsi untuk mengaktifkan mode edit
-        function enableEdit() {
-            document.getElementById('view-mode').style.display = 'none';
-            document.getElementById('edit-mode').style.display = 'block';
-
-            // Ubah semua info-value menjadi editable
-            const infoValues = document.querySelectorAll('.info-value');
-            infoValues.forEach(el => {
-                el.classList.add('editable');
-            });
-        }
-
-        // Fungsi untuk menonaktifkan mode edit
-        function disableEdit() {
-            document.getElementById('view-mode').style.display = 'block';
-            document.getElementById('edit-mode').style.display = 'none';
-
-            // Kembalikan info-value ke mode readonly
-            // const infoValues = document.querySelectorAll('.info-value');
-            // infoValues.forEach(el => {
-            //     el.classList.remove('editable');
-            // });
-        }
-
-        // Preview gambar saat memilih file
+        // Fungsi untuk preview gambar sebelum upload
         document.getElementById('file-input').addEventListener('change', function(e) {
             if (this.files && this.files[0]) {
                 var reader = new FileReader();
 
                 reader.onload = function(e) {
                     document.getElementById('profile-picture').src = e.target.result;
+
+                    // Tampilkan notifikasi
+                    Swal.fire({
+                        title: 'Foto Profil Diubah',
+                        text: 'Foto akan disimpan saat Anda klik Simpan',
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true
+                    });
                 }
 
                 reader.readAsDataURL(this.files[0]);
             }
         });
+
+        // Fungsi untuk mengaktifkan mode edit
+        function enableEdit() {
+            document.getElementById('view-mode').style.display = 'none';
+            document.getElementById('edit-mode').style.display = 'block';
+        }
+
+        // Fungsi untuk menonaktifkan mode edit
+        function disableEdit() {
+            document.getElementById('view-mode').style.display = 'block';
+            document.getElementById('edit-mode').style.display = 'none';
+            document.getElementById('profile-form').reset();
+
+            // Reset gambar ke yang sebelumnya
+            document.getElementById('profile-picture').src = '<?php echo $data['profile'] ? "../" . $data['profile'] : "../image/default.png"; ?>';
+        }
 
         // Auto-hide alert setelah 5 detik
         setTimeout(function() {
