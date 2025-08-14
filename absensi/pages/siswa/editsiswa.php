@@ -31,12 +31,13 @@ if (isset($_POST['submit'])) {
     $pro_keahlian = $_POST['pro_keahlian'];
     $TL = $_POST['TL'];
     $TTGL = $_POST['TTGL'];
-    $id_sekolah = $_POST['id_sekolah'];
-    $id_perusahaan = $_POST['id_perusahaan'];
-    $tanggal_mulai = $_POST['tanggal_mulai'];
-    $tanggal_selesai = $_POST['tanggal_selesai'];
-    $id_pembimbing = $_POST['id_pembimbing'];
-    $id_guru = $_POST['id_guru'];
+    $id_sekolah     = $_POST['id_sekolah'] ?? 0;
+    $id_perusahaan  = $_POST['id_perusahaan'] ?? 0;
+    $tanggal_mulai  = $_POST['tanggal_mulai'] ?? '';
+    $tanggal_selesai = $_POST['tanggal_selesai'] ?? '';
+    $id_pembimbing  = $_POST['id_pembimbing'] ?? 0;
+    $id_guru        = $_POST['id_guru'] ?? 0;
+
     $username = $_POST['username'];
     $password = $_POST['password'];
     $foto_lama = $_POST['foto_lama'] ?? 'default.png';
@@ -540,11 +541,9 @@ function getUploadError($errorCode)
                             </div>
 
                             <div class="form-group">
-                                <label class="info-label">Program Keahlian</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="pro_keahlian" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" required>
-                                </div>
+                                <label for="no_wa">Nomor WhatsApp</label>
+                                <input type="text" class="form-control" id="no_wa" name="no_wa"
+                                    value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
                             </div>
 
                             <div class="form-group">
@@ -563,18 +562,17 @@ function getUploadError($errorCode)
                                 </div>
                             </div>
 
+
                             <div class="form-group">
                                 <label class="info-label">Sekolah</label>
                                 <div class="info-value editable">
-                                    <select name="id_sekolah" class="form-control" required>
-                                        <?php
-                                        $sekolah_query = mysqli_query($coneksi, "SELECT * FROM sekolah");
-                                        while ($sekolah = mysqli_fetch_assoc($sekolah_query)) {
-                                            $selected = ($sekolah['id_sekolah'] == $data['id_sekolah']) ? 'selected' : '';
-                                            echo '<option value="' . $sekolah['id_sekolah'] . '" ' . $selected . '>' . htmlspecialchars($sekolah['nama_sekolah']) . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                $sekolah_query = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '" . $data['id_sekolah'] . "'");
+                                                $sekolah = mysqli_fetch_assoc($sekolah_query);
+                                                echo htmlspecialchars($sekolah['nama_sekolah']);
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
                         </div>
@@ -584,67 +582,83 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label class="info-label">Perusahaan</label>
                                 <div class="info-value editable">
-                                    <select name="id_perusahaan" class="form-control" required>
-                                        <?php
-                                        $perusahaan_query = mysqli_query($coneksi, "SELECT * FROM perusahaan");
-                                        while ($perusahaan = mysqli_fetch_assoc($perusahaan_query)) {
-                                            $selected = ($perusahaan['id_perusahaan'] == $data['id_perusahaan']) ? 'selected' : '';
-                                            echo '<option value="' . $perusahaan['id_perusahaan'] . '" ' . $selected . '>' . htmlspecialchars($perusahaan['nama_perusahaan']) . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
+                                                $perusahaan = mysqli_fetch_assoc($perusahaan_query);
+                                                echo htmlspecialchars($perusahaan['nama_perusahaan']);
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">Pembimbing</label>
                                 <div class="info-value editable">
-                                    <select name="id_pembimbing" class="form-control" required>
-                                        <?php
-                                        $pembimbing_query = mysqli_query($coneksi, "SELECT * FROM pembimbing");
-                                        while ($pembimbing = mysqli_fetch_assoc($pembimbing_query)) {
-                                            $selected = ($pembimbing['id_pembimbing'] == $data['id_pembimbing']) ? 'selected' : '';
-                                            echo '<option value="' . $pembimbing['id_pembimbing'] . '" ' . $selected . '>' . htmlspecialchars($pembimbing['nama_pembimbing']) . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                $pembimbing_query = mysqli_query($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = '" . $data['id_pembimbing'] . "'");
+                                                $pembimbing = mysqli_fetch_assoc($pembimbing_query);
+                                                echo htmlspecialchars($pembimbing['nama_pembimbing']);
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">Guru</label>
                                 <div class="info-value editable">
-                                    <select name="id_guru" class="form-control" required>
-                                        <?php
-                                        $guru_query = mysqli_query($coneksi, "SELECT * FROM guru");
-                                        while ($guru = mysqli_fetch_assoc($guru_query)) {
-                                            $selected = ($guru['id_guru'] == $data['id_guru']) ? 'selected' : '';
-                                            echo '<option value="' . $guru['id_guru'] . '" ' . $selected . '>' . htmlspecialchars($guru['nama_guru']) . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                $guru_query = mysqli_query($coneksi, "SELECT nama_guru FROM guru WHERE id_guru = '" . $data['id_guru'] . "'");
+                                                $guru = mysqli_fetch_assoc($guru_query);
+                                                echo htmlspecialchars($guru['nama_guru']);
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">Tanggal Mulai</label>
                                 <div class="info-value editable">
-                                    <input type="date" name="tanggal_mulai" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['tanggal_mulai']); ?>" required>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                // Format tanggal dari Y-m-d (database) ke m-d-Y
+                                                if (!empty($data['tanggal_mulai'])) {
+                                                    $date = DateTime::createFromFormat('Y-m-d', $data['tanggal_mulai']);
+                                                    echo $date ? htmlspecialchars($date->format('m-d-Y')) : htmlspecialchars($data['tanggal_mulai']);
+                                                } else {
+                                                    echo '-';
+                                                }
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">Tanggal Selesai</label>
                                 <div class="info-value editable">
-                                    <input type="date" name="tanggal_selesai" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['tanggal_selesai']); ?>" required>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                // Format tanggal dari Y-m-d (database) ke m-d-Y
+                                                if (!empty($data['tanggal_selesai'])) {
+                                                    $date = DateTime::createFromFormat('Y-m-d', $data['tanggal_selesai']);
+                                                    echo $date ? htmlspecialchars($date->format('m-d-Y')) : htmlspecialchars($data['tanggal_selesai']);
+                                                } else {
+                                                    echo '-';
+                                                }
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
+
                             <div class="form-group">
-                                <label for="no_wa">Nomor WhatsApp</label>
-                                <input type="text" class="form-control" id="no_wa" name="no_wa"
-                                    value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
+                                <label class="info-label">Program Keahlian</label>
+                                <div class="info-value editable">
+                                    <input type="text" name="pro_keahlian" class="form-control"
+                                        value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" readonly
+                                        style="background-color: #e9ecef;">
+                                </div>
                             </div>
                         </div>
                     </div>
