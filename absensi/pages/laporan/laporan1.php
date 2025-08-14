@@ -145,7 +145,7 @@ if (!$result) {
                 <option value="bl">Lembar Bimbingan Laporan</option>
             </select>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4">Unduh Laporan</button>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Priview</button>
         </form>
 
         <!-- Script untuk menangkap ID siswa -->

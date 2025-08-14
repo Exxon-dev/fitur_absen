@@ -71,7 +71,7 @@
 
             </li>
             <li>
-              <a class="dropdown-item border-radius-md" href="./pages/sign-up_aksi.php">
+              <a id="logoutBtn" class="dropdown-item border-radius-md" href="./pages/sign-up_aksi.php">
                   <i class="fas fa-sign-out-alt me-2"></i> Logout
               </a>
             </li>
@@ -81,3 +81,24 @@
     </div>
   </div>
 </nav> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('logoutBtn').addEventListener('click', function(event) {
+    event.preventDefault(); // Jangan langsung logout
+
+    Swal.fire({
+        title: 'Yakin mau logout?',
+        text: "Anda akan keluar dari aplikasi!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = './pages/sign-up_aksi.php'; // arahkan logout
+        }
+    });
+});
+</script>

@@ -129,24 +129,7 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
 </head>
 
 <body class="row">
-  <?php
-  $bulanIndo = [
-    1 => 'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'Mei',
-    'Jun',
-    'Jul',
-    'Agt',
-    'Sep',
-    'Okt',
-    'Nov',
-    'Des'
-  ];
-  ?>
-  <h2 class="text-primary">Daftar Hadir Siswa <?= date('d') . "-" . $bulanIndo[(int)date('m')] . "-" . date('Y'); ?></h2>
-  <br>
+        <h2 class="text-primary">Data Jurnal dan Catatan Harian <?= date('d-m-Y') ?> </h2>
   <div class="body">
     <div class="body-card">
       <div class="container my-70">

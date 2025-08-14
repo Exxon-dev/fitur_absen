@@ -252,76 +252,54 @@ $jumlah_catatan = $catatanData['jumlah'] ?? 0;
               <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
                 <i class="material-icons opacity-10">note_add</i>
               </div>
-            <div class="text-end pt-1">
+              <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Catatan Siswa</p>
                 <h4 class="mb-0"><?php echo $jumlah_catatan; ?></h4>
-            </div>
+              </div>
             </div>
             <hr class="dark horizontal my-0">
           </div>
         </div>
-        <div class="row">
-          <div class="col-lg-8 col-md-9 mt-4 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <h6 class="mb-0 text-center">Grafik Absensi Siswa PKL</h6>
-                <div class="pe-2">
-                  <div class="chart" style="height: 170px; position: relative;">
-                    <canvas id="chart-line" class="chart-canvas"></canvas>
-                  </div>
-                </div>
-                <hr class="dark horizontal">
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 mt-6">
-            <ul class="chart-legend clearfix">
-              <li><i class="far fa-circle text-danger"></i>Alpa : 15</li>
-              <li><i class="far fa-circle text-success"></i>Hadir : 20</li>
-              <li><i class="far fa-circle text-warning"></i>Izin : 5</li>
-              <li><i class="far fa-circle text-info"></i>Sakit : 7</li>
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
+  </div>
 
-    <!-- Mobile Card View -->
-    <div class="student-cards d-block d-md-none">
-      <?php
-      $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
-      $index = 1;
-      $today = date('Y-m-d');
+  <!-- Mobile Card View -->
+  <div class="student-cards d-block d-md-none">
+    <?php
+    $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
+    $index = 1;
+    $today = date('Y-m-d');
 
-      while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
-        $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
-        $attendance = mysqli_fetch_assoc($attendanceQuery);
+    while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
+      $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
+      $attendance = mysqli_fetch_assoc($attendanceQuery);
 
-        $keterangan = $attendance['keterangan'] ?? null;
-        $badgeClass = 'badge-belum';
-        $statusText = 'Belum Absen';
+      $keterangan = $attendance['keterangan'] ?? null;
+      $badgeClass = 'badge-belum';
+      $statusText = 'Belum Absen';
 
-        if ($keterangan) {
-          switch ($keterangan) {
-            case 'sakit':
-              $badgeClass = 'badge-sakit';
-              $statusText = 'Sakit';
-              break;
-            case 'izin':
-              $badgeClass = 'badge-izin';
-              $statusText = 'Izin';
-              break;
-            case 'alpa':
-              $badgeClass = 'badge-alpa';
-              $statusText = 'Alpa';
-              break;
-            default:
-              $badgeClass = 'badge-hadir';
-              $statusText = 'Hadir';
-          }
+      if ($keterangan) {
+        switch ($keterangan) {
+          case 'sakit':
+            $badgeClass = 'badge-sakit';
+            $statusText = 'Sakit';
+            break;
+          case 'izin':
+            $badgeClass = 'badge-izin';
+            $statusText = 'Izin';
+            break;
+          case 'alpa':
+            $badgeClass = 'badge-alpa';
+            $statusText = 'Alpa';
+            break;
+          default:
+            $badgeClass = 'badge-hadir';
+            $statusText = 'Hadir';
         }
+      }
 
-        echo '
+      echo '
           <div class="student-card">
             <div class="student-header">
               <div>
@@ -350,36 +328,11 @@ $jumlah_catatan = $catatanData['jumlah'] ?? 0;
             </div>
           </div>
           ';
-        $index++;
-      }
-      ?>
-    </div>
+      $index++;
+    }
+    ?>
   </div>
-  <script>
-    const ctx = document.getElementById('chart-line').getContext('2d');
-    const chartLine = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['S', 'S', 'R', 'K', 'J', 'S', 'M', ], // contoh label
-        datasets: [{
-          label: 'Sales',
-          data: [10, 20, 15, 30, 25, 35, 40],
-          borderColor: '#3e95cd',
-          fill: false,
-          tension: 0.1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-  </script>
+  </div>
 </body>
 
 </html>
