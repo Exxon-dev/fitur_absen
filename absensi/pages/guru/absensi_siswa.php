@@ -124,6 +124,24 @@ $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_
 </head>
 
 <body class="row">
+    <?php
+    $bulanIndo = [
+        1 => 'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'Mei',
+        'Jun',
+        'Jul',
+        'Agt',
+        'Sep',
+        'Okt',
+        'Nov',
+        'Des'
+    ];
+    ?>
+    <h2 class="text-primary">Daftar Hadir Siswa <?= date('d') . "-" . $bulanIndo[(int)date('m')] . "-" . date('Y'); ?></h2>
+    <br>
     <div class="body">
         <div class="body-card">
             <div class="container my-70">
@@ -140,67 +158,69 @@ $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_
                                 <th>Alpa</th>
                             </tr>
                         </thead>
-<tbody>
-    <?php
-    $index = 1;
-    // Reset pointer result set ke awal
-    mysqli_data_seek($query_siswa, 0);
-    
-    while ($siswa = mysqli_fetch_assoc($query_siswa)) {
-        // Pastikan format tanggal sesuai database (YYYY-MM-DD)
-        $tanggal = date('Y-m-d'); // Contoh, sesuaikan dengan kebutuhan
-        
-        // Query untuk mendapatkan data absen
-        $query_absen = mysqli_query($coneksi, 
-            "SELECT keterangan FROM absen 
-             WHERE id_siswa = '".$siswa['id_siswa']."' 
-             AND tanggal = '".$tanggal."'");
-        
-        $absen = mysqli_fetch_assoc($query_absen);
-        $keterangan = isset($absen['keterangan']) ? $absen['keterangan'] : null;
+                        <tbody>
+                            <?php
+                            $index = 1;
+                            // Reset pointer result set ke awal
+                            mysqli_data_seek($query_siswa, 0);
 
-        // Tentukan kelas badge dan teks status
-        $badgeClass = 'badge-secondary'; // Default: Belum absen
-        $statusText = 'Belum Absen';
-        
-        if ($keterangan) {
-            switch (strtolower($keterangan)) {
-                case 'hadir':
-                    $badgeClass = 'badge-success';
-                    $statusText = 'Hadir';
-                    break;
-                case 'sakit':
-                    $badgeClass = 'badge-warning';
-                    $statusText = 'Sakit';
-                    break;
-                case 'izin':
-                    $badgeClass = 'badge-info';
-                    $statusText = 'Izin';
-                    break;
-                case 'alpa':
-                    $badgeClass = 'badge-danger';
-                    $statusText = 'Alpa';
-                    break;
-            }
-        }
-    ?>
-    <tr>
-        <td><?= $index; ?></td>
-        <td><?= htmlspecialchars($siswa['nama_siswa']); ?></td>
-        <td>
-            <span class="badge <?= $badgeClass; ?>">
-                <?= $statusText; ?>
-            </span>
-        </td>
-        <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="sakit" <?= ($keterangan === 'sakit') ? 'checked' : ''; ?> disabled></td>
-        <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="izin" <?= ($keterangan === 'izin') ? 'checked' : ''; ?> disabled></td>
-        <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="alpa" <?= ($keterangan === 'alpa') ? 'checked' : ''; ?> disabled></td>
-    </tr>
-    <?php
-        $index++;
-    }
-    ?>
-</tbody>    
+                            while ($siswa = mysqli_fetch_assoc($query_siswa)) {
+                                // Pastikan format tanggal sesuai database (YYYY-MM-DD)
+                                $tanggal = date('Y-m-d'); // Contoh, sesuaikan dengan kebutuhan
+
+                                // Query untuk mendapatkan data absen
+                                $query_absen = mysqli_query(
+                                    $coneksi,
+                                    "SELECT keterangan FROM absen 
+             WHERE id_siswa = '" . $siswa['id_siswa'] . "' 
+             AND tanggal = '" . $tanggal . "'"
+                                );
+
+                                $absen = mysqli_fetch_assoc($query_absen);
+                                $keterangan = isset($absen['keterangan']) ? $absen['keterangan'] : null;
+
+                                // Tentukan kelas badge dan teks status
+                                $badgeClass = 'badge-secondary'; // Default: Belum absen
+                                $statusText = 'Belum Absen';
+
+                                if ($keterangan) {
+                                    switch (strtolower($keterangan)) {
+                                        case 'hadir':
+                                            $badgeClass = 'badge-success';
+                                            $statusText = 'Hadir';
+                                            break;
+                                        case 'sakit':
+                                            $badgeClass = 'badge-warning';
+                                            $statusText = 'Sakit';
+                                            break;
+                                        case 'izin':
+                                            $badgeClass = 'badge-info';
+                                            $statusText = 'Izin';
+                                            break;
+                                        case 'alpa':
+                                            $badgeClass = 'badge-danger';
+                                            $statusText = 'Alpa';
+                                            break;
+                                    }
+                                }
+                            ?>
+                                <tr>
+                                    <td><?= $index; ?></td>
+                                    <td><?= htmlspecialchars($siswa['nama_siswa']); ?></td>
+                                    <td>
+                                        <span class="badge <?= $badgeClass; ?>">
+                                            <?= $statusText; ?>
+                                        </span>
+                                    </td>
+                                    <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="sakit" <?= ($keterangan === 'sakit') ? 'checked' : ''; ?> disabled></td>
+                                    <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="izin" <?= ($keterangan === 'izin') ? 'checked' : ''; ?> disabled></td>
+                                    <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="alpa" <?= ($keterangan === 'alpa') ? 'checked' : ''; ?> disabled></td>
+                                </tr>
+                            <?php
+                                $index++;
+                            }
+                            ?>
+                        </tbody>
                     </table>
                 </div>
             </div>
