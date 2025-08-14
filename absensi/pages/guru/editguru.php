@@ -215,6 +215,7 @@ if (isset($_POST['submit'])) {
             <div class="profile-container">
                 <div class="profile-card">
                     <h2>Profile Guru</h2>
+                    <br>
                     <div class="profile-picture-container">
                         <img src="<?php echo $data['profile'] ? '../' . htmlspecialchars($data['profile']) : '../image/default.png'; ?>"
                             alt="Foto Profil"
@@ -262,7 +263,7 @@ if (isset($_POST['submit'])) {
                 </div>
 
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Informasi Guru</h3>
+                    <h3><i class="fas fa-info-circle"></i> Data Guru</h3>
                     <div class="form-row">
                         <!-- Left Column -->
                         <div class="form-col">

@@ -48,12 +48,18 @@ mysqli_stmt_bind_param($stmt, "is", $id_sekolah, $tanggal);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
-
 $jumlah_siswa_absen = $row['jumlah_absen'] ?? 0;
 
-$query_catatan = mysqli_query($coneksi, "SELECT COUNT(*) as jumlah FROM catatan WHERE id_catatan != ''");
+$tanggal_hari_ini = date('Y-m-d');
+
+$query_catatan = mysqli_query($coneksi, "
+    SELECT COUNT(DISTINCT id_jurnal) AS jumlah 
+    FROM catatan
+    WHERE tanggal = '$tanggal_hari_ini'
+");
 $catatanData = mysqli_fetch_assoc($query_catatan);
-$jumlah_catatan = $catatanData['jumlah'] ?? '';
+$jumlah_catatan = $catatanData['jumlah'] ?? 0;
+
 ?>
 
 <!DOCTYPE html>
@@ -246,10 +252,10 @@ $jumlah_catatan = $catatanData['jumlah'] ?? '';
               <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
                 <i class="material-icons opacity-10">note_add</i>
               </div>
-<div class="text-end pt-1">
-    <p class="text-sm mb-0 text-capitalize">Catatan Siswa</p>
-    <h4 class="mb-0"><?php echo $jumlah_catatan; ?></h4>
-</div>
+            <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Catatan Siswa</p>
+                <h4 class="mb-0"><?php echo $jumlah_catatan; ?></h4>
+            </div>
             </div>
             <hr class="dark horizontal my-0">
           </div>
