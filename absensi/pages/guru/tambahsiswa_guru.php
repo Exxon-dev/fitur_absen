@@ -93,12 +93,12 @@
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
-                    <input type="text" name="nis" id="nis" class="form-control" required minlength="8" maxlength="12" oninput="validateNIS()">
+                    <input type="text" name="nis" id="nis" class="form-control" minlength="8" maxlength="12" oninput="validateNIS()">
                     <div id="nisError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
-                    <input type="text" name="nisn" id="nisn" class="form-control" required maxlength="10" minlength="10" oninput="validateNISN()">
+                    <input type="text" name="nisn" id="nisn" class="form-control" maxlength="10" minlength="10" oninput="validateNISN()">
                     <div id="nisnError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
@@ -116,11 +116,11 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" required>
+                    <input type="text" name="TL" class="form-control">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" required>
+                    <input type="date" name="TTGL" class="form-control">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -130,7 +130,7 @@
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>"><?php echo htmlspecialchars($row['nama_sekolah']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_sekolah']); ?>"><?= htmlspecialchars($row['nama_sekolah']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -142,7 +142,7 @@
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>"><?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_perusahaan']); ?>"><?= htmlspecialchars($row['nama_perusahaan']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -162,7 +162,7 @@
                         $data_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>"><?php echo htmlspecialchars($row['nama_pembimbing']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_pembimbing']); ?>"><?= htmlspecialchars($row['nama_pembimbing']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -174,7 +174,7 @@
                         $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
                         while ($row = mysqli_fetch_array($data_guru)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>"><?php echo htmlspecialchars($row['nama_guru']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_guru']); ?>"><?= htmlspecialchars($row['nama_guru']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -191,10 +191,9 @@
                     <input type="text" name="no_wa" class="form-control" placeholder="628xxx" required>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="col text-right">
-                    <a href="index.php?page=siswa" class="btn btn-warning">KEMBALI</a>
+                    <a href="index.php?page=tambahsiswa_guru" class="btn btn-warning">KEMBALI</a>
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
             </div>
