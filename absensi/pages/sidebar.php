@@ -1,4 +1,7 @@
-<!-- sidebar.php -->
+<?php
+include '../koneksi.php';
+?>
+
 <aside id="sidenav-main" class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" data-color="dark">
   <div class="sidenav-header">
     <a class="navbar-brand m-0" href="#">
@@ -19,13 +22,15 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'profile_admin') ? 'active' : ''; ?>" href="index.php?page=profile_admin&id_admin=<?php echo isset($_SESSION['Id']) ? $_SESSION['Id'] : ''; ?>">
+        <a class="nav-link text-white <?= ($page == 'profile_admin') ? 'active' : ''; ?>" href="index.php?page=profile_admin&username=<?php echo urlencode($_SESSION['username']); ?>">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
           </div>
           <span class="nav-link-text ms-1">Profile Admin</span>
         </a>
       </li>
+
+
       <!-- Basis Data -->
       <li class="nav-item">
         <a class="nav-link text-white" href="index.php?page=siswa">

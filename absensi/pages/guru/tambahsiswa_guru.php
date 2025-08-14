@@ -105,7 +105,7 @@
                     <label>Nama Siswa</label>
                     <input type="text" name="nama_siswa" class="form-control" required>
                 </div>
-                <div class="form-group col-md-3">
+                <!-- <div class="form-group col-md-3">
                     <label>Kelas</label>
                     <select name="kelas" class="form-control" required>
                         <option value="">Pilih Kelas</option>
@@ -113,7 +113,7 @@
                         <option value="12 RPL">12 RPL</option>
                         <option value="12 MPLB">12 MPLB</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>

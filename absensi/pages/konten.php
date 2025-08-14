@@ -30,9 +30,6 @@
             case 'tambahsiswa':
                 include "pages/siswa/tambahsiswa.php";
                 break;
-            case 'tambah_siswa':
-                include "pages/guru/tambah_siswa.php";
-                break;
             case 'editsiswa':
                 include "pages/siswa/editsiswa.php";
                 break;
@@ -50,6 +47,9 @@
                 break;
             case 'absensi_siswa':
                 include "pages/guru/absensi_siswa.php";
+                break;
+            case 'tambahsiswa_guru':
+                include "pages/guru/tambahsiswa_guru.php";
                 break;
             case 'tambahguru':
                 include "pages/guru/tambahguru.php";
