@@ -193,7 +193,7 @@
             </div>
             <div class="form-row">
                 <div class="col text-right">
-                    <a href="index.php?page=tambahsiswa_guru" class="btn btn-warning">KEMBALI</a>
+                    <a href="index.php?page=absensi_siswa" class="btn btn-warning">KEMBALI</a>
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
             </div>
@@ -222,7 +222,8 @@
                     echo '<pre>Query error: ' . mysqli_error($coneksi) . '</pre>';
                     exit();
                 }
-
+                // Pastikan TTGL NULL kalau kosong
+                $TTGL = !empty($_POST['TTGL']) ? $_POST['TTGL'] : null;
                 if (mysqli_num_rows($cek) == 0) {
                     $sql = mysqli_query($coneksi, "INSERT INTO siswa (
                         nis,
@@ -247,7 +248,7 @@
                         '$no_wa',
                         '$pro_keahlian',
                         '$TL',
-                        '$TTGL',
+                        " . ($TTGL !== null ? "'$TTGL'" : "NULL") . ",
                         '$id_sekolah',
                         '$id_perusahaan',
                         '$tanggal_mulai',
@@ -258,9 +259,24 @@
                         '$password')");
 
                     if ($sql) {
-                        // Redirect ke halaman absensi_siswa.php
-                        header("Location: absensi_siswa.php");
-                        exit();
+                        echo"
+                        <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Siswa berhasil ditambahkan!',
+                            showCancelButton: true,
+                            confirmButtonText: 'Tambah lagi',
+                            cancelButtonText: 'Tidak'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'index.php?page=tambahsiswa_guru';
+                            } else {
+                                window.location.href = 'index.php?page=absensi_siswa';
+                            }
+                        });
+                        </script>
+                        ";
                     } else {
                         echo "Gagal memasukkan data: " . mysqli_error($coneksi);
                     }
@@ -269,7 +285,7 @@
             ?>
         </form>
     </div>
-
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>

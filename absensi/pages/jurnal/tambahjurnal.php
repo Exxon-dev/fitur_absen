@@ -114,8 +114,8 @@ if ($result) {
             <div class="form-group">
                 <label>Keterangan Kegiatan</label>
                 <textarea class="form-control" rows="6" name="keterangan" required><?=
-                                                                                    htmlspecialchars($jurnal_hari_ini['keterangan'] ?? '')
-                                                                                    ?></textarea>
+                htmlspecialchars($jurnal_hari_ini['keterangan'] ?? '')
+                ?></textarea>
             </div>
 
             <div class="form-group text-right">

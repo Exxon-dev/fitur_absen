@@ -6,7 +6,6 @@ ini_set('display_startup_errors', 1);
 
 include('koneksi.php');
 
-<<<<<<< HEAD
 // Cek id admin dari session atau GET
 if (!isset($_GET['id'])) {
     // Jika tidak ada parameter id, coba dari session
@@ -25,14 +24,12 @@ $select = mysqli_query($coneksi, "SELECT * FROM users WHERE Id='$id_admin' AND l
 
 if (mysqli_num_rows($select) == 0) {
     echo '<div class="alert alert-warning">ID admin tidak ada dalam database.</div>';
-=======
 // Cek apakah admin sudah login
 if (!isset($_SESSION['username'])) {
     header("Location: sign-in.php");
->>>>>>> bad306cf45d9eb3f867b4ffebb3185b8872cf693
     exit();
 }
-
+}
 $username_admin = $_GET['username'] ?? $_SESSION['username'];
 
 // Ambil data admin berdasarkan username
