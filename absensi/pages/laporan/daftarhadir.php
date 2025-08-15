@@ -129,6 +129,31 @@ $coneksi->close();
         .align-right {
             text-align: right;
         }
+
+        /* Atur alignment tiap kolom tabel */
+        table td:nth-child(1),
+        table th:nth-child(1) {
+            text-align: center;
+        }
+
+        table td:nth-child(2),
+        table th:nth-child(2) {
+            text-align: left;
+            padding-left: 5px;
+        }
+
+        table td:nth-child(3),
+        table td:nth-child(4),
+        table th:nth-child(3),
+        table th:nth-child(4) {
+            text-align: center;
+        }
+
+        table td:nth-child(5),
+        table th:nth-child(5) {
+            text-align: left;
+            padding-left: 5px;
+        }
     </style>
     <script>
         function printReport() {
