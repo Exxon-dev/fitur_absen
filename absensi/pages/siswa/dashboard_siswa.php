@@ -307,7 +307,7 @@ function formatTanggal($dateString)
                         <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
                     </button>
                     <div class="info-status">
-                        <i class="fas fa-info-circle"></i> Status:
+                        Status:
                         <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
                     </div>
                 </div>
