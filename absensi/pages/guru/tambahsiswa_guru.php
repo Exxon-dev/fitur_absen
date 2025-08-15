@@ -93,27 +93,18 @@
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
-                    <input type="text" name="nis" id="nis" class="form-control" required minlength="8" maxlength="12" oninput="validateNIS()">
+                    <input type="text" name="nis" id="nis" class="form-control" minlength="8" maxlength="12" oninput="validateNIS()">
                     <div id="nisError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
-                    <input type="text" name="nisn" id="nisn" class="form-control" required maxlength="10" minlength="10" oninput="validateNISN()">
+                    <input type="text" name="nisn" id="nisn" class="form-control" maxlength="10" minlength="10" oninput="validateNISN()">
                     <div id="nisnError" class="error-message"></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
                     <input type="text" name="nama_siswa" class="form-control" required>
                 </div>
-                <!-- <div class="form-group col-md-3">
-                    <label>Kelas</label>
-                    <select name="kelas" class="form-control" required>
-                        <option value="">Pilih Kelas</option>
-                        <option value="12 MM">12 MM</option>
-                        <option value="12 RPL">12 RPL</option>
-                        <option value="12 MPLB">12 MPLB</option>
-                    </select>
-                </div> -->
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>
@@ -125,11 +116,11 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" required>
+                    <input type="text" name="TL" class="form-control">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" required>
+                    <input type="date" name="TTGL" class="form-control">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -139,7 +130,7 @@
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>"><?php echo htmlspecialchars($row['nama_sekolah']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_sekolah']); ?>"><?= htmlspecialchars($row['nama_sekolah']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -151,7 +142,7 @@
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>"><?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_perusahaan']); ?>"><?= htmlspecialchars($row['nama_perusahaan']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -171,7 +162,7 @@
                         $data_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>"><?php echo htmlspecialchars($row['nama_pembimbing']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_pembimbing']); ?>"><?= htmlspecialchars($row['nama_pembimbing']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -183,7 +174,7 @@
                         $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
                         while ($row = mysqli_fetch_array($data_guru)) {
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>"><?php echo htmlspecialchars($row['nama_guru']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_guru']); ?>"><?= htmlspecialchars($row['nama_guru']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -200,10 +191,9 @@
                     <input type="text" name="no_wa" class="form-control" placeholder="628xxx" required>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="col text-right">
-                    <a href="index.php?page=siswa" class="btn btn-warning">KEMBALI</a>
+                    <a href="index.php?page=absensi_siswa" class="btn btn-warning">KEMBALI</a>
                     <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
                 </div>
             </div>
@@ -232,7 +222,8 @@
                     echo '<pre>Query error: ' . mysqli_error($coneksi) . '</pre>';
                     exit();
                 }
-
+                // Pastikan TTGL NULL kalau kosong
+                $TTGL = !empty($_POST['TTGL']) ? $_POST['TTGL'] : null;
                 if (mysqli_num_rows($cek) == 0) {
                     $sql = mysqli_query($coneksi, "INSERT INTO siswa (
                         nis,
@@ -257,7 +248,7 @@
                         '$no_wa',
                         '$pro_keahlian',
                         '$TL',
-                        '$TTGL',
+                        " . ($TTGL !== null ? "'$TTGL'" : "NULL") . ",
                         '$id_sekolah',
                         '$id_perusahaan',
                         '$tanggal_mulai',
@@ -268,9 +259,24 @@
                         '$password')");
 
                     if ($sql) {
-                        // Redirect ke halaman absensi_siswa.php
-                        header("Location: absensi_siswa.php");
-                        exit();
+                        echo"
+                        <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Siswa berhasil ditambahkan!',
+                            showCancelButton: true,
+                            confirmButtonText: 'Tambah lagi',
+                            cancelButtonText: 'Tidak'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'index.php?page=tambahsiswa_guru';
+                            } else {
+                                window.location.href = 'index.php?page=absensi_siswa';
+                            }
+                        });
+                        </script>
+                        ";
                     } else {
                         echo "Gagal memasukkan data: " . mysqli_error($coneksi);
                     }
@@ -279,7 +285,7 @@
             ?>
         </form>
     </div>
-
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>

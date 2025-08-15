@@ -162,7 +162,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <?php if ($level === 'siswa'): ?>
                 <div class="form-inline">
-                    <div class="from-control mb-2">
+                    <div class="from-control mb-3">
                         <?php if ($allow_jurnal): ?>
                             <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>" class="btn btn-<?= $jurnal_hari_ini ? 'primary' : 'primary' ?>">
                                 <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
@@ -180,13 +180,21 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
             <!-- Form Pencarian (hanya untuk pembimbing dan guru) -->
             <?php if ($level === 'pembimbing' || $level === 'guru'): ?>
-                <form method="GET" class="form-inline">
+                <form method="GET" class="form-iniline">
                     <input type="hidden" name="page" value="catatan" />
                     <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" />
-                    <input type="text" name="search" class="form-control mr-2" placeholder="Cari nama siswa..." value="<?= htmlspecialchars($search) ?>" />
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
+                    <div class="input-group-append">
+                        <input type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="Cari nama siswa..."
+                            value="<?= htmlspecialchars($search) ?>"
+                            aria-label="Cari nama siswa"
+                            aria-describedby="button-search">
+                        <button class="btn btn-primary ms-1" type="submit" id="button-search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </form>
             <?php else: ?>
                 <div></div> <!-- Placeholder untuk menjaga layout -->
@@ -195,14 +203,10 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <!-- Form Filter Tanggal -->
             <form method="GET" class="form-inline">
                 <input type="hidden" name="page" value="catatan" />
-                <label for="tanggal" class="mr-2">Tanggal:</label>
-                <input type="date" name="tanggal" class="form-control date-picker"
+                <input type="date" name="tanggal" class="form-control date-picker mb-2"
                     value="<?= htmlspecialchars($tanggal) ?>"
                     pattern="\d{4}-\d{2}-\d{2}" />
-                <button type="submit" class="btn btn-primary ml-2">Filter</button>
-                <?php if ($tanggal != date('Y-m-d')): ?>
-                    <a href="index.php?page=catatan" class="btn btn-secondary ml-2">Hari Ini</a>
-                <?php endif; ?>
+                <button type="submit" class="btn btn-primary ml-2 mb-2"> <i class="fa-solid fa-filter"></i></button>
             </form>
         </div>
 
