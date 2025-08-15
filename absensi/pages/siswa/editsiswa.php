@@ -133,18 +133,18 @@ if (isset($_POST['submit'])) {
     $sql = mysqli_query($coneksi, "UPDATE siswa SET 
         profile='$profile',
         nis='$nis',
-        nisn='$nisn', 
+        nisn='$nisn',
+        no_wa='$no_wa', 
         nama_siswa='$nama_siswa', 
-        no_wa='$no_wa',
         username='$username', 
         password='$password', 
-        id_sekolah='$id_sekolah',
-        id_perusahaan='$id_perusahaan',
-        tanggal_mulai='$tanggal_mulai',
-        tanggal_selesai='$tanggal_selesai',
-        id_pembimbing='$id_pembimbing',
-        id_guru='$id_guru',
-        pro_keahlian='$pro_keahlian',
+        -- id_sekolah='$id_sekolah',
+        -- id_perusahaan='$id_perusahaan',
+        -- tanggal_mulai='$tanggal_mulai',
+        -- tanggal_selesai='$tanggal_selesai',
+        -- id_pembimbing='$id_pembimbing',
+        -- id_guru='$id_guru',
+        -- pro_keahlian='$pro_keahlian',
         TL='$TL',
         TTGL='$TTGL'
         WHERE id_siswa='$id_siswa'");
@@ -513,7 +513,7 @@ function getUploadError($errorCode)
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
                         </button>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Update
+                        <button type="submit" name="submit" class="btn btn-primary">Simpan
                         </button>
                     </div>
                 </div>
@@ -655,8 +655,8 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label class="info-label">Program Keahlian</label>
                                 <div class="info-value editable">
-                                    <input type="text" name="pro_keahlian" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" readonly
+                                    <input type="text" name="pro_keahlian" class="form-control" readonly
+                                        value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>"
                                         style="background-color: #e9ecef;">
                                 </div>
                             </div>

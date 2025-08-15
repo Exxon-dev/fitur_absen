@@ -58,7 +58,8 @@ if ($id_perusahaan) {
 }
 
 // Format tanggal function
-function formatTanggal($dateString) {
+function formatTanggal($dateString)
+{
     $date = new DateTime($dateString);
     return $date->format('m-d-Y');
 }
@@ -91,7 +92,7 @@ function formatTanggal($dateString) {
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
             height: 100vh;
-            overflow: hidden;
+            /* overflow: hidden; */
         }
 
         .main-container {
@@ -115,10 +116,9 @@ function formatTanggal($dateString) {
             border-bottom: 1px solid #e0e0e0;
         }
 
-        .dashboard-title {
+        h2 {
+            margin-bottom: 20px;
             color: #007bff;
-            font-size: 24px;
-            font-weight: 600;
         }
 
         .content-container {
@@ -297,11 +297,9 @@ function formatTanggal($dateString) {
 
 <body>
     <div class="main-container">
+
         <div class="dashboard-wrapper">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title"><i class="fas fa-calendar-alt"></i> Absensi Harian</h1>
-            </div>
-            
+            <h2 class="dashboard-title">Absensi Harian</h2>
             <div class="content-container">
                 <div class="attendance-section">
                     <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
@@ -309,7 +307,7 @@ function formatTanggal($dateString) {
                         <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
                     </button>
                     <div class="info-status">
-                        <i class="fas fa-info-circle"></i> Status: 
+                        <i class="fas fa-info-circle"></i> Status:
                         <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
                     </div>
                 </div>
@@ -318,7 +316,7 @@ function formatTanggal($dateString) {
                     <h2 class="section-title">
                         <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
                     </h2>
-                    
+
                     <?php if (!empty($catatan_pembimbing)): ?>
                         <?php foreach ($catatan_pembimbing as $catatan): ?>
                             <div class="note-card">
@@ -331,7 +329,7 @@ function formatTanggal($dateString) {
                                 </div>
                                 <div class="note-footer">
                                     <i class="far fa-clock"></i>
-                                    <?= formatTanggal($catatan['tanggal']) ?> <?= date('H:i', strtotime($catatan['tanggal'])) ?>
+                                    <?= formatTanggal($catatan['tanggal']) ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -503,4 +501,5 @@ function formatTanggal($dateString) {
         });
     </script>
 </body>
+
 </html>
