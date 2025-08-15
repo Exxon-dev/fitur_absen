@@ -130,7 +130,7 @@ if (!$result) {
                 <div class="form-group col-md-6">
                     <label for="reportSelect">Pilih Laporan:</label>
                     <select id="reportSelect" name="page" class="form-control" required>
-                        <option value="">-- Pilih Laporan --</option>
+                        <option value="">Pilih Laporan</option>
                         <option value="cover">Cover</option>
                         <option value="df">Daftar Hadir</option>
                         <option value="jr">Laporan Jurnal</option>
