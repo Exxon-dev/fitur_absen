@@ -89,8 +89,9 @@ if (!isset($_SESSION['id_siswa'])) {
 </head>
 
 <body>
+    <h1 class="text-left">Laporan Siswa</h1>
     <div class="main-container container-custom">
-        <h1>Laporan Siswa</h1>
+        
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="POST">
