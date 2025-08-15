@@ -374,19 +374,19 @@ $jumlah_perusahaan = $data_perusahaan['total'];
           $id_siswa = str_replace('absen_', '', $key);
           $keterangan = mysqli_real_escape_string($coneksi, $value);
           $tanggal = date('Y-m-d');
-          $jamMasuk = date('H:i:s');
-          $jamKeluar = date('H:i:s');
+          $jam_masuk = date('H:i:s');
+          $jam_keluar = date('H:i:s');
 
           // Cek jika data sudah ada di database
           $checkQuery = mysqli_query($coneksi, "SELECT * FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'");
 
           if (mysqli_num_rows($checkQuery) > 0) {
             // Update data jika sudah ada
-            $updateQuery = "UPDATE absen SET keterangan = '$keterangan', jam_keluar = '$jamKeluar' WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
+            $updateQuery = "UPDATE absen SET keterangan = '$keterangan', jam_keluar = '$jam_keluar' WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
             $result = mysqli_query($coneksi, $updateQuery);
           } else {
             // Insert data baru
-            $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jamMasuk')";
+            $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk, jam_keluar) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jam_masuk', '$jam_keluar')";
             $result = mysqli_query($coneksi, $insertQuery);
           }
         }

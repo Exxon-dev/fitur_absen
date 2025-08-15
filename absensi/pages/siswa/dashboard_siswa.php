@@ -10,15 +10,16 @@ if (!isset($_SESSION['id_siswa'])) {
 $id_siswa = $_SESSION['id_siswa'];
 $tanggal = date('Y-m-d');
 
-// Ambil nama siswa dari database (tidak perlu simpan di session, agar selalu update)
-$stmt = mysqli_prepare($coneksi, "SELECT nama_siswa FROM siswa WHERE id_siswa = ?");
+// Ambil data siswa
+$stmt = mysqli_prepare($coneksi, "SELECT nama_siswa, id_perusahaan FROM siswa WHERE id_siswa = ?");
 mysqli_stmt_bind_param($stmt, "i", $id_siswa);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $siswa = mysqli_fetch_assoc($result);
 $nama_siswa = $siswa ? $siswa['nama_siswa'] : "Siswa";
+$id_perusahaan = $siswa['id_perusahaan'] ?? null;
 
-// Cek status absensi dengan prepared statement
+// Cek status absensi
 $stmt = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa=? AND tanggal=?");
 mysqli_stmt_bind_param($stmt, "is", $id_siswa, $tanggal);
 mysqli_stmt_execute($stmt);
@@ -34,6 +35,34 @@ if ($absen) {
     }
 }
 $_SESSION['status_absen'] = $status;
+
+// Ambil catatan pembimbing
+$catatan_pembimbing = [];
+if ($id_perusahaan) {
+    $sql_catatan = "
+        SELECT 
+            c.catatan,
+            c.tanggal,
+            p.nama_pembimbing
+        FROM catatan c
+        JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+        JOIN jurnal j ON c.id_jurnal = j.id_jurnal
+        WHERE j.id_siswa = '$id_siswa'
+        ORDER BY c.tanggal DESC
+        LIMIT 5
+    ";
+    $result_catatan = mysqli_query($coneksi, $sql_catatan);
+    if ($result_catatan) {
+        $catatan_pembimbing = mysqli_fetch_all($result_catatan, MYSQLI_ASSOC);
+    }
+}
+
+// Format tanggal function
+function formatTanggal($dateString)
+{
+    $date = new DateTime($dateString);
+    return $date->format('m-d-Y');
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -43,28 +72,83 @@ $_SESSION['status_absen'] = $status;
     <title>Dashboard Siswa - Sistem Absensi</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <style>
-        /* CSS styles tetap sama seperti sebelumnya */
+        :root {
+            --primary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+
         body {
             padding-left: 270px;
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
+            height: 100vh;
+            /* overflow: hidden; */
         }
 
         .main-container {
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-left: 0;
-            width: auto;
-            max-width: none;
+            margin: 20px 20px 0 0;
+            height: calc(100vh - 40px);
+        }
+
+        .dashboard-wrapper {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .content-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+        }
+
+        .attendance-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .notes-section {
+            width: 350px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         #btnAbsensi {
-            padding: 25px 40px;
-            font-size: 24px;
+            padding: 25px 30px;
+            font-size: 20px;
             font-weight: 600;
             border: none;
             color: white;
@@ -76,6 +160,9 @@ $_SESSION['status_absen'] = $status;
             letter-spacing: 1px;
             position: relative;
             overflow: hidden;
+            margin-bottom: 20px;
+            width: 40%;
+            max-width: 250px;
         }
 
         #btnAbsensi.belum {
@@ -89,16 +176,6 @@ $_SESSION['status_absen'] = $status;
         #btnAbsensi.selesai {
             background: linear-gradient(135deg, #2f3542 0%, #57606f 100%);
             cursor: not-allowed;
-        }
-
-        .container-tengah {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            margin-top: 200px;
-            padding: 130px;
-            flex-direction: column;
         }
 
         .info-status {
@@ -124,30 +201,150 @@ $_SESSION['status_absen'] = $status;
             }
         }
 
-        @media (max-width: 768px) {
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #007bff;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .note-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .note-header {
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .note-header i {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .note-body {
+            margin-bottom: 10px;
+            color: #333;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+
+        .note-footer {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .note-footer i {
+            margin-right: 5px;
+        }
+
+        .empty-notes {
+            color: #6c757d;
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 991px) {
             body {
                 padding-left: 0;
             }
 
-            .main-content {
-                margin-left: 0;
+            .main-container {
+                margin: 10px;
+                height: auto;
+            }
+
+            .content-container {
+                flex-direction: column;
+            }
+
+            .attendance-section {
+                margin-bottom: 20px;
+                padding: 20px;
+            }
+
+            .notes-section {
+                width: 100%;
+                height: auto;
+                max-height: 300px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container-tengah container-custom">
-        <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
-            onclick="prosesAbsensi()">
-            <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
-        </button>
-        <div class="info-status">
-            Status:
-            <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
+    <div class="main-container">
+
+        <div class="dashboard-wrapper">
+            <h2 class="dashboard-title">Absensi Harian</h2>
+            <div class="content-container">
+                <div class="attendance-section">
+                    <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
+                        onclick="prosesAbsensi()">
+                        <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
+                    </button>
+                    <div class="info-status">
+                        <i class="fas fa-info-circle"></i> Status:
+                        <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
+                    </div>
+                </div>
+
+                <div class="notes-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
+                    </h2>
+
+                    <?php if (!empty($catatan_pembimbing)): ?>
+                        <?php foreach ($catatan_pembimbing as $catatan): ?>
+                            <div class="note-card">
+                                <div class="note-header">
+                                    <i class="fas fa-user-tie"></i>
+                                    <?= htmlspecialchars($catatan['nama_pembimbing']) ?>
+                                </div>
+                                <div class="note-body">
+                                    <?= htmlspecialchars($catatan['catatan']) ?>
+                                </div>
+                                <div class="note-footer">
+                                    <i class="far fa-clock"></i>
+                                    <?= formatTanggal($catatan['tanggal']) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="empty-notes">
+                            <i class="far fa-folder-open"></i> Belum ada catatan dari pembimbing
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let statusSaatIni = "<?= $status ?>";
         let sudahAbsenPulang = <?= ($status === 'selesai') ? 'true' : 'false' ?>;
@@ -166,10 +363,8 @@ $_SESSION['status_absen'] = $status;
             setTimeout(() => ripple.remove(), 600);
 
             if (statusSaatIni === 'belum') {
-                // Untuk absen masuk, langsung proses tanpa konfirmasi
                 kirimDataAbsensi('simpan_masuk');
             } else {
-                // Untuk absen pulang, tetap pakai konfirmasi
                 Swal.fire({
                     title: 'Konfirmasi',
                     text: 'Absen pulang sekarang?',
@@ -210,7 +405,11 @@ $_SESSION['status_absen'] = $status;
                     Swal.fire({
                         icon: 'success',
                         title: 'Berhasil',
-                        text: data.message
+                        text: data.message,
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000
                     });
 
                     const btn = document.getElementById('btnAbsensi');
@@ -218,29 +417,30 @@ $_SESSION['status_absen'] = $status;
                         btn.className = 'masuk';
                         btn.textContent = 'ABSEN PULANG';
                         statusSaatIni = 'masuk';
-                        document.querySelector('.info-status').textContent = 'Status: Sudah absen masuk';
+                        document.querySelector('.info-status').innerHTML = '<i class="fas fa-info-circle"></i> Status: Sudah absen masuk';
                     } else {
                         btn.className = 'selesai';
                         btn.textContent = 'SUDAH ABSEN';
                         btn.disabled = true;
                         statusSaatIni = 'selesai';
                         sudahAbsenPulang = true;
-                        document.querySelector('.info-status').textContent = 'Status: Sudah absen pulang';
+                        document.querySelector('.info-status').innerHTML = '<i class="fas fa-info-circle"></i> Status: Sudah absen pulang';
                     }
                 })
                 .catch(err => {
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal',
-                        text: err.message
+                        text: err.message,
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
                     });
                 });
         }
-    </script>
 
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Notifikasi SweetAlert2 dari proses tambah siswa
             <?php if (isset($_GET['pesan'])): ?>
                 <?php if ($_GET['pesan'] == 'sukses'): ?>
                     Swal.fire({
@@ -274,11 +474,9 @@ $_SESSION['status_absen'] = $status;
                     });
                 <?php endif; ?>
             <?php else: ?>
-                // Notifikasi login sukses (hanya muncul sekali)
                 if (!localStorage.getItem('siswaWelcomeShown')) {
                     const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
 
-                    // Delay sedikit untuk memastikan semua element sudah loaded
                     setTimeout(() => {
                         Swal.fire({
                             title: `Selamat datang ${namaSiswa}!`,
@@ -301,11 +499,7 @@ $_SESSION['status_absen'] = $status;
                 }
             <?php endif; ?>
         });
-        // Tambahkan ini untuk menghapus localStorage saat logout
-        // Pastikan ini ada di halaman logout Anda
-        // localStorage.removeItem('siswaAlertShown');
     </script>
-
 </body>
 
 </html>
