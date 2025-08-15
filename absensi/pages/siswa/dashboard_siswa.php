@@ -295,11 +295,13 @@ function formatTanggal($dateString)
     </style>
 </head>
 
+<h2 class="dashboard-title">Absensi Harian</h2>
+
 <body>
     <div class="main-container">
 
         <div class="dashboard-wrapper">
-            <h2 class="dashboard-title">Absensi Harian</h2>
+            
             <div class="content-container">
                 <div class="attendance-section">
                     <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
@@ -307,7 +309,7 @@ function formatTanggal($dateString)
                         <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
                     </button>
                     <div class="info-status">
-                        Status:
+                        <i class="fas fa-info-circle"></i> Status:
                         <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
                     </div>
                 </div>
