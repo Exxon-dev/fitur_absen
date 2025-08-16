@@ -91,13 +91,23 @@ function formatTanggal($dateString)
             padding-left: 270px;
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
-            height: 100vh;
-            /* overflow: hidden; */
+            
         }
 
         .main-container {
-            margin: 20px 20px 0 0;
-            height: calc(100vh - 40px);
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
+            max-width: none;
+            zoom: 0.85;
+        }
+
+        .container-custom {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .dashboard-wrapper {
@@ -295,19 +305,18 @@ function formatTanggal($dateString)
     </style>
 </head>
 
+
+
 <body>
     <div class="main-container">
-
         <div class="dashboard-wrapper">
-            <h2 class="dashboard-title">Absensi Harian</h2>
             <div class="content-container">
                 <div class="attendance-section">
                     <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
                         onclick="prosesAbsensi()">
                         <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
                     </button>
-                    <div class="info-status">
-                        Status:
+                    <div class="info-status"> Status:
                         <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
                     </div>
                 </div>

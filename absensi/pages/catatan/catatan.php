@@ -23,10 +23,25 @@ if ($level === 'siswa' && $id_siswa) {
     $jurnal_hari_ini = mysqli_fetch_assoc($result_jurnal);
 }
 
-// Cek waktu saat ini untuk validasi jam 15.00-16.15
+// Validasi waktu tambah jurnal
 $current_time = date('H:i');
-$allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
-$time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15';
+$current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
+
+$allow_jurnal = false;
+$time_message = '';
+
+if ($current_day == 7) { // Hari Minggu
+    $allow_jurnal = false;
+    $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
+} else {
+    if ($current_day == 6) { // Hari Sabtu
+        $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
+        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
+    } else { // Hari Senin-Jumat
+        $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
+        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
+    }
+}
 
 // Membangun kondisi WHERE berdasarkan level pengguna
 $where_conditions = [];
@@ -172,6 +187,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             <button type="button" class="btn btn-light" id="disabledJurnalButton">
                                 <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
                                 <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
+                                <span class="time-alert"></span>
                             </button>
                         <?php endif; ?>
                     </div>
