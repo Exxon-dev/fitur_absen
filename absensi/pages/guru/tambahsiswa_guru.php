@@ -94,12 +94,12 @@
                 <div class="form-group col-md-3">
                     <label>NIS</label>
                     <input type="text" name="nis" id="nis" class="form-control" minlength="8" maxlength="12" oninput="validateNIS()">
-                    <div id="nisError" class="error-message"></div>
+                    <div id="nisError" class="error-message" required></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
                     <input type="text" name="nisn" id="nisn" class="form-control" maxlength="10" minlength="10" oninput="validateNISN()">
-                    <div id="nisnError" class="error-message"></div>
+                    <div id="nisnError" class="error-message" required></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
-                    <select name="pro_keahlian" class="form-control" required>
+                    <select name="pro_keahlian" class="form-control">
                         <option value="">Pilih Program Keahlian</option>
                         <option value="Multimedia">Multimedia</option>
                         <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
@@ -124,28 +124,40 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
-                    <select name="id_sekolah" class="form-control" required>
-                        <option value="">Pilih Sekolah</option>
+                    <select name="id_sekolah" class="form-control" readonly>
                         <?php
-                        $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
-                        while ($row = mysqli_fetch_array($data_sekolah)) {
+                        // Ambil id_guru dari session
+                        $id_guru_login = $_SESSION['id_guru'];
+
+                        // Ambil data guru + sekolah
+                        $query = mysqli_query($coneksi, "SELECT g.id_sekolah, s.nama_sekolah 
+                                         FROM guru g 
+                                         JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
+                                         WHERE g.id_guru = '$id_guru_login'");
+                        $row = mysqli_fetch_assoc($query);
                         ?>
-                            <option value="<?= htmlspecialchars($row['id_sekolah']); ?>"><?= htmlspecialchars($row['nama_sekolah']); ?></option>
-                        <?php } ?>
+                        <option value="<?= htmlspecialchars($row['id_sekolah']); ?>" selected>
+                            <?= htmlspecialchars($row['nama_sekolah']); ?>
+                        </option>
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Perusahaan</label>
-                    <select name="id_perusahaan" class="form-control" required>
-                        <option value="">Pilih Perusahaan</option>
+                    <label>Guru</label>
+                    <select name="id_guru" class="form-control" readonly>
                         <?php
-                        $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
-                        while ($row = mysqli_fetch_array($data_perusahaan)) {
+                        // Ambil id_guru dari session login
+                        $id_guru_login = $_SESSION['id_guru'];
+
+                        // Ambil data guru berdasarkan id yang login
+                        $query_guru = mysqli_query($coneksi, "SELECT * FROM guru WHERE id_guru='$id_guru_login'");
+                        $guru = mysqli_fetch_assoc($query_guru);
                         ?>
-                            <option value="<?= htmlspecialchars($row['id_perusahaan']); ?>"><?= htmlspecialchars($row['nama_perusahaan']); ?></option>
-                        <?php } ?>
+                        <option value="<?= htmlspecialchars($guru['id_guru']); ?>" selected>
+                            <?= htmlspecialchars($guru['nama_guru']); ?>
+                        </option>
                     </select>
                 </div>
+
                 <div class="form-group col-md-3">
                     <label>Tanggal Mulai</label>
                     <input type="date" name="tanggal_mulai" class="form-control" required>
@@ -167,14 +179,14 @@
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Guru</label>
-                    <select name="id_guru" class="form-control" required>
-                        <option value="">Pilih Guru</option>
+                    <label>Perusahaan</label>
+                    <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Pilih Perusahaan</option>
                         <?php
-                        $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
-                        while ($row = mysqli_fetch_array($data_guru)) {
+                        $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                        while ($row = mysqli_fetch_array($data_perusahaan)) {
                         ?>
-                            <option value="<?= htmlspecialchars($row['id_guru']); ?>"><?= htmlspecialchars($row['nama_guru']); ?></option>
+                            <option value="<?= htmlspecialchars($row['id_perusahaan']); ?>"><?= htmlspecialchars($row['nama_perusahaan']); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -188,7 +200,7 @@
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" placeholder="628xxx" required>
+                    <input type="text" name="no_wa" class="form-control" placeholder="628xxx">
                 </div>
             </div>
             <div class="form-row">
@@ -213,76 +225,81 @@
                 $id_pembimbing  = $_POST['id_pembimbing'];
                 $id_guru        = $_POST['id_guru'];
                 $username       = $_POST['username'];
-                $password       = $_POST['password']; // Sebaiknya di-hash
+                $password       = $_POST['password']; // Bisa di-hash
 
-                // 1. Cek apakah ID siswa atau username sudah ada
-                $cek = mysqli_query($coneksi, "SELECT * FROM siswa WHERE nisn='$nisn' OR username='$username'");
+                // Escape input untuk keamanan SQL
+                $nis_safe      = mysqli_real_escape_string($coneksi, $nis);
+                $nisn_safe     = mysqli_real_escape_string($coneksi, $nisn);
+                $username_safe = mysqli_real_escape_string($coneksi, $username);
+
+                // 1. Cek apakah NISN atau username sudah ada
+                $cek = mysqli_query($coneksi, "SELECT * FROM siswa WHERE nisn='$nisn_safe' OR username='$username_safe'");
 
                 if (!$cek) {
-                    echo '<pre>Query error: ' . mysqli_error($coneksi) . '</pre>';
-                    exit();
+                    die("Query error: " . mysqli_error($coneksi));
                 }
-                // Pastikan TTGL NULL kalau kosong
-                $TTGL = !empty($_POST['TTGL']) ? $_POST['TTGL'] : null;
-                if (mysqli_num_rows($cek) == 0) {
+
+                if (mysqli_num_rows($cek) > 0) {
+                    $row = mysqli_fetch_assoc($cek);
+                    $pesan = '';
+                    if ($row['nisn'] == $nisn_safe) {
+                        $pesan = 'NISN sudah digunakan!';
+                    } elseif ($row['username'] == $username_safe) {
+                        $pesan = 'Username sudah digunakan!';
+                    }
+
+                    echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '$pesan',
+            });
+        </script>";
+                } else {
+                    // Pastikan TTGL NULL kalau kosong
+                    $TTGL = !empty($_POST['TTGL']) ? $_POST['TTGL'] : null;
+
+                    // Insert data
                     $sql = mysqli_query($coneksi, "INSERT INTO siswa (
-                        nis,
-                        nisn,
-                        nama_siswa,
-                        no_wa,
-                        pro_keahlian,
-                        TL,
-                        TTGL,
-                        id_sekolah,
-                        id_perusahaan,
-                        tanggal_mulai,
-                        tanggal_selesai,
-                        id_pembimbing,
-                        id_guru,
-                        username,
-                        password)
-                        VALUES (
-                        '$nis',
-                        '$nisn',
-                        '$nama_siswa',
-                        '$no_wa',
-                        '$pro_keahlian',
-                        '$TL',
-                        " . ($TTGL !== null ? "'$TTGL'" : "NULL") . ",
-                        '$id_sekolah',
-                        '$id_perusahaan',
-                        '$tanggal_mulai',
-                        '$tanggal_selesai',
-                        '$id_pembimbing',
-                        '$id_guru',
-                        '$username',
-                        '$password')");
+            nis, nisn, nama_siswa, no_wa, pro_keahlian, TL, TTGL,
+            id_sekolah, id_perusahaan, tanggal_mulai, tanggal_selesai,
+            id_pembimbing, id_guru, username, password
+        ) VALUES (
+            '$nis_safe', '$nisn_safe', '$nama_siswa', '$no_wa', '$pro_keahlian', '$TL', " . ($TTGL !== null ? "'$TTGL'" : "NULL") . ",
+            '$id_sekolah', '$id_perusahaan', '$tanggal_mulai', '$tanggal_selesai',
+            '$id_pembimbing', '$id_guru', '$username_safe', '$password'
+        )");
 
                     if ($sql) {
-                        echo"
-                        <script>
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Siswa berhasil ditambahkan!',
-                            showCancelButton: true,
-                            confirmButtonText: 'Tambah lagi',
-                            cancelButtonText: 'Tidak'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = 'index.php?page=tambahsiswa_guru';
-                            } else {
-                                window.location.href = 'index.php?page=absensi_siswa';
-                            }
-                        });
-                        </script>
-                        ";
+                        echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Siswa berhasil ditambahkan!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Tambah lagi',
+                    cancelButtonText: 'Tidak'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'index.php?page=tambahsiswa_guru';
                     } else {
-                        echo "Gagal memasukkan data: " . mysqli_error($coneksi);
+                        window.location.href = 'index.php?page=absensi_siswa';
+                    }
+                });
+            </script>";
+                    } else {
+                        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Gagal memasukkan data: " . mysqli_error($coneksi) . "'
+                });
+            </script>";
                     }
                 }
             }
             ?>
+
         </form>
     </div>
     <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>

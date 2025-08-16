@@ -128,9 +128,8 @@ if (!$result) {
                 <!-- Input hidden untuk menyimpan ID siswa -->
                 <input type="hidden" name="id_siswa" id="selected_siswa_id">
                 <div class="form-group col-md-6">
-                    <label for="reportSelect">Pilih Laporan:</label>
+                    <label for="reportSelect">Cari Laporan:</label>
                     <select id="reportSelect" name="page" class="form-control" required>
-                        <option value="">Pilih Laporan</option>
                         <option value="cover">Cover</option>
                         <option value="df">Daftar Hadir</option>
                         <option value="jr">Laporan Jurnal</option>
@@ -146,6 +145,23 @@ if (!$result) {
 
             <button type="submit" class="btn btn-primary btn-block mt-4">Priview</button>
         </form>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const reportSelect = new Choices('#reportSelect', {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Cari laporan...',
+                    placeholderValue: 'Cari laporan',
+                    shouldSort: false,
+                    itemSelectText: 'Pilih',
+                    noResultsText: 'Laporan tidak ditemukan',
+                    noChoicesText: 'Tidak ada pilihan lain'
+                });
+            });
+        </script>
 
         <!-- Script untuk menangkap ID siswa -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
