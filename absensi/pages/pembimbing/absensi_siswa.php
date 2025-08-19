@@ -24,7 +24,7 @@ if (!$pembimbing) {
   exit();
 }
 
-$tanggal = date('Y-m-d');
+$tanggal = date('m-d-Y');
 $nama_pembimbing = $pembimbing['nama_pembimbing'];
 $id_perusahaan = $pembimbing['id_perusahaan'];
 $nama_perusahaan = $pembimbing['nama_perusahaan']; // Ambil nama perusahaan dari hasil join
