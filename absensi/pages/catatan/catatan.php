@@ -168,7 +168,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 </head>
 
 <body>
-    <h2 class="text-primary">Data Jurnal dan Catatan Harian</h2>
+    <h2 class="text-primary text-center text-md-left">Data Jurnal dan Catatan Harian</h2>
     <div class="main-container container-custom">
 
         <hr />
@@ -203,7 +203,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                         <input type="text"
                             name="search"
                             class="form-control"
-                            placeholder="Cari nama siswa..."
+                            placeholder="cari nama siswa..."
                             value="<?= htmlspecialchars($search) ?>"
                             aria-label="Cari nama siswa"
                             aria-describedby="button-search">
@@ -242,7 +242,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-primary">
-                    <tr>
+                    <tr class="text-center">
                         <th>No</th>
                         <th>Nama Siswa</th>
                         <th>Jurnal</th>
@@ -271,7 +271,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
-                                <td><?= $no ?></td>
+                                <td class="text-center"><?= $no ?></td>
                                 <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
                                 <td><?= htmlspecialchars($keterangan) ?></td>
                                 <td><?= htmlspecialchars($catatan) ?></td>
@@ -320,6 +320,9 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Choices.js -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
         $(document).ready(function() {
             $(".clickable-row").click(function() {
