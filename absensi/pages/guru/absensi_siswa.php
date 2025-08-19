@@ -93,43 +93,49 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
     }
 
     /* ===== Responsif untuk layar kecil (mobile/tablet) ===== */
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
+
+      /* Tablet & Mobile */
       body {
         padding-left: 0;
-        /* hilangkan padding kiri agar konten muat penuh */
       }
+    }
 
-      .body-card {
-        padding: 15px;
-        margin-bottom: 15px;
-      }
 
-      /* Supaya tabel bisa digulir horizontal */
-      .table-responsive {
-        overflow-x: scroll;
-      }
+    .body-card {
+      padding: 15px;
+      margin-bottom: 15px;
+    }
 
-      /* Ukuran font tabel bisa disesuaikan agar muat */
-      .table td,
-      .table th {
-        font-size: 14px;
-        padding: 8px;
-      }
+    /* Supaya tabel bisa digulir horizontal */
+    .table-responsive {
+      overflow-x: scroll;
+    }
 
-      /* Jika kamu ingin badge lebih kecil */
-      .badge-sakit,
-      .badge-izin,
-      .badge-alpa,
-      .badge-belum {
-        font-size: 0.8rem;
-        padding: 4px 8px;
-      }
+    /* Ukuran font tabel bisa disesuaikan agar muat */
+    .table td,
+    .table th {
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    /* Jika kamu ingin badge lebih kecil */
+    .badge-sakit,
+    .badge-izin,
+    .badge-alpa,
+    .badge-belum {
+      font-size: 0.8rem;
+      padding: 4px 8px;
     }
   </style>
 </head>
 
 <body class="row">
-        <h2 class="text-primary">Data Jurnal dan Catatan Harian <?= date('d-m-Y') ?> </h2>
+  <h3 class="text-primary text-center text-md-left">Daftar Hadir Siswa 
+    <span class="d-block d-md-inline">
+      <?= date('d-m-Y') ?>
+    </span>
+  </h3>
   <div class="body">
     <div class="body-card p-3">
       <div class="container-fluid my-4">

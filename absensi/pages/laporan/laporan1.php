@@ -113,7 +113,7 @@ if (!$result) {
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label for="siswaSelect">Cari Siswa:</label>
+                    <label for="siswaSelect">Siswa:</label>
                     <select id="siswaSelect" name="id_siswa" class="form-control" required>
                         <option value="">Cari Siswa...</option>
                         <?php
@@ -127,7 +127,7 @@ if (!$result) {
                 </div>
 
                 <div class="form-group col-md-6">
-                    <label for="reportSelect">Cari Laporan:</label>
+                    <label for="reportSelect">Laporan:</label>
                     <select id="reportSelect" name="page" class="form-control" required>
                         <option value="">Cari laporan...</option>
                         <option value="cover">Cover</option>

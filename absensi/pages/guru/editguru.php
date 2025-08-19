@@ -208,26 +208,19 @@ if (isset($_POST['submit'])) {
 
         select.form-control:disabled {
             color: #495057;
-            /* sama seperti normal */
-            background-color: #fff;
-            /* agar putih, bukan abu-abu */
             height: calc(1.5em + .75rem + 2px);
-            /* pastikan height seperti normal bootstrap */
             padding: .375rem .75rem;
-            /* padding default bootstrap */
-            -webkit-text-fill-color: #495057;
-            /* untuk Chrome agar teks terlihat jelas */
         }
     </style>
 </head>
 
 <body>
     <div>
+        <h3 class="text-primary text-center text-md-left">Profile Guru</h3>
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
             <div class="profile-container">
                 <div class="profile-card">
-                    <h2>Profile Guru</h2>
                     <br>
                     <div class="profile-picture-container">
                         <img src="<?php echo $data['profile'] ? '../' . htmlspecialchars($data['profile']) : '../image/default.png'; ?>"
@@ -270,7 +263,7 @@ if (isset($_POST['submit'])) {
                 </div>
 
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Data Guru</h3>
+                    <h3>Data Guru</h3>
                     <div class="form-row">
                         <!-- Left Column -->
                         <div class="form-col">
@@ -305,6 +298,12 @@ if (isset($_POST['submit'])) {
                             </div>
 
                             <div class="form-group">
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                            </div>
+                            
+                            <div class="form-group">
                                 <label for="">Sekolah</label>
                                 <select class="form-control" disabled>
                                     <?php
@@ -318,12 +317,6 @@ if (isset($_POST['submit'])) {
 
                                 <!-- Hidden input agar tetap dikirim -->
                                 <input type="hidden" name="id_sekolah" value="<?= $data['id_sekolah'] ?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
 
                         </div>
