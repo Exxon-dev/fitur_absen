@@ -203,11 +203,23 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <!-- Form Filter Tanggal -->
             <form method="GET" class="form-inline">
                 <input type="hidden" name="page" value="catatan" />
-                <input type="date" name="tanggal" class="form-control date-picker mb-2"
+
+                <?php
+                // jika ada tanggal dari GET, gunakan itu, kalau tidak pakai hari ini
+                $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+                ?>
+
+                <input type="date"
+                    name="tanggal"
+                    class="form-control date-picker mb-2"
                     value="<?= htmlspecialchars($tanggal) ?>"
                     pattern="\d{4}-\d{2}-\d{2}" />
-                <button type="submit" class="btn btn-primary ml-2 mb-2"> <i class="fa-solid fa-filter"></i></button>
+
+                <button type="submit" class="btn btn-primary ml-2 mb-2">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
             </form>
+
         </div>
 
         <!-- Tabel Data -->
