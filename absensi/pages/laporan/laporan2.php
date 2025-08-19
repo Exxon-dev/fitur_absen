@@ -1,6 +1,5 @@
 <?php
 include('koneksi.php');
-session_start();
 
 $id_perusahaan = $_SESSION['id_perusahaan'] ?? null;
 
