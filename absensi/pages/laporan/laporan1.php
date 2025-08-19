@@ -113,23 +113,23 @@ if (!$result) {
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label for="siswa_search">Cari Nama Siswa:</label>
-                    <input type="text" id="siswa_search" class="form-control" list="siswa_list" placeholder="Ketik nama siswa..." autocomplete="off">
-
-                    <datalist id="siswa_list">
+                    <label for="siswaSelect">Cari Siswa:</label>
+                    <select id="siswaSelect" name="id_siswa" class="form-control" required>
+                        <option value="">Cari Siswa...</option>
                         <?php
                         mysqli_data_seek($result, 0);
                         while ($row = mysqli_fetch_assoc($result)): ?>
-                            <option value="<?= htmlspecialchars($row['nama_siswa']) ?>" data-id="<?= $row['id_siswa'] ?>">
-                            <?php endwhile; ?>
-                    </datalist>
+                            <option value="<?= $row['id_siswa'] ?>">
+                                <?= htmlspecialchars($row['nama_siswa']) ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
 
-                <!-- Input hidden untuk menyimpan ID siswa -->
-                <input type="hidden" name="id_siswa" id="selected_siswa_id">
                 <div class="form-group col-md-6">
                     <label for="reportSelect">Cari Laporan:</label>
                     <select id="reportSelect" name="page" class="form-control" required>
+                        <option value="">Cari laporan...</option>
                         <option value="cover">Cover</option>
                         <option value="df">Daftar Hadir</option>
                         <option value="jr">Laporan Jurnal</option>
@@ -143,18 +143,26 @@ if (!$result) {
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4">Priview</button>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Preview</button>
         </form>
 
+        <!-- Choices.js -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const reportSelect = new Choices('#reportSelect', {
+                new Choices('#siswaSelect', {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Ketik nama siswa...',
+                    itemSelectText: 'Pilih',
+                    noResultsText: 'Siswa tidak ditemukan',
+                    noChoicesText: 'Tidak ada data siswa'
+                });
+
+                new Choices('#reportSelect', {
                     searchEnabled: true,
                     searchPlaceholderValue: 'Cari laporan...',
-                    placeholderValue: 'Cari laporan',
                     shouldSort: false,
                     itemSelectText: 'Pilih',
                     noResultsText: 'Laporan tidak ditemukan',
@@ -162,21 +170,8 @@ if (!$result) {
                 });
             });
         </script>
-
-        <!-- Script untuk menangkap ID siswa -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('#siswa_search').on('input', function() {
-                    const selectedOption = $(`#siswa_list option[value="${$(this).val()}"]`);
-                    if (selectedOption.length) {
-                        $('#selected_siswa_id').val(selectedOption.data('id'));
-                    }
-                });
-            });
-        </script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-
+    </div>
 </body>
+
 
 </html>
