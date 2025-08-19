@@ -240,7 +240,7 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit data
+                            <i class="fas fa-edit"></i> Edit Profile
                         </button>
                     </div>
 
@@ -263,9 +263,9 @@ if (isset($_POST['submit'])) {
                 </div>
 
                 <div class="profile-info">
-                    <h3>Data Guru</h3>
+                    <h3 class="text-center">Data Guru</h3>
+                    <br>
                     <div class="form-row">
-                        <!-- Left Column -->
                         <div class="form-col">
 
                             <div class="form-group">

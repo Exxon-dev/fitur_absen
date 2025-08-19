@@ -110,6 +110,7 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
     /* Supaya tabel bisa digulir horizontal */
     .table-responsive {
       overflow-x: scroll;
+      overflow-x: hidden !important;  
     }
 
     /* Ukuran font tabel bisa disesuaikan agar muat */
@@ -133,12 +134,12 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
 <body class="row">
   <h3 class="text-primary text-center text-md-left">Daftar Hadir Siswa 
     <span class="d-block d-md-inline">
-      <?= date('d-m-Y') ?>
+      <?= date('d-m-Y') ?>  
     </span>
   </h3>
   <div class="body">
     <div class="body-card p-3">
-      <div class="container-fluid my-4">
+      <div class="container-fluid my-3">
         <a href="index.php?page=tambahsiswa_guru" class="btn btn-primary"><i class="fas fa-plus"></i>tambah</a>
         <div class="table-responsive">
           <table class="table table-hover table-bordered">
@@ -166,9 +167,8 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
                 $query_absen = mysqli_query(
                   $coneksi,
                   "SELECT keterangan FROM absen 
-             WHERE id_siswa = '" . $siswa['id_siswa'] . "' 
-             AND tanggal = '" . $tanggal . "'"
-                );
+                    WHERE id_siswa = '" . $siswa['id_siswa'] . "' 
+                    AND tanggal = '" . $tanggal . "'");
 
                 $absen = mysqli_fetch_assoc($query_absen);
                 $keterangan = isset($absen['keterangan']) ? $absen['keterangan'] : null;

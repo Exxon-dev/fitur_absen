@@ -249,52 +249,52 @@
                     }
 
                     echo "<script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: '$pesan',
-            });
-        </script>";
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: '$pesan',
+                        });
+                    </script>";
                 } else {
                     // Pastikan TTGL NULL kalau kosong
                     $TTGL = !empty($_POST['TTGL']) ? $_POST['TTGL'] : null;
 
                     // Insert data
                     $sql = mysqli_query($coneksi, "INSERT INTO siswa (
-            nis, nisn, nama_siswa, no_wa, pro_keahlian, TL, TTGL,
-            id_sekolah, id_perusahaan, tanggal_mulai, tanggal_selesai,
-            id_pembimbing, id_guru, username, password
-        ) VALUES (
-            '$nis_safe', '$nisn_safe', '$nama_siswa', '$no_wa', '$pro_keahlian', '$TL', " . ($TTGL !== null ? "'$TTGL'" : "NULL") . ",
-            '$id_sekolah', '$id_perusahaan', '$tanggal_mulai', '$tanggal_selesai',
-            '$id_pembimbing', '$id_guru', '$username_safe', '$password'
-        )");
+                    nis, nisn, nama_siswa, no_wa, pro_keahlian, TL, TTGL,
+                    id_sekolah, id_perusahaan, tanggal_mulai, tanggal_selesai,
+                    id_pembimbing, id_guru, username, password
+                ) VALUES (
+                    '$nis_safe', '$nisn_safe', '$nama_siswa', '$no_wa', '$pro_keahlian', '$TL', " . ($TTGL !== null ? "'$TTGL'" : "NULL") . ",
+                    '$id_sekolah', '$id_perusahaan', '$tanggal_mulai', '$tanggal_selesai',
+                    '$id_pembimbing', '$id_guru', '$username_safe', '$password'
+                )");
 
                     if ($sql) {
                         echo "<script>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil',
-                    text: 'Siswa berhasil ditambahkan!',
-                    showCancelButton: true,
-                    confirmButtonText: 'Tambah lagi',
-                    cancelButtonText: 'Tidak'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'index.php?page=tambahsiswa_guru';
-                    } else {
-                        window.location.href = 'index.php?page=absensi_siswa';
-                    }
-                });
-            </script>";
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Siswa berhasil ditambahkan!',
+                                showCancelButton: true,
+                                confirmButtonText: 'Tambah lagi',
+                                cancelButtonText: 'Tidak'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = 'index.php?page=tambahsiswa_guru';
+                                } else {
+                                    window.location.href = 'index.php?page=absensi_siswa';
+                                }
+                            });
+                        </script>";
                     } else {
                         echo "<script>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: 'Gagal memasukkan data: " . mysqli_error($coneksi) . "'
-                });
-            </script>";
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Gagal memasukkan data: " . mysqli_error($coneksi) . "'
+                            });
+                        </script>";
                     }
                 }
             }
