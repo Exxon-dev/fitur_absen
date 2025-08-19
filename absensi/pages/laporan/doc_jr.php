@@ -81,19 +81,26 @@ foreach ($jurnal_data as $row) {
             font-size: 11px;
         }
         .ttd {
-            margin-top: 80px;
+            margin-top: 100px; /* kasih jarak lebih luas */
             width: 100%;
             text-align: right;
             font-size: 11px;
         }
         .ttd div {
-            display: inline-block;
             text-align: center;
         }
         .page-break {
             page-break-after: always;
         }
     </style>
+    <script>
+        function printReport() {
+            window.print();
+        }
+        window.onload = function() {
+            printReport();
+        };
+    </script>
 </head>
 <body>
 
@@ -141,9 +148,8 @@ foreach ($jurnal_data as $row) {
     <div class="ttd">
         <div>
             <div>....................., ..................... 202...</div>
-            <br>
-            <div>PEMBIMBING DUDI</div>
-            <br><br><br><br><br><br><br><br>
+            <div style="margin-top:20px;">PEMBIMBING DUDI</div>
+            <br><br><br><br><br><br>
             <div>(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
         </div>
     </div>
