@@ -61,30 +61,11 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class='nav-link text-white <?php echo ($_GET['page'] == 'rekap_ip') ? 'active' : ''; ?>' href='index.php?page=rekap_ip'>
-          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">list_alt</i>
-          </div>
-          <span class="nav-link-text ms-1">Rekap IP</span>
-        </a>
-      </li>
-      <li class="nav-item mt-3">
-        <h6 class="ps-4 ms-2 text-uppercase text-xs text-white font-weight-bolder opacity-8">Account pages</h6>
-      </li>
-      <li class="nav-item">
         <a class='nav-link text-white <?php echo ($_GET['page'] == 'laporan2') ? 'active' : ''; ?>' href='index.php?page=laporan2'>
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">insert_chart</i>
           </div>
           <span class="nav-link-text ms-1">Laporan</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class='nav-link text-white <?php echo ($_GET['page'] == 'sign-up_aksi') ? 'active' : ''; ?>' href='./pages/sign-up_aksi.php'>
-          <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="material-icons opacity-10">login</i>
-          </div>
-          <span class="nav-link-text ms-1">Sign Out</span>
         </a>
       </li>
     </ul>
