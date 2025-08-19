@@ -53,7 +53,6 @@ if (!$result) {
         }
 
         h1 {
-            text-align: center;
             color: #007bff;
         }
 
@@ -107,46 +106,62 @@ if (!$result) {
 </head>
 
 <body>
+    <h1>Laporan Siswa</h1>
     <div class="main-container container-custom">
-        <h1>Buka Laporan Siswa</h1>
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
-            <label for="siswa_search">Cari Nama Siswa:</label>
-            <input type="text"
-                id="siswa_search"
-                class="form-control"
-                list="siswa_list"
-                placeholder="Ketik nama siswa..."
-                autocomplete="off">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="siswa_search">Cari Nama Siswa:</label>
+                    <input type="text" id="siswa_search" class="form-control" list="siswa_list" placeholder="Ketik nama siswa..." autocomplete="off">
 
-            <datalist id="siswa_list">
-                <?php
-                mysqli_data_seek($result, 0);
-                while ($row = mysqli_fetch_assoc($result)): ?>
-                    <option value="<?= htmlspecialchars($row['nama_siswa']) ?>" data-id="<?= $row['id_siswa'] ?>">
-                    <?php endwhile; ?>
-            </datalist>
+                    <datalist id="siswa_list">
+                        <?php
+                        mysqli_data_seek($result, 0);
+                        while ($row = mysqli_fetch_assoc($result)): ?>
+                            <option value="<?= htmlspecialchars($row['nama_siswa']) ?>" data-id="<?= $row['id_siswa'] ?>">
+                            <?php endwhile; ?>
+                    </datalist>
+                </div>
 
-            <!-- Input hidden untuk menyimpan ID siswa -->
-            <input type="hidden" name="id_siswa" id="selected_siswa_id">
-
-            <label for="reportSelect">Pilih Laporan:</label>
-            <select id="reportSelect" name="page" class="form-control" required>
-                <option value="">-- Pilih Laporan --</option>
-                <option value="cover">Cover</option>
-                <option value="df">Daftar Hadir</option>
-                <option value="jr">Laporan Jurnal</option>
-                <option value="catatan">Lembar Catatan Kegiatan</option>
-                <option value="dn">Lembar Daftar Nilai</option>
-                <option value="sk">Lembar Surat Keterangan</option>
-                <option value="nkp">Lembar Nilai Kepuasan Pelanggan</option>
-                <option value="lp">Lembar Pengesahan</option>
-                <option value="bl">Lembar Bimbingan Laporan</option>
-            </select>
+                <!-- Input hidden untuk menyimpan ID siswa -->
+                <input type="hidden" name="id_siswa" id="selected_siswa_id">
+                <div class="form-group col-md-6">
+                    <label for="reportSelect">Cari Laporan:</label>
+                    <select id="reportSelect" name="page" class="form-control" required>
+                        <option value="cover">Cover</option>
+                        <option value="df">Daftar Hadir</option>
+                        <option value="jr">Laporan Jurnal</option>
+                        <option value="catatan">Lembar Catatan Kegiatan</option>
+                        <option value="dn">Lembar Daftar Nilai</option>
+                        <option value="sk">Lembar Surat Keterangan</option>
+                        <option value="nkp">Lembar Nilai Kepuasan Pelanggan</option>
+                        <option value="lp">Lembar Pengesahan</option>
+                        <option value="bl">Lembar Bimbingan Laporan</option>
+                    </select>
+                </div>
+            </div>
 
             <button type="submit" class="btn btn-primary btn-block mt-4">Priview</button>
         </form>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const reportSelect = new Choices('#reportSelect', {
+                    searchEnabled: true,
+                    searchPlaceholderValue: 'Cari laporan...',
+                    placeholderValue: 'Cari laporan',
+                    shouldSort: false,
+                    itemSelectText: 'Pilih',
+                    noResultsText: 'Laporan tidak ditemukan',
+                    noChoicesText: 'Tidak ada pilihan lain'
+                });
+            });
+        </script>
 
         <!-- Script untuk menangkap ID siswa -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

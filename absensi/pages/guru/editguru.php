@@ -205,6 +205,19 @@ if (isset($_POST['submit'])) {
         #file-input {
             display: none;
         }
+
+        select.form-control:disabled {
+            color: #495057;
+            /* sama seperti normal */
+            background-color: #fff;
+            /* agar putih, bukan abu-abu */
+            height: calc(1.5em + .75rem + 2px);
+            /* pastikan height seperti normal bootstrap */
+            padding: .375rem .75rem;
+            /* padding default bootstrap */
+            -webkit-text-fill-color: #495057;
+            /* untuk Chrome agar teks terlihat jelas */
+        }
     </style>
 </head>
 
@@ -234,7 +247,7 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profil
+                            <i class="fas fa-edit"></i> Edit data
                         </button>
                     </div>
 
@@ -251,14 +264,8 @@ if (isset($_POST['submit'])) {
                             <input type="password" class="form-control" id="password" name="password"
                                 value="<?php echo htmlspecialchars($data['password']); ?>" required>
                         </div>
-
-
-                        <button type="button" class="btn btn-danger" onclick="disableEdit()">
-                            <i class="fas fa-times"></i> Batal
-                        </button>
-                        <button type="submit" name="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Update
-                        </button>
+                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
+                        <button type="submit" name="submit" class="btn btn-primary">Update</button>
                     </div>
                 </div>
 
@@ -267,10 +274,17 @@ if (isset($_POST['submit'])) {
                     <div class="form-row">
                         <!-- Left Column -->
                         <div class="form-col">
+
                             <div class="form-group">
-                                <label>NIP</label>
-                                <input type="text" name="nip" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
+                                <label for="nama_guru">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
+                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>No. Telepon</label>
+                                <input type="text" name="no_tlp" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
                             </div>
 
                             <div class="form-group">
@@ -280,25 +294,19 @@ if (isset($_POST['submit'])) {
                                     <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                 </select>
                             </div>
-
-                            <div class="form-group">
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
-                            </div>
                         </div>
 
                         <!-- Right Column -->
                         <div class="form-col">
                             <div class="form-group">
-                                <label>No. Telepon</label>
-                                <input type="text" name="no_tlp" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
+                                <label>NIP</label>
+                                <input type="text" name="nip" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label>Sekolah</label>
-                                <select name="id_sekolah" class="form-control" required>
+                                <label for="">Sekolah</label>
+                                <select class="form-control" disabled>
                                     <?php
                                     $sekolah_query = mysqli_query($coneksi, "SELECT * FROM sekolah");
                                     while ($sekolah = mysqli_fetch_assoc($sekolah_query)) {
@@ -307,12 +315,17 @@ if (isset($_POST['submit'])) {
                                     }
                                     ?>
                                 </select>
+
+                                <!-- Hidden input agar tetap dikirim -->
+                                <input type="hidden" name="id_sekolah" value="<?= $data['id_sekolah'] ?>">
                             </div>
+
                             <div class="form-group">
-                                <label for="nama_guru">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
-                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
+
                         </div>
                     </div>
                 </div>

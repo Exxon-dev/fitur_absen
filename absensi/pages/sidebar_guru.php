@@ -10,7 +10,7 @@
   <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'dashboard_guru') ? 'active' : ''; ?>" href="index.php?page=dashboard_guru">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'dashboard_guru') ? 'active' : ''; ?>" href="index.php?page=dashboard_guru">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">dashboard</i>
           </div>
@@ -18,7 +18,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'absensi_siswa') ? 'active' : ''; ?>" href="index.php?page=absensi_siswa">
+          <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'absensi_siswa') ? 'active' : ''; ?>" href="index.php?page=absensi_siswa">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">assignment</i>
           </div>
@@ -26,7 +26,8 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'editguru') !== false) ? 'active' : ''; ?>" href="index.php?page=editguru&id_guru=<?php echo $_SESSION['id_guru'] ?>">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && strpos($_GET['page'], 'editguru') !== false) ? 'active' : ''; ?>" href="index.php?page=editguru&id_guru=<?php echo $_SESSION['id_guru'] ?>">
+
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">person</i>
           </div>
@@ -34,7 +35,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo (strpos($_GET['page'], 'catatan') !== false) ? 'active' : ''; ?>" href="index.php?page=catatan">
+        <a class="nav-link text-white <?php echo (isset($_GET['page']) && strpos($_GET['page'], 'catatan') !== false) ? 'active' : ''; ?>" href="index.php?page=catatan">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">note</i>
           </div>
@@ -42,7 +43,7 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white <?php echo ($_GET['page'] == 'laporan1') ? 'active' : ''; ?>" href="index.php?page=laporan1">
+          <a class="nav-link text-white <?php echo (isset($_GET['page']) && $_GET['page'] == 'laporan1') ? 'active' : ''; ?>" href="index.php?page=laporan1">
           <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="material-icons opacity-10">insert_chart</i>
           </div>

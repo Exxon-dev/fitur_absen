@@ -131,8 +131,8 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
 <body class="row">
         <h2 class="text-primary">Data Jurnal dan Catatan Harian <?= date('d-m-Y') ?> </h2>
   <div class="body">
-    <div class="body-card">
-      <div class="container my-70">
+    <div class="body-card p-3">
+      <div class="container-fluid my-4">
         <a href="index.php?page=tambahsiswa_guru" class="btn btn-primary"><i class="fas fa-plus"></i>tambah</a>
         <div class="table-responsive">
           <table class="table table-hover table-bordered">

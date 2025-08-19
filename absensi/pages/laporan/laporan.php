@@ -17,8 +17,7 @@ if (!isset($_SESSION['id_siswa'])) {
     <title>Buka Laporan Siswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <style>
         body {
             padding-left: 270px;
@@ -47,42 +46,6 @@ if (!isset($_SESSION['id_siswa'])) {
             margin-bottom: 20px;
         }
 
-        /* Select2 Custom Styling - Mempertahankan tampilan asli */
-        .select2-container--default .select2-selection--single {
-            border: none;
-            border-bottom: 2px solid #007bff;
-            border-radius: 0;
-            height: auto;
-            padding: 6px 12px;
-            background-color: transparent;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #495057;
-            padding-left: 0;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 100%;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__placeholder {
-            color: #6c757d;
-        }
-
-        .select2-container--default .select2-search--dropdown .select2-search__field {
-            border: 1px solid #007bff;
-        }
-
-        .select2-container--default .select2-results__option--highlighted[aria-selected] {
-            background-color: #007bff;
-        }
-
-        .select2-dropdown {
-            border: 1px solid #007bff;
-            border-radius: 0;
-        }
-
         .btn-primary {
             background-color: #007bff;
             border: none;
@@ -94,6 +57,24 @@ if (!isset($_SESSION['id_siswa'])) {
             background-color: #0056b3;
         }
 
+        /* Style untuk Choices.js */
+        .choices__inner {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px 12px;
+            min-height: auto;
+            background-color: white;
+        }
+
+        .choices__list--dropdown {
+            border: 1px solid #ddd;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .choices__input {
+            margin-bottom: 0;
+        }
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -108,8 +89,9 @@ if (!isset($_SESSION['id_siswa'])) {
 </head>
 
 <body>
+    <h1 class="text-left">Laporan Siswa</h1>
     <div class="main-container container-custom">
-        <h1>Laporan Siswa</h1>
+        
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="POST">
@@ -117,8 +99,8 @@ if (!isset($_SESSION['id_siswa'])) {
 
             <div class="form-group">
                 <label for="reportSelect">Pilih Laporan:</label>
-                <select name="page" class="js-example-placeholder-single js-states form-control" required>
-                    <option value="" selected disabled>-- Pilih Laporan --</option>
+                <select id="reportSelect" name="page" class="form-control">
+                    <option value="">-- Pilih Laporan --</option>
                     <option value="cover">Cover</option>
                     <option value="df">Daftar Hadir</option>
                     <option value="jr">Laporan Jurnal</option>
@@ -138,45 +120,49 @@ if (!isset($_SESSION['id_siswa'])) {
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <script>
-        $(".js-example-placeholder-single").select2({
-            placeholder: "-- Pilih Laporan --",
-            allowClear: true
-        });
-        // Handle submit form
-        $('#myForm').on('submit', function(e) {
-            e.preventDefault();
-
-            // Validasi pilihan laporan
-            if ($('#reportSelect').val() === null || $('#reportSelect').val() === '') {
-                alert('Silakan pilih laporan terlebih dahulu');
-                return false;
+        // Inisialisasi Choices.js
+        document.addEventListener('DOMContentLoaded', function() {
+            const reportSelect = document.getElementById('reportSelect');
+            if (reportSelect) {
+                const choices = new Choices(reportSelect, {
+                    searchEnabled: true,
+                    itemSelectText: '',
+                    shouldSort: false,
+                    position: 'auto',
+                    placeholder: true,
+                    searchPlaceholderValue: 'Cari laporan...',
+                    noResultsText: 'Tidak ditemukan',
+                    noChoicesText: 'Tidak ada pilihan',
+                });
             }
 
-            // Buka laporan di tab baru
-            const formData = $(this).serialize();
-            const url = $(this).attr('action') + '?' + formData;
-            window.open(url, '_blank');
+            // Handle submit form
+            $('#myForm').on('submit', function(e) {
+                e.preventDefault();
 
-            // Reset form setelah 100ms
-            setTimeout(() => {
-                $('#reportSelect').val(null).trigger('change');
-            }, 100);
-
-            // Kirim data via POST
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: formData,
-                success: function() {
-                    // Tidak perlu action tambahan
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr.responseText);
+                // Validasi pilihan laporan
+                if (!$('#reportSelect').val()) {
+                    alert('Silakan pilih laporan terlebih dahulu');
+                    return false;
                 }
+
+                // Buka laporan di tab baru
+                const formData = $(this).serialize();
+                const url = $(this).attr('action') + '?' + formData;
+                window.open(url, '_blank');
+
+                // Reset form setelah submit
+                setTimeout(() => {
+                    const choices = $('#reportSelect').data('choices');
+                    if (choices) {
+                        choices.setChoiceByValue('');
+                    } else {
+                        $('#reportSelect').val('');
+                    }
+                }, 100);
             });
         });
     </script>
