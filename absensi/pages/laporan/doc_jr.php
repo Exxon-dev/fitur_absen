@@ -1,11 +1,19 @@
 <?php
 include('../../koneksi.php');
+$filter_params = $_SESSION['filter_params'] ?? [];
+$id_siswa = $filter_params['id_siswa'] ?? $_GET['id_siswa'] ?? null;
+$filter_type = $filter_params['filter_type'] ?? 'daily';
 
-$id_siswa = $_GET['id_siswa'] ?? null;
 if (!$id_siswa) {
     echo "ID siswa tidak ditemukan.";
     exit();
 }
+
+// Set default values untuk filter
+$start_date = $filter_params['start_date'] ?? date('Y-m-d');
+$end_date = $filter_params['end_date'] ?? date('Y-m-d');
+$month = $filter_params['month'] ?? date('m');
+$year = $filter_params['year'] ?? date('Y');
 
 // ambil data siswa + pembimbing
 $query_siswa = "
@@ -29,16 +37,36 @@ $nisn            = $data_siswa['nisn'] ?? '';
 $jurusan         = $data_siswa['jurusan'] ?? '';
 $nama_pembimbing = $data_siswa['nama_pembimbing'] ?? '........................';
 
-// ambil data jurnal + catatan
+// Query jurnal dengan filter
 $query_jurnal = "
     SELECT j.tanggal, j.keterangan, c.catatan
     FROM jurnal j
     LEFT JOIN catatan c ON j.id_jurnal = c.id_jurnal
     WHERE j.id_siswa = ? 
-    ORDER BY j.tanggal ASC
 ";
+
+// Tambahkan kondisi WHERE berdasarkan jenis filter
+if ($filter_type == 'daily') {
+    $query_jurnal .= " AND j.tanggal BETWEEN ? AND ? ";
+} elseif ($filter_type == 'monthly') {
+    $query_jurnal .= " AND MONTH(j.tanggal) = ? AND YEAR(j.tanggal) = ? ";
+} elseif ($filter_type == 'yearly') {
+    $query_jurnal .= " AND YEAR(j.tanggal) = ? ";
+}
+
+$query_jurnal .= " ORDER BY j.tanggal ASC";
+
 $stmt_jurnal = $coneksi->prepare($query_jurnal);
-$stmt_jurnal->bind_param("i", $id_siswa);
+
+// Bind parameter berdasarkan jenis filter
+if ($filter_type == 'daily') {
+    $stmt_jurnal->bind_param("iss", $id_siswa, $start_date, $end_date);
+} elseif ($filter_type == 'monthly') {
+    $stmt_jurnal->bind_param("iis", $id_siswa, $month, $year);
+} elseif ($filter_type == 'yearly') {
+    $stmt_jurnal->bind_param("ii", $id_siswa, $year);
+}
+
 $stmt_jurnal->execute();
 $result_jurnal = $stmt_jurnal->get_result();
 
@@ -47,11 +75,28 @@ while ($row = $result_jurnal->fetch_assoc()) {
     $jurnal_data[] = $row;
 }
 
-// group per bulan
+// Buat judul berdasarkan jenis filter
+if ($filter_type == 'daily') {
+    $judul_periode = "Periode: " . date('d M Y', strtotime($start_date)) . " - " . date('d M Y', strtotime($end_date));
+} elseif ($filter_type == 'monthly') {
+    $month_names = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    $judul_periode = "Bulan: " . $month_names[$month-1] . " " . $year;
+} elseif ($filter_type == 'yearly') {
+    $judul_periode = "Tahun: " . $year;
+}
+
+// group per bulan untuk multi-page
 $grouped_by_month = [];
 foreach ($jurnal_data as $row) {
     $bulan = date("Y-m", strtotime($row['tanggal']));
     $grouped_by_month[$bulan][] = $row;
+}
+
+// Jika tidak ada data, tampilkan pesan
+if (empty($jurnal_data)) {
+    echo "<p>Tidak ada data jurnal untuk periode yang dipilih.</p>";
+    exit();
 }
 ?>
 
@@ -59,7 +104,7 @@ foreach ($jurnal_data as $row) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Jurnal Prakerin</title>
+    <title>Jurnal Prakerin - <?= $judul_periode ?></title>
     <style>
         body {
             font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -69,6 +114,11 @@ foreach ($jurnal_data as $row) {
             text-align: center;
             font-weight: bold;
             font-size: 11px;
+        }
+        .periode {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 10px;
         }
         table {
             border-collapse: collapse;
@@ -81,33 +131,34 @@ foreach ($jurnal_data as $row) {
             font-size: 11px;
         }
         .ttd {
-            margin-top: 100px; /* kasih jarak lebih luas */
+            margin-top: 100px;
             width: 100%;
             text-align: right;
             font-size: 11px;
         }
         .ttd div {
-            text-align: center;
+            text-align: right;
         }
         .page-break {
             page-break-after: always;
         }
-    </style>
-    <script>
-        function printReport() {
-            window.print();
+        .no-print {
+            margin-top: 20px;
+            text-align: center;
         }
-        window.onload = function() {
-            printReport();
-        };
-    </script>
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <?php foreach ($grouped_by_month as $bulan => $records): ?>
     <div class="judul">
         <div>JURNAL PRAKERIN</div>
-        <div>SMA N 1 Magelang</div>
+        <div>SMA N 1 Magelang</div> 
         <div>TAHUN AJARAN 2025/2026</div>
     </div>
 
@@ -126,8 +177,8 @@ foreach ($jurnal_data as $row) {
         </tr>
         <?php $no=1; foreach ($records as $row): ?>
             <tr>
-                <td><?= $no++ ?></td>
-                <td><?= date("d-m-Y", strtotime($row['tanggal'])) ?></td>
+                <td style="text-align: center;"><?= $no++ ?></td>
+                <td style="text-align: center;"><?= date("d-m-Y", strtotime($row['tanggal'])) ?></td>
                 <td><?= htmlspecialchars($row['keterangan']) ?></td>
                 <td><?= htmlspecialchars($row['catatan'] ?? '') ?></td>
                 <td></td>
@@ -147,15 +198,22 @@ foreach ($jurnal_data as $row) {
     <!-- tanda tangan -->
     <div class="ttd">
         <div>
-            <div>....................., ..................... 202...</div>
+            <div>................., .......... <?= date('Y') ?></div>
             <div style="margin-top:20px;">PEMBIMBING DUDI</div>
             <br><br><br><br><br><br>
             <div>(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
         </div>
     </div>
 
-    <div class="page-break"></div>
+    <?php if (count($grouped_by_month) > 1): ?>
+        <div class="page-break"></div>
+    <?php endif; ?>
 <?php endforeach; ?>
+
+<!-- <div class="no-print">
+    <button onclick="window.print()">Cetak</button>
+    <button onclick="window.close()">Tutup</button>
+</div> -->
 
 </body>
 </html>

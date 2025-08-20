@@ -9,9 +9,7 @@ if (!isset($_SESSION['id_guru'])) {
     exit();
 }
 
-// // Ambil ID sekolah dari session
-
-// Query untuk mengambil daftar siswa berdasarkan ID sekolah
+// Query untuk mengambil daftar siswa berdasarkan ID guru
 $query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_guru = '$id_guru'";
 $result = mysqli_query($coneksi, $query);
 
@@ -19,6 +17,13 @@ $result = mysqli_query($coneksi, $query);
 if (!$result) {
     die('Query gagal: ' . mysqli_error($coneksi));
 }
+
+// Set nilai default untuk filter
+$filter_type = isset($_GET['filter_type']) ? $_GET['filter_type'] : 'daily';
+$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-d');
+$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-d');
+$month = isset($_GET['month']) ? $_GET['month'] : date('m');
+$year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 ?>
 
 <!DOCTYPE html>
@@ -92,6 +97,10 @@ if (!$result) {
         background-color: #e0a800;
     }
 
+    .filter-option {
+        display: none;
+    }
+
     @media (max-width: 991px) {
         body {
             padding-left: 0;
@@ -111,6 +120,81 @@ if (!$result) {
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
+            <!-- Filter Type Selection -->
+            <div class="form-group">
+                <label for="filterType">Filter Berdasarkan:</label>
+                <select id="filterType" name="filter_type" class="form-control" required>
+                    <option value="daily" <?= $filter_type == 'daily' ? 'selected' : '' ?>>Harian</option>
+                    <option value="monthly" <?= $filter_type == 'monthly' ? 'selected' : '' ?>>Bulanan</option>
+                    <option value="yearly" <?= $filter_type == 'yearly' ? 'selected' : '' ?>>Tahunan</option>
+                </select>
+            </div>
+
+            <!-- Daily Filter -->
+            <div id="dailyFilter" class="filter-option">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="startDate">Tanggal Mulai:</label>
+                        <input type="date" id="startDate" name="start_date" class="form-control" value="<?= $start_date ?>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="endDate">Tanggal Akhir:</label>
+                        <input type="date" id="endDate" name="end_date" class="form-control" value="<?= $end_date ?>">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Filter -->
+            <div id="monthlyFilter" class="filter-option">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="monthSelect">Bulan:</label>
+                        <select id="monthSelect" name="month" class="form-control">
+                            <option value="01" <?= $month == '01' ? 'selected' : '' ?>>Januari</option>
+                            <option value="02" <?= $month == '02' ? 'selected' : '' ?>>Februari</option>
+                            <option value="03" <?= $month == '03' ? 'selected' : '' ?>>Maret</option>
+                            <option value="04" <?= $month == '04' ? 'selected' : '' ?>>April</option>
+                            <option value="05" <?= $month == '05' ? 'selected' : '' ?>>Mei</option>
+                            <option value="06" <?= $month == '06' ? 'selected' : '' ?>>Juni</option>
+                            <option value="07" <?= $month == '07' ? 'selected' : '' ?>>Juli</option>
+                            <option value="08" <?= $month == '08' ? 'selected' : '' ?>>Agustus</option>
+                            <option value="09" <?= $month == '09' ? 'selected' : '' ?>>September</option>
+                            <option value="10" <?= $month == '10' ? 'selected' : '' ?>>Oktober</option>
+                            <option value="11" <?= $month == '11' ? 'selected' : '' ?>>November</option>
+                            <option value="12" <?= $month == '12' ? 'selected' : '' ?>>Desember</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="yearSelectMonthly">Tahun:</label>
+                        <select id="yearSelectMonthly" name="year_monthly" class="form-control">
+                            <?php
+                            $currentYear = date('Y');
+                            for ($i = $currentYear - 2; $i <= $currentYear + 5; $i++) {
+                                $selected = ($i == $year) ? 'selected' : '';
+                                echo "<option value='$i' $selected>$i</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yearly Filter -->
+            <div id="yearlyFilter" class="filter-option">
+                <div class="form-group">
+                    <label for="yearSelectYearly">Tahun:</label>
+                    <select id="yearSelectYearly" name="year_yearly" class="form-control">
+                        <?php
+                        $currentYear = date('Y');
+                        for ($i = $currentYear - 2; $i <= $currentYear + 5; $i++) {
+                            $selected = ($i == $year) ? 'selected' : '';
+                            echo "<option value='$i' $selected>$i</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="siswaSelect">Siswa:</label>
@@ -152,6 +236,7 @@ if (!$result) {
 
         <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Choices.js for selects
             new Choices('#siswaSelect', {
                 searchEnabled: true,
                 searchPlaceholderValue: 'Ketik nama siswa...',
@@ -168,10 +253,40 @@ if (!$result) {
                 noResultsText: 'Laporan tidak ditemukan',
                 noChoicesText: 'Tidak ada pilihan lain'
             });
+
+            // Filter type change handler
+            const filterType = document.getElementById('filterType');
+            const dailyFilter = document.getElementById('dailyFilter');
+            const monthlyFilter = document.getElementById('monthlyFilter');
+            const yearlyFilter = document.getElementById('yearlyFilter');
+
+            function updateFilterVisibility() {
+                // Hide all filters first
+                dailyFilter.style.display = 'none';
+                monthlyFilter.style.display = 'none';
+                yearlyFilter.style.display = 'none';
+
+                // Show the selected filter
+                switch(filterType.value) {
+                    case 'daily':
+                        dailyFilter.style.display = 'block';
+                        break;
+                    case 'monthly':
+                        monthlyFilter.style.display = 'block';
+                        break;
+                    case 'yearly':
+                        yearlyFilter.style.display = 'block';
+                        break;
+                }
+            }
+
+            // Initial update
+            updateFilterVisibility();
+
+            // Add event listener for changes
+            filterType.addEventListener('change', updateFilterVisibility);
         });
         </script>
     </div>
 </body>
-
-
 </html>
