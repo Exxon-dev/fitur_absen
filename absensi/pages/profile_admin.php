@@ -18,8 +18,8 @@ if (!isset($_GET['username'])) {
 }
 
 // Get admin data
-$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'") 
-                                 or die(mysqli_error($coneksi));
+$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'")
+    or die(mysqli_error($coneksi));
 
 if (mysqli_num_rows($select) == 0) {
     echo '<div class="alert alert-warning">ID admin tidak ada dalam database.</div>';
@@ -33,6 +33,8 @@ if (isset($_POST['submit'])) {
     $nama = $_POST['nama'];
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $no_telp = $_POST['no_telp'] ?? '';
+    $alamat = $_POST['alamat'] ?? '';
     $foto_lama = $_POST['foto_lama'] ?? 'default.png';
 
     $profile = $foto_lama;
@@ -41,7 +43,7 @@ if (isset($_POST['submit'])) {
     if (!empty($_FILES['foto']['name'])) {
         // Define upload directory - use absolute server path
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/fitur_absen/absensi/pages/image/';
-        
+
         $fotoName = $_FILES['foto']['name'];
         $fotoTmp = $_FILES['foto']['tmp_name'];
         $fotoSize = $_FILES['foto']['size'];
@@ -72,7 +74,7 @@ if (isset($_POST['submit'])) {
 
                     $fotoBaru = uniqid('admin_', true) . '.' . $fotoExt;
                     $uploadPath = $uploadDir . $fotoBaru;
-                    
+
                     if (move_uploaded_file($fotoTmp, $uploadPath)) {
                         // Hapus foto lama jika bukan default
                         if (!empty($foto_lama) && $foto_lama !== 'default.png') {
@@ -108,7 +110,7 @@ if (isset($_POST['submit'])) {
                     Swal.fire({
                         icon: "error",
                         title: "Upload Gagal",
-                        text: "'.$errorMsg.'",
+                        text: "' . $errorMsg . '",
                         position: "top"
                     });
                 </script>';
@@ -126,15 +128,18 @@ if (isset($_POST['submit'])) {
     }
 
     $sql = mysqli_query($coneksi, "UPDATE users SET 
+        profile='$profile', 
         username='$username', 
         password='$password', 
+        no_telp='$no_telp', 
+        alamat='$alamat', 
         nama='$nama'
         WHERE username='$username' AND level='admin'")
         or die(mysqli_error($coneksi));
 
     if ($sql) {
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data admin berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editadmin&id=' . $username . '&pesan=sukses";},1200);</script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data admin berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=profile_admin&username=' . $username . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
         $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
@@ -143,7 +148,8 @@ if (isset($_POST['submit'])) {
     }
 }
 
-function getUploadError($errorCode) {
+function getUploadError($errorCode)
+{
     switch ($errorCode) {
         case UPLOAD_ERR_INI_SIZE:
             return "Ukuran file melebihi limit server";
@@ -437,7 +443,7 @@ function getUploadError($errorCode) {
 
 <body>
     <div class="main-content">
-        <h2>Profil Admin</h2>
+        <h2>Profile Admin</h2>
 
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id" value="<?php echo $username; ?>">
@@ -451,7 +457,7 @@ function getUploadError($errorCode) {
                         $imageDir = '/fitur_absen/absensi/pages/image/';
                         $defaultImage = $imageDir . 'default.png';
                         $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
-                        
+
                         echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>
 
@@ -492,10 +498,10 @@ function getUploadError($errorCode) {
                                 value="<?php echo htmlspecialchars($data['password']); ?>" required>
                         </div>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Simpan
+                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
                         </button>
 
-                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
+                        <button type="submit" name="submit" class="btn btn-primary">Simpan
                         </button>
                     </div>
                 </div>
@@ -507,9 +513,16 @@ function getUploadError($errorCode) {
                         <!-- Left Column -->
                         <div class="form-col">
                             <div class="form-group">
+                                <label for="no_telp">Nomor Telepon</label>
+                                <input type="text" class="form-control" id="no_telp" name="no_telp"
+                                    value="<?php echo htmlspecialchars($data['no_telp']); ?>" placeholder="628xxxxxx" required>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="info-label">Level Akses</label>
-                                <div class="info-value">
-                                    <?php echo htmlspecialchars($data['level']); ?>
+                                <div class="editable">
+                                    <input type="text" name="level" class="form-control" readonly
+                                        value="<?php echo htmlspecialchars($data['level']); ?>" style="background-color: #e9ecef;">
                                 </div>
                             </div>
                         </div>
@@ -517,9 +530,16 @@ function getUploadError($errorCode) {
                         <!-- Right Column -->
                         <div class="form-col">
                             <div class="form-group">
+                                <label for="alamat">Alamat</label>
+                                <input type="text" class="form-control" id="alamat" name="alamat"
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="info-label">Terakhir Login</label>
-                                <div class="info-value">
-                                    <?php echo date('d F Y H:i:s'); ?>
+                                <div class="editable">
+                                    <input type="text" name="date_last_login" class="form-control" readonly
+                                        value="<?php echo date('d F Y , H:i:s'); ?>" style="background-color: #e9ecef;">
                                 </div>
                             </div>
                         </div>
@@ -580,11 +600,11 @@ function getUploadError($errorCode) {
             document.getElementById('view-mode').style.display = 'block';
             document.getElementById('edit-mode').style.display = 'none';
 
-            // Kembalikan info-value ke mode readonly
-            // const infoValues = document.querySelectorAll('.info-value');
-            // infoValues.forEach(el => {
-            //     el.classList.remove('editable');
-            // });
+            //Kembalikan info-value ke mode readonly
+            const infoValues = document.querySelectorAll('.info-value');
+            infoValues.forEach(el => {
+                el.classList.remove('editable');
+            });
         }
 
         // Preview gambar saat memilih file

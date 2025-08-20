@@ -61,10 +61,8 @@
 </head>
 
 <body>
-
+<h2 class="text-left">Tambah Sekolah</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Tambah Sekolah</h2>
-		<hr>
 		<form action="pages/sekolah/proses_tambahsekolah.php" method="post" enctype="multipart/form-data">
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label"></label>

@@ -176,11 +176,8 @@ if (isset($_GET['id_guru'])) {
 </head>
 
 <body>
+    <h2 class="text-left">Data Guru</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Guru</h2>
-        <hr>
-
-
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <?php if (isset($_GET['pesan'])): ?>
             <script>

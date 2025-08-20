@@ -58,10 +58,8 @@
 </head>
 
 <body>
-
+<h2 class="text-left">Edit Perusahaan</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Edit Perusahaan</h2>
-		<hr>
 		<?php
 		if (isset($_GET['id_perusahaan'])) {
 			$id_perusahaan = $_GET['id_perusahaan'];

@@ -79,34 +79,35 @@ include('koneksi.php');
 </head>
 
 <body>
-
+ <h2 class="text-left">Data Pembimbing</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Pembimbing</h2>
-        <hr>
         <a href="index.php?page=tambahpembimbing" class="btn btn-primary">Tambah Pembimbing</a>
-
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Username</th>
-                        <th>Password</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama</th>
+                        <th class="text-center">Perusahaan</th>
+                        <th class="text-center">Alamat Perusahaan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $sql = mysqli_query($coneksi, "SELECT * FROM pembimbing ORDER BY id_pembimbing ASC") or die(mysqli_error($coneksi));
+                    // Mengubah query untuk JOIN dengan tabel perusahaan
+                    $sql = mysqli_query($coneksi, "SELECT p.*, pr.nama_perusahaan, pr.alamat_perusahaan 
+                                                   FROM pembimbing p 
+                                                   LEFT JOIN perusahaan pr ON p.id_perusahaan = pr.id_perusahaan 
+                                                   ORDER BY p.id_pembimbing ASC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
                             echo '
                     <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editpembimbing1&id_pembimbing=' . $data['id_pembimbing'] . '\'">
                         <td>' . $no . '</td>
-                        <td>' . $data['nama_pembimbing'] . '</td>
-                        <td>' . $data['username'] . '</td>
-                        <td>' . $data['password'] . '</td>
+                        <td class="text-left">' . $data['nama_pembimbing'] . '</td>
+                        <td class="text-left">' . $data['nama_perusahaan'] . '</td>
+                        <td class="text-left">' . $data['alamat_perusahaan'] . '</td>
                     </tr>
                     ';
                             $no++;
