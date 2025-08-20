@@ -130,12 +130,12 @@ $num_rows = mysqli_num_rows($query);
         }
 
         .btn-wa {
-            background-color: #145A32;
+            background-color: #128C7E;
             color: white;
         }
 
         .btn-wa:hover {
-            background-color: #128C7E;
+            background-color: #145A32;
             color: white;
         }
 

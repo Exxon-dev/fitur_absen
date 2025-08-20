@@ -240,7 +240,8 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profile
+
+                            <i class="fas fa-edit"></i> Edit Data
                         </button>
                     </div>
 

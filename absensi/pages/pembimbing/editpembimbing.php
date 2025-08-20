@@ -309,6 +309,15 @@ function getUploadError($errorCode)
             box-sizing: border-box;
         }
 
+        .select-fixed {
+            height: auto !important;
+            min-height: 38px !important;
+            padding: 8px 12px !important;
+            line-height: 1.5 !important;
+            font-size: 14px !important;
+            box-sizing: border-box !important;
+        }
+
         .btn {
             padding: 10px 15px;
             border-radius: 4px;
@@ -458,7 +467,7 @@ function getUploadError($errorCode)
                         $imageDir = '/fitur_absen/absensi/pages/image/';
                         $defaultImage = $imageDir . 'default.png';
                         $profileImage = (!empty($data['profile'])) ? $imageDir . $data['profile'] : $defaultImage;
-                        
+
                         echo '<img src="' . $profileImage . '" alt="Profile Picture" class="profile-picture" id="profile-picture">';
                         ?>
 
@@ -488,7 +497,7 @@ function getUploadError($errorCode)
                         </p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profil
+                            <i class="fas fa-edit"></i> Edit Data
                         </button>
                     </div>
 
@@ -547,7 +556,7 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label class="info-label">Jenis Kelamin</label>
                                 <div class="info-value editable">
-                                    <select name="jenis_kelamin" class="form-control" required>
+                                    <select name="jenis_kelamin" class="form-control select-fixed" required>
                                         <option value="Laki-laki" <?php if ($data['jenis_kelamin'] == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
                                         <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                     </select>
@@ -557,15 +566,13 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label class="info-label">Perusahaan</label>
                                 <div class="info-value editable">
-                                    <select name="id_perusahaan" class="form-control" required>
-                                        <?php
-                                        $perusahaan_query = mysqli_query($coneksi, "SELECT * FROM perusahaan");
-                                        while ($perusahaan = mysqli_fetch_assoc($perusahaan_query)) {
-                                            $selected = ($perusahaan['id_perusahaan'] == $data['id_perusahaan']) ? 'selected' : '';
-                                            echo '<option value="' . $perusahaan['id_perusahaan'] . '" ' . $selected . '>' . htmlspecialchars($perusahaan['nama_perusahaan']) . '</option>';
-                                        }
-                                        ?>
-                                    </select>
+                                    <input type="text" class="form-control" readonly
+                                        value="<?php
+                                                $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
+                                                $perusahaan = mysqli_fetch_assoc($perusahaan_query);
+                                                echo htmlspecialchars($perusahaan['nama_perusahaan']);
+                                                ?>"
+                                        style="background-color: #e9ecef;">
                                 </div>
                             </div>
                         </div>
