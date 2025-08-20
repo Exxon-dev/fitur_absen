@@ -139,12 +139,9 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Sekolah</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Sekolah</h2>
-        <hr>
         <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
-
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="table-light">

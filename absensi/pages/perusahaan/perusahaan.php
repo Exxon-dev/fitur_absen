@@ -128,21 +128,18 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Perusahaan</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Perusahaan</h2>
-        <hr>
         <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
-
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Derektur</th>
-                        <th>Alamat</th>
-                        <th>No Telepon</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama</th>
+                        <th class="text-center">Derektur</th>
+                        <th class="text-center">Alamat</th>
+                        <th class="text-center">No Telepon</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,9 +153,9 @@ include('koneksi.php');
                             echo '
                                 <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
                                     <td>' . $no . '</td>
-                                    <td>' . $data['nama_perusahaan'] . '</td>
-                                    <td>' . $data['pimpinan'] . '</td>
-                                    <td>' . $data['alamat_perusahaan'] . '</td>
+                                    <td class="text-left">' . $data['nama_perusahaan'] . '</td>
+                                    <td class="text-left">' . $data['pimpinan'] . '</td>
+                                    <td class="text-left">' . $data['alamat_perusahaan'] . '</td>
                                     <td>' . $data['no_tlp'] . '</td>
                                 </tr>';
                             $no++;

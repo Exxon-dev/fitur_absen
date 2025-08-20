@@ -86,9 +86,8 @@
 </head>
 
 <body>
+    <h2 class="text-left">Tambah Siswa</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Tambah Siswa</h2>
-        <hr>
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-3">

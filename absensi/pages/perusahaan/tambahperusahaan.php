@@ -59,9 +59,8 @@
 </head>
 
 <body>
+	<h2 class="text-left">Tambah Perusahaan</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Tambah Perusahaan</h2>
-		<hr>
 		<form action="pages/perusahaan/proses_tambahperusahaan.php" method="post" class="tes" enctype="multipart/form-data">
 			<div class="form-group row">
 				<label class="col-sm-2 col-form-label">Nama Perusahaan</label>

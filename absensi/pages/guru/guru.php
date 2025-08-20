@@ -78,33 +78,35 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Guru</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data GURU</h2>
-        <hr>
         <a href="index.php?page=tambahguru" class="btn btn-primary">Tambah Guru</a>
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Username</th>
-                        <th>Password</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama</th>
+                        <th class="text-center">Sekolah</th>
+                        <th class="text-center">Alamat Sekolah</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $sql = mysqli_query($coneksi, "SELECT * FROM guru ORDER BY id_guru ASC") or die(mysqli_error($coneksi));
+                    // Mengubah ORDER BY dari ASC menjadi DESC agar data terbaru muncul pertama
+                    $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, s.alamat_sekolah
+                                                   FROM guru g 
+                                                   LEFT JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
+                                                   ORDER BY g.id_guru DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
                             echo '
                     <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editguru1&id_guru=' . $data['id_guru'] . '\'">
                         <td>' . $no . '</td>
-                        <td>' . $data['nama_guru'] . '</td>
-                        <td>' . $data['username'] . '</td>
-                        <td>' . $data['password'] . '</td>
+                        <td class="text-left">' . $data['nama_guru'] . '</td>
+                        <td class="text-left">' . $data['nama_sekolah'] . '</td>
+                        <td class="text-left">' . $data['alamat_sekolah'] . '</td>
                     </tr>
                     ';
                             $no++;

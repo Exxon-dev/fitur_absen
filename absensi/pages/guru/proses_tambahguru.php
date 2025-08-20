@@ -1,6 +1,9 @@
 <?php
-// Pastikan tidak ada output sebelum tag php pembuka
-include(__DIR__ . '/../../koneksi.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+include('../../koneksi.php');
 
 if (isset($_POST['submit'])) {
     $nama_guru      = $_POST['nama_guru'];
@@ -12,7 +15,7 @@ if (isset($_POST['submit'])) {
     $username       = $_POST['username'];
     $password       = $_POST['password']; // Sebaiknya di-hash
 
-    // 1. Cek apakah ID guru atau username sudah ada
+    // 1. Cek apakah username sudah ada
     $cek = mysqli_query($coneksi, "SELECT * FROM guru WHERE username='$username'");
 
     if (!$cek) {
@@ -20,8 +23,9 @@ if (isset($_POST['submit'])) {
     }
 
     if (mysqli_num_rows($cek) == 0) {
-        // 2. Jika belum ada, insert data baru
+        // 2. Jika belum ada, insert data baru dengan menambahkan kolom profile
         $sql = mysqli_query($coneksi, "INSERT INTO guru (
+            profile,
             nama_guru,
             nip,
             jenis_kelamin,
@@ -31,6 +35,7 @@ if (isset($_POST['submit'])) {
             username,
             password
         ) VALUES (
+            '',
             '$nama_guru',
             '$nip',
             '$jenis_kelamin',

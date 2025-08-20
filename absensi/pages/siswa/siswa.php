@@ -78,26 +78,24 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Siswa</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Siswa</h2>
-        <hr>
         <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
-
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                    <th>No</th>
-                    <th>NISN</th>
-                    <th>Nama</th>
-                    <th>Sekolah</th>
-                    <th>Tempat Prakerin</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Selesai</th>
+                    <th class="text-center">No</th>
+                    <th class="text-center">NISN</th>
+                    <th class="text-center">Nama</th>
+                    <th class="text-center">Sekolah</th>
+                    <th class="text-center">Tempat Prakerin</th>
+                    <th class="text-center">Tanggal Mulai</th>
+                    <th class="text-center">Tanggal Selesai</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
+                    // Query untuk mengambil data siswa dengan urutan terbaru di atas
                     $sql = mysqli_query($coneksi, "
                     SELECT 
                         s.id_siswa, s.nis, s.nisn, s.nama_siswa,
@@ -107,7 +105,7 @@ include('koneksi.php');
                     FROM siswa s
                     LEFT JOIN sekolah sk ON s.id_sekolah = sk.id_sekolah
                     LEFT JOIN perusahaan p ON s.id_perusahaan = p.id_perusahaan
-                    ORDER BY sk.nama_sekolah ASC, p.nama_perusahaan ASC
+                    ORDER BY s.id_siswa DESC, sk.nama_sekolah ASC, p.nama_perusahaan ASC
                 ") or die(mysqli_error($coneksi));
 
                     if (mysqli_num_rows($sql) > 0) {
@@ -115,11 +113,11 @@ include('koneksi.php');
                         while ($data = mysqli_fetch_assoc($sql)) {
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
-                            <td>' . $no++ . '</td>
+                            <td class="text-center">' . $no++ . '</td>
                             <td>' . htmlspecialchars($data['nisn']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
+                            <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
+                            <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
+                            <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
                             <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
                             <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
                         </tr>';

@@ -131,10 +131,8 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body>
+    <h2 class="text-left">Edit Pembimbing</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Edit Pembimbing</h2>
-        <hr>
-
         <?php
         if (isset($_GET['id_pembimbing'])) {
             $id_pembimbing = $_GET['id_pembimbing'];
