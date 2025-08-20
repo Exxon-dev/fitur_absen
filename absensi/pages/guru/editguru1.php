@@ -161,6 +161,34 @@ if (isset($_GET['id_guru'])) {
                 background-color: #e0a800;
             }
 
+            .hapusGuru {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
+
+        .hapusGuru:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+
             @media (max-width: 991px) {
                 body {
                     padding-left: 0;
@@ -267,7 +295,7 @@ if (isset($_GET['id_guru'])) {
                 </div>
                 <div class="form-group row">
                     <div class="col text-left">
-                        <button type="button" class="btn btn-danger" id="btnHapus"
+                        <button type="button" class="btn hapusGuru btn-danger" id="btnHapus"
                             data-id="<?php echo $data['id_guru']; ?>">Hapus</button>
                     </div>
                     <div class="col text-right">
