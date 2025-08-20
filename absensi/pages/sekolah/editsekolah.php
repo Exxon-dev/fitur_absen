@@ -175,7 +175,7 @@
 				</div>
 				<div class="col text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+					<input type="submit" name="submit" class="btn btn-primary" value="Update">
 				</div>
 			</div>
 		</form>

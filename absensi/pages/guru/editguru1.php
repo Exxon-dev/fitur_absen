@@ -300,7 +300,7 @@ if (isset($_GET['id_guru'])) {
                     </div>
                     <div class="col text-right">
                         <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        <input type="submit" name="submit" class="btn btn-primary" value="UPdate">
                     </div>
                 </div>
             </form>

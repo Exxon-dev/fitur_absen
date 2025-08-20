@@ -206,7 +206,7 @@ if (isset($_POST['submit'])) {
                         <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
                         <div class="d-flex flex-wrap justify-content-end gap-2">
                             <a href="index.php?page=pembimbing" class="btn btn-warning mr-2">KEMBALI</a>
-                            <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                            <input type="submit" name="submit" class="btn btn-primary" value="Update">
                         </div>
                     </div>
                 </div>
