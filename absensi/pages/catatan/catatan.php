@@ -73,14 +73,13 @@ $count_result = mysqli_query($coneksi, $count_sql);
 $total_rows = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = max(1, ceil($total_rows / $limit));
 
-// Query untuk mendapatkan data
+// Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
 $sql = "
     SELECT
         siswa.id_siswa,
         siswa.nama_siswa,
         jurnal.id_jurnal,
         jurnal.keterangan AS keterangan_jurnal,
-        jurnal.tanggal AS tanggal_jurnal,
         (
             SELECT catatan.catatan
             FROM catatan
@@ -88,15 +87,7 @@ $sql = "
             " . ($level === 'pembimbing' ? "AND catatan.id_pembimbing = '$id_pembimbing'" : "") . "
             ORDER BY catatan.tanggal ASC
             LIMIT 1
-        ) AS catatan,
-        (
-            SELECT catatan.tanggal
-            FROM catatan
-            WHERE catatan.id_jurnal = jurnal.id_jurnal
-            " . ($level === 'pembimbing' ? "AND catatan.id_pembimbing = '$id_pembimbing'" : "") . "
-            ORDER BY catatan.tanggal ASC
-            LIMIT 1
-        ) AS waktu_catatan
+        ) AS catatan
     FROM siswa
     LEFT JOIN jurnal ON siswa.id_siswa = jurnal.id_siswa AND DATE(jurnal.tanggal) = '$tanggal'
     WHERE $where_clause
@@ -155,6 +146,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             margin-left: 10px;
         }
 
+        .journal-text {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -162,6 +160,10 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
             .main-container {
                 margin: 0 15px;
+            }
+            
+            .journal-text {
+                max-width: 150px;
             }
         }
     </style>
@@ -226,16 +228,15 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             </form>
         </div>
 
-        <!-- Tabel Data -->
+        <!-- Tabel Data (kolom waktu dihapus) -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-primary">
                     <tr>
-                        <th>No</th>
-                        <th>Nama Siswa</th>
-                        <th>Jurnal</th>
-                        <th>Catatan Pembimbing</th>
-                        <th>Waktu</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama Siswa</th>
+                        <th class="text-center">Jurnal</th>
+                        <th class="text-center">Catatan Pembimbing</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -246,30 +247,24 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             $id_jurnal = $row['id_jurnal'] ?? 0;
                             $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
                             $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Belum ada jurnal';
-
-                            // Format waktu ke m-d-Y
-                            $waktu = '-';
-                            if (!empty($row['waktu_catatan'])) {
-                                $waktu = date('m-d-Y', strtotime($row['waktu_catatan']));
-                            } elseif (!empty($row['tanggal_jurnal'])) {
-                                $waktu = date('m-d-Y', strtotime($row['tanggal_jurnal']));
-                            }
+                            $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
 
                             // Link tambah catatan
                             $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
-                                <td><?= $no ?></td>
+                                <td class="text-center"><?= $no ?></td>
                                 <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
-                                <td><?= htmlspecialchars($keterangan) ?></td>
+                                <td class="journal-text" title="<?= htmlspecialchars($keterangan) ?>">
+                                    <?= htmlspecialchars($keterangan_short) ?>
+                                </td>
                                 <td><?= htmlspecialchars($catatan) ?></td>
-                                <td><?= htmlspecialchars($waktu) ?></td>
                             </tr>
                             <?php $no++; ?>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5" class="text-center">Tidak ada data siswa ditemukan untuk tanggal <?= htmlspecialchars(date('m-d-Y', strtotime($tanggal))) ?>.</td>
+                            <td colspan="4" class="text-center">Tidak ada data siswa ditemukan untuk tanggal <?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
