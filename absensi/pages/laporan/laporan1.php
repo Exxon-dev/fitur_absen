@@ -30,78 +30,78 @@ if (!$result) {
     <title>Buka Laporan Siswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
+    body {
+        padding-left: 270px;
+        transition: padding-left 0.3s;
+        background-color: #f8f9fa;
+    }
+
+    .main-container {
+        margin-top: 20px;
+        margin-right: 20px;
+        margin-left: 0;
+        width: auto;
+        max-width: none;
+    }
+
+    /* Style asli */
+    .container-custom {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #007bff;
+    }
+
+    .form-control {
+        border: none;
+        border-bottom: 2px solid #007bff;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .form-control:focus {
+        border-color: #0056b3;
+        box-shadow: none;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    @media (max-width: 991px) {
         body {
-            padding-left: 270px;
-            transition: padding-left 0.3s;
-            background-color: #f8f9fa;
+            padding-left: 0;
         }
 
         .main-container {
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-left: 0;
-            width: auto;
-            max-width: none;
+            margin-right: 15px;
+            margin-left: 15px;
         }
-
-        /* Style asli */
-        .container-custom {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #007bff;
-        }
-
-        .form-control {
-            border: none;
-            border-bottom: 2px solid #007bff;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .form-control:focus {
-            border-color: #0056b3;
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #777;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            border: none;
-        }
-
-        .btn-warning:hover {
-            background-color: #e0a800;
-        }
-
-        @media (max-width: 991px) {
-            body {
-                padding-left: 0;
-            }
-
-            .main-container {
-                margin-right: 15px;
-                margin-left: 15px;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -119,9 +119,9 @@ if (!$result) {
                         <?php
                         mysqli_data_seek($result, 0);
                         while ($row = mysqli_fetch_assoc($result)): ?>
-                            <option value="<?= $row['id_siswa'] ?>">
-                                <?= htmlspecialchars($row['nama_siswa']) ?>
-                            </option>
+                        <option value="<?= $row['id_siswa'] ?>">
+                            <?= htmlspecialchars($row['nama_siswa']) ?>
+                        </option>
                         <?php endwhile; ?>
                     </select>
                 </div>
@@ -151,24 +151,24 @@ if (!$result) {
         <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                new Choices('#siswaSelect', {
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Ketik nama siswa...',
-                    itemSelectText: 'Pilih',
-                    noResultsText: 'Siswa tidak ditemukan',
-                    noChoicesText: 'Tidak ada data siswa'
-                });
-
-                new Choices('#reportSelect', {
-                    searchEnabled: true,
-                    searchPlaceholderValue: 'Cari laporan...',
-                    shouldSort: false,
-                    itemSelectText: 'Pilih',
-                    noResultsText: 'Laporan tidak ditemukan',
-                    noChoicesText: 'Tidak ada pilihan lain'
-                });
+        document.addEventListener('DOMContentLoaded', function() {
+            new Choices('#siswaSelect', {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Ketik nama siswa...',
+                itemSelectText: 'Pilih',
+                noResultsText: 'Siswa tidak ditemukan',
+                noChoicesText: 'Tidak ada data siswa'
             });
+
+            new Choices('#reportSelect', {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Cari laporan...',
+                shouldSort: false,
+                itemSelectText: 'Pilih',
+                noResultsText: 'Laporan tidak ditemukan',
+                noChoicesText: 'Tidak ada pilihan lain'
+            });
+        });
         </script>
     </div>
 </body>
