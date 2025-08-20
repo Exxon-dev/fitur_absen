@@ -1,11 +1,11 @@
 <?php
+session_start();
 include('koneksi.php');
 
-if (isset($_SESSION['level']) && $_SESSION['level'] === 'pembimbing') {
-    $id_pembimbing = $_SESSION['id_pembimbing'];
-} else {
-    $id_pembimbing = null;
-}
+// Cek session level
+$level = $_SESSION['level'] ?? '';
+$id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
+
 $tanggal_hari_ini = date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 
@@ -38,7 +38,7 @@ if (!$jurnal_data) {
     exit();
 }
 
-// Get notes
+// Get notes - tampilkan semua catatan untuk jurnal ini, tidak peduli pembimbing mana
 $catatan_result = mysqli_query(
     $coneksi,
     "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
@@ -54,11 +54,23 @@ if ($catatan_result) {
         $catatan_list[] = $r;
     }
 }
-$catatan_data = $catatan_list[0] ?? null;
+
+// Cek apakah pembimbing sudah punya catatan untuk jurnal ini
+$catatan_pembimbing = null;
+if ($level === 'pembimbing' && $id_pembimbing) {
+    foreach ($catatan_list as $catatan) {
+        if ($catatan['id_pembimbing'] == $id_pembimbing) {
+            $catatan_pembimbing = $catatan;
+            break;
+        }
+    }
+}
 
 $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
-$level = $_SESSION['level'] ?? '';
-$id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
+
+// Tentukan mode dan teks tombol
+$mode = ($level === 'pembimbing' && $catatan_pembimbing) ? 'update' : 'tambah';
+$teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'SIMPAN') : '';
 ?>
 
 <!DOCTYPE html>
@@ -127,13 +139,13 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 </head>
 
 <body>
+    <h2 class="text-left text-primary"><?= ($level === 'pembimbing') ? (($mode === 'update') ? 'Update Catatan' : 'Tambah Catatan') : 'Lihat Catatan' ?></h2>
     <div class="main-container container-custom">
-        <h2 class="text-center text-primary"><?= ($level === 'pembimbing') ? 'Tambah Catatan' : 'Lihat Catatan' ?></h2>
-        <hr>
         <form id="formTambahCatatan" action="pages/catatan/proses_tambahcatatan.php" method="post">
-            <?php if ($catatan_data): ?>
-                <input type="hidden" name="id_catatan" value="<?= $catatan_data['id_catatan'] ?>">
+            <?php if ($catatan_pembimbing): ?>
+                <input type="hidden" name="id_catatan" value="<?= $catatan_pembimbing['id_catatan'] ?>">
             <?php endif; ?>
+            <input type="hidden" name="mode" value="<?= $mode ?>">
             <input type="hidden" name="id_jurnal" value="<?= htmlspecialchars($id_jurnal) ?>">
 
             <div class="form-group row">
@@ -150,34 +162,39 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
                 </div>
             </div>
 
-            <?php if ($catatan_data): ?>
-                <input type="hidden" name="id_catatan" value="<?= htmlspecialchars($catatan_data['id_catatan']) ?>">
-            <?php endif; ?>
-
             <?php if ($level === 'pembimbing'): ?>
-                <textarea name="catatan" class="form-control mb-3" rows="4" placeholder="Tulis catatan..." required></textarea>
+                <div class="form-group">
+                    <label for="catatan">Catatan Pembimbing</label>
+                    <textarea name="catatan" class="form-control mb-3" rows="4" placeholder="Tulis catatan..." required><?= $catatan_pembimbing ? htmlspecialchars($catatan_pembimbing['catatan']) : '' ?></textarea>
+                </div>
             <?php endif; ?>
 
-            <?php foreach ($catatan_list as $row): ?>
-                <div class="note-container">
-                    <strong><?= htmlspecialchars($row['nama_pembimbing'] ?? 'Tidak diketahui') ?>:</strong>
-                    <?= nl2br(htmlspecialchars($row['catatan'] ?? '')) ?>
-                    <br>
-                    <small><em><?= htmlspecialchars($row['tanggal_catatan'] ?? '') ?></em></small>
-                </div>
-            <?php endforeach; ?>
+            <?php if (!empty($catatan_list)): ?>
+                <h5>Catatan:</h5>
+                <?php foreach ($catatan_list as $row): ?>
+                    <div class="note-container">
+                        <strong><?= htmlspecialchars($row['nama_pembimbing'] ?? 'Tidak diketahui') ?>:</strong>
+                        <?= nl2br(htmlspecialchars($row['catatan'] ?? '')) ?>
+                        <br>
+                        <small><em><?= htmlspecialchars($row['tanggal_catatan'] ?? '') ?></em></small>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <!--  -->
+            <?php endif; ?>
+            
             <br>
             
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
-                        <?php if ($catatan_data): ?>
-                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_data['id_catatan'] ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
+                        <?php if ($catatan_pembimbing): ?>
+                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_pembimbing['id_catatan'] ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
                     <div class="col text-right">
                         <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        <input type="submit" name="submit" class="btn btn-primary" value="<?= $teks_tombol ?>">
                     </div>
                 </div>
             <?php else: ?>

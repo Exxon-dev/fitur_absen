@@ -101,9 +101,9 @@ if ($result) {
         <?php endif; ?>
     </div>
 
-    <div class="main-container container-custom">
-        <h2 class="mb-4"><?= isset($jurnal_hari_ini) ? 'Update' : 'Tambah' ?> Jurnal Harian</h2>
+    <h2 class="text-primary mb-4"><?= isset($jurnal_hari_ini) ? 'Update' : 'Tambah' ?> Jurnal Harian</h2>
 
+    <div class="main-container container-custom">
         <form id="jurnalForm" action="pages/jurnal/proses_tambahjurnal.php" method="POST">
             <div class="form-group">
                 <label>Tanggal</label>
@@ -121,7 +121,7 @@ if ($result) {
             <div class="form-group text-right">
                 <a href="index.php?page=catatan" class="btn btn-warning ml-2">Kembali</a>
                 <button type="submit" class="btn btn-primary">
-                    <?= isset($jurnal_hari_ini) ? 'Update Jurnal' : 'Simpan Jurnal' ?>
+                    <?= isset($jurnal_hari_ini) ? 'Update' : 'Simpan' ?>
                 </button>
             </div>
         </form>
@@ -138,26 +138,6 @@ if ($result) {
             setTimeout(function() {
                 $('.alert').alert('close');
             }, 5000);
-
-            // Konfirmasi sebelum submit
-            $('#jurnalForm').on('submit', function(e) {
-                e.preventDefault();
-
-                Swal.fire({
-                    title: 'Konfirmasi',
-                    text: "Apakah Anda yakin ingin <?= isset($jurnal_hari_ini) ? 'mengupdate' : 'menyimpan' ?> jurnal ini?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: '<?= isset($jurnal_hari_ini) ? 'Update' : 'Simpan' ?>',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.submit();
-                    }
-                });
-            });
         });
     </script>
 </body>

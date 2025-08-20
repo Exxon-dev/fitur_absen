@@ -29,7 +29,7 @@ if (mysqli_num_rows($select) == 0) {
 // Process form submission
 if (isset($_POST['submit'])) {
     $id_pembimbing    = $_POST['id_pembimbing'];
-    $id_perusahaan    = $_POST['id_perusahaan'];
+    // $id_perusahaan    = $_POST['id_perusahaan'];
     $nama_pembimbing  = $_POST['nama_pembimbing'];
     $no_tlp           = $_POST['no_tlp'];
     $alamat           = $_POST['alamat'];
@@ -129,8 +129,7 @@ if (isset($_POST['submit'])) {
     $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
         nama_pembimbing = '$nama_pembimbing',
         no_tlp          = '$no_tlp',
-        alamat          = '$alamat',
-        id_perusahaan   = '$id_perusahaan',
+        alamat          = '$alamat', 
         jenis_kelamin   = '$jenis_kelamin',
         username        = '$username', 
         profile         = '$profile', 
