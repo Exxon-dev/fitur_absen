@@ -205,16 +205,22 @@ if (isset($_POST['submit'])) {
         #file-input {
             display: none;
         }
+
+        select.form-control:disabled {
+            color: #495057;
+            height: calc(1.5em + .75rem + 2px);
+            padding: .375rem .75rem;
+        }
     </style>
 </head>
 
 <body>
     <div>
+        <h3 class="text-primary text-center text-md-left">Profile Guru</h3>
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
             <div class="profile-container">
                 <div class="profile-card">
-                    <h2>Profile Guru</h2>
                     <br>
                     <div class="profile-picture-container">
                         <img src="<?php echo $data['profile'] ? '../' . htmlspecialchars($data['profile']) : '../image/default.png'; ?>"
@@ -234,7 +240,7 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profil
+                            <i class="fas fa-edit"></i> Edit Profile
                         </button>
                     </div>
 
@@ -251,26 +257,27 @@ if (isset($_POST['submit'])) {
                             <input type="password" class="form-control" id="password" name="password"
                                 value="<?php echo htmlspecialchars($data['password']); ?>" required>
                         </div>
-
-
-                        <button type="button" class="btn btn-danger" onclick="disableEdit()">
-                            <i class="fas fa-times"></i> Batal
-                        </button>
-                        <button type="submit" name="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Update
-                        </button>
+                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
+                        <button type="submit" name="submit" class="btn btn-primary">Update</button>
                     </div>
                 </div>
 
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Data Guru</h3>
+                    <h3 class="text-center">Data Guru</h3>
+                    <br>
                     <div class="form-row">
-                        <!-- Left Column -->
                         <div class="form-col">
+
                             <div class="form-group">
-                                <label>NIP</label>
-                                <input type="text" name="nip" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
+                                <label for="nama_guru">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
+                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>No. Telepon</label>
+                                <input type="text" name="no_tlp" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
                             </div>
 
                             <div class="form-group">
@@ -280,25 +287,25 @@ if (isset($_POST['submit'])) {
                                     <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                 </select>
                             </div>
-
-                            <div class="form-group">
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
-                            </div>
                         </div>
 
                         <!-- Right Column -->
                         <div class="form-col">
                             <div class="form-group">
-                                <label>No. Telepon</label>
-                                <input type="text" name="no_tlp" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
+                                <label>NIP</label>
+                                <input type="text" name="nip" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
                             </div>
 
                             <div class="form-group">
-                                <label>Sekolah</label>
-                                <select name="id_sekolah" class="form-control" required>
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="">Sekolah</label>
+                                <select class="form-control" disabled>
                                     <?php
                                     $sekolah_query = mysqli_query($coneksi, "SELECT * FROM sekolah");
                                     while ($sekolah = mysqli_fetch_assoc($sekolah_query)) {
@@ -307,12 +314,11 @@ if (isset($_POST['submit'])) {
                                     }
                                     ?>
                                 </select>
+
+                                <!-- Hidden input agar tetap dikirim -->
+                                <input type="hidden" name="id_sekolah" value="<?= $data['id_sekolah'] ?>">
                             </div>
-                            <div class="form-group">
-                                <label for="nama_guru">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
-                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
-                            </div>
+
                         </div>
                     </div>
                 </div>

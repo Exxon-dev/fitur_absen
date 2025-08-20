@@ -30,78 +30,78 @@ if (!$result) {
     <title>Buka Laporan Siswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
+    body {
+        padding-left: 270px;
+        transition: padding-left 0.3s;
+        background-color: #f8f9fa;
+    }
+
+    .main-container {
+        margin-top: 20px;
+        margin-right: 20px;
+        margin-left: 0;
+        width: auto;
+        max-width: none;
+    }
+
+    /* Style asli */
+    .container-custom {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #007bff;
+    }
+
+    .form-control {
+        border: none;
+        border-bottom: 2px solid #007bff;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .form-control:focus {
+        border-color: #0056b3;
+        box-shadow: none;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    @media (max-width: 991px) {
         body {
-            padding-left: 270px;
-            transition: padding-left 0.3s;
-            background-color: #f8f9fa;
+            padding-left: 0;
         }
 
         .main-container {
-            margin-top: 20px;
-            margin-right: 20px;
-            margin-left: 0;
-            width: auto;
-            max-width: none;
+            margin-right: 15px;
+            margin-left: 15px;
         }
-
-        /* Style asli */
-        .container-custom {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #007bff;
-        }
-
-        .form-control {
-            border: none;
-            border-bottom: 2px solid #007bff;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .form-control:focus {
-            border-color: #0056b3;
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #777;
-        }
-
-        .btn-warning {
-            background-color: #ffc107;
-            border: none;
-        }
-
-        .btn-warning:hover {
-            background-color: #e0a800;
-        }
-
-        @media (max-width: 991px) {
-            body {
-                padding-left: 0;
-            }
-
-            .main-container {
-                margin-right: 15px;
-                margin-left: 15px;
-            }
-        }
+    }
     </style>
 </head>
 
@@ -113,24 +113,23 @@ if (!$result) {
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
             <div class="row">
                 <div class="form-group col-md-6">
-                    <label for="siswa_search">Cari Nama Siswa:</label>
-                    <input type="text" id="siswa_search" class="form-control" list="siswa_list" placeholder="Ketik nama siswa..." autocomplete="off">
-
-                    <datalist id="siswa_list">
+                    <label for="siswaSelect">Siswa:</label>
+                    <select id="siswaSelect" name="id_siswa" class="form-control" required>
+                        <option value="">Cari Siswa...</option>
                         <?php
                         mysqli_data_seek($result, 0);
                         while ($row = mysqli_fetch_assoc($result)): ?>
-                            <option value="<?= htmlspecialchars($row['nama_siswa']) ?>" data-id="<?= $row['id_siswa'] ?>">
-                            <?php endwhile; ?>
-                    </datalist>
+                        <option value="<?= $row['id_siswa'] ?>">
+                            <?= htmlspecialchars($row['nama_siswa']) ?>
+                        </option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
 
-                <!-- Input hidden untuk menyimpan ID siswa -->
-                <input type="hidden" name="id_siswa" id="selected_siswa_id">
                 <div class="form-group col-md-6">
-                    <label for="reportSelect">Pilih Laporan:</label>
+                    <label for="reportSelect">Laporan:</label>
                     <select id="reportSelect" name="page" class="form-control" required>
-                        <option value="">Pilih Laporan</option>
+                        <option value="">Cari laporan...</option>
                         <option value="cover">Cover</option>
                         <option value="df">Daftar Hadir</option>
                         <option value="jr">Laporan Jurnal</option>
@@ -144,23 +143,35 @@ if (!$result) {
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4">Priview</button>
+            <button type="submit" class="btn btn-primary btn-block mt-4">Preview</button>
         </form>
 
-        <!-- Script untuk menangkap ID siswa -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('#siswa_search').on('input', function() {
-                    const selectedOption = $(`#siswa_list option[value="${$(this).val()}"]`);
-                    if (selectedOption.length) {
-                        $('#selected_siswa_id').val(selectedOption.data('id'));
-                    }
-                });
-            });
-        </script>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <!-- Choices.js -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new Choices('#siswaSelect', {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Ketik nama siswa...',
+                itemSelectText: 'Pilih',
+                noResultsText: 'Siswa tidak ditemukan',
+                noChoicesText: 'Tidak ada data siswa'
+            });
+
+            new Choices('#reportSelect', {
+                searchEnabled: true,
+                searchPlaceholderValue: 'Cari laporan...',
+                shouldSort: false,
+                itemSelectText: 'Pilih',
+                noResultsText: 'Laporan tidak ditemukan',
+                noChoicesText: 'Tidak ada pilihan lain'
+            });
+        });
+        </script>
+    </div>
 </body>
+
 
 </html>
