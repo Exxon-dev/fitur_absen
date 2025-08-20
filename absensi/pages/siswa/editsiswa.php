@@ -487,7 +487,7 @@ function getUploadError($errorCode)
                         <p><?php echo htmlspecialchars($data['pro_keahlian']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profil
+                            <i class="fas fa-edit"></i> Edit Data
                         </button>
                     </div>
 

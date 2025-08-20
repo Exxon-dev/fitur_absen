@@ -27,14 +27,34 @@ $nama_pembimbing = $pembimbing['nama_pembimbing'];
 $id_perusahaan = $pembimbing['id_perusahaan'];
 $nama_perusahaan = $pembimbing['nama_perusahaan'];
 
+// Query untuk jumlah siswa di perusahaan ini
 $query_siswa = mysqli_query($coneksi, "SELECT COUNT(*) as total FROM siswa WHERE id_perusahaan = '$id_perusahaan'");
 $jumlah_siswa = mysqli_fetch_assoc($query_siswa)['total'];
 
-$query_sekolah = mysqli_query($coneksi, "SELECT COUNT(*) as total FROM sekolah");
-$jumlah_sekolah = mysqli_fetch_assoc($query_sekolah)['total'];
+// Query untuk jumlah jurnal dari siswa di perusahaan ini HARI INI
+$today = date('Y-m-d');
+$query_jurnal = mysqli_query($coneksi, "SELECT COUNT(*) as total 
+                                        FROM jurnal j
+                                        JOIN siswa s ON j.id_siswa = s.id_siswa
+                                        WHERE s.id_perusahaan = '$id_perusahaan'
+                                        AND j.tanggal = '$today'");
+$jumlah_jurnal = mysqli_fetch_assoc($query_jurnal)['total'];
 
-$query_perusahaan = mysqli_query($coneksi, "SELECT COUNT(*) as total FROM perusahaan WHERE id_perusahaan = '$id_perusahaan'");
-$jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
+// Query untuk siswa yang belum absen hari ini
+$query_belum_hadir = mysqli_query($coneksi, "SELECT COUNT(*) as total 
+                                            FROM siswa s
+                                            WHERE s.id_perusahaan = '$id_perusahaan'
+                                            AND s.id_siswa NOT IN (
+                                                SELECT id_siswa FROM absen WHERE tanggal = '$today'
+                                            )");
+$jumlah_belum_hadir = mysqli_fetch_assoc($query_belum_hadir)['total'];
+
+// Query untuk jumlah jurnal total (opsional - jika ingin menampilkan juga)
+$query_jurnal_total = mysqli_query($coneksi, "SELECT COUNT(*) as total 
+                                             FROM jurnal j
+                                             JOIN siswa s ON j.id_siswa = s.id_siswa
+                                             WHERE s.id_perusahaan = '$id_perusahaan'");
+$jumlah_jurnal_total = mysqli_fetch_assoc($query_jurnal_total)['total'];
 ?>
 
 <!DOCTYPE html>
@@ -45,6 +65,8 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard Pembimbing</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       padding-left: 270px;
@@ -100,16 +122,19 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
       color: #333;
     }
 
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+
     /* === Media Query untuk layar kecil (mobile) === */
     @media (max-width: 991px) {
       body {
         padding-left: 0;
-        /* hilangkan padding kiri agar sidebar tidak mengganggu */
       }
 
       .main-container {
         margin: 10px;
-        /* kurangi margin agar muat */
       }
 
       .icon-circle {
@@ -125,6 +150,10 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
 
       .card-number {
         font-size: 1.2rem;
+      }
+
+      .card-subtitle {
+        font-size: 0.7rem;
       }
 
       .body-card {
@@ -147,6 +176,7 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
 <body>
   <div class="main-container container">
     <div class="row">
+      <!-- Card Siswa -->
       <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
         <div class="card">
           <div class="card-header p-3 pt-2">
@@ -162,30 +192,32 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
         </div>
       </div>
 
+      <!-- Card Jurnal (HARI INI) -->
       <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
         <div class="card">
           <div class="card-header p-3 pt-2">
             <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-              <i class="material-icons opacity-10">school</i>
+              <i class="material-icons opacity-10">book</i>
             </div>
             <div class="text-end pt-1">
-              <p class="text-sm mb-0 text-capitalize">Sekolah</p>
-              <h4 class="mb-0"><?= $jumlah_sekolah ?></h4>
+              <p class="text-sm mb-0 text-capitalize">Jurnal</p>
+              <h4 class="mb-0"><?= $jumlah_jurnal ?></h4>
             </div>
           </div>
           <hr class="dark horizontal my-0" />
         </div>
       </div>
 
+      <!-- Card Belum Hadir -->
       <div class="col-xl-4 col-sm-6">
         <div class="card">
           <div class="card-header p-3 pt-2">
-            <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-              <i class="material-icons opacity-10">location_city</i>
+            <div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl mt-n4 position-absolute">
+              <i class="material-icons opacity-10">schedule</i>
             </div>
             <div class="text-end pt-1">
-              <p class="text-sm mb-0 text-capitalize">Perusahaan</p>
-              <h4 class="mb-0"><?= $jumlah_perusahaan ?></h4>
+              <p class="text-sm mb-0 text-capitalize">Belum Hadir</p>
+              <h4 class="mb-0"><?= $jumlah_belum_hadir ?></h4>
             </div>
           </div>
           <hr class="dark horizontal my-0" />
@@ -193,6 +225,32 @@ $jumlah_perusahaan = mysqli_fetch_assoc($query_perusahaan)['total'];
       </div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    if (!localStorage.getItem('pembimbingAlertShown')) {
+      const namaPembimbing = "<?php echo !empty($nama_pembimbing) ? htmlspecialchars($nama_pembimbing, ENT_QUOTES) : ' Pembimbing'; ?>";
+
+      setTimeout(() => {
+        Swal.fire({
+          title: `Selamat datang ${namaPembimbing}!`,
+          text: "Anda berhasil login ke sistem",
+          icon: 'success',
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          toast: true,
+          background: '#f8f9fa',
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
+      }, 300);
+
+      localStorage.setItem('pembimbingAlertShown', 'true');
+    }
+  </script>
 </body>
 
 </html>

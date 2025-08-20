@@ -260,9 +260,10 @@ $jumlah_perusahaan = $data_perusahaan['total'];
   </style>
 </head>
 
-<h2 class="text-left my-4">Absensi Siswa <?= htmlspecialchars($tanggal) ?></h2>
+
 
 <body>
+  <h2 class="text-left my-4">Absensi Siswa <?= htmlspecialchars($tanggal) ?></h2>
   <!-- Main content -->
   <div class="main-container container-custom">
     <form method="POST" action="">
@@ -272,12 +273,12 @@ $jumlah_perusahaan = $data_perusahaan['total'];
             <table class="table table-hover table-bordered">
               <thead class="table-light">
                 <tr>
-                  <th>No</th>
-                  <th>Nama</th>
-                  <th>Status</th>
-                  <th>Sakit</th>
-                  <th>Izin</th>
-                  <th>Alpa</th>
+                  <th class="text-center">No</th>
+                  <th class="text-center">Nama</th>
+                  <th class="text-center">Status</th>
+                  <th class="text-center">Sakit</th>
+                  <th class="text-center">Izin</th>
+                  <th class="text-center">Alpa</th>
                 </tr>
               </thead>
               <tbody>
@@ -327,7 +328,7 @@ $jumlah_perusahaan = $data_perusahaan['total'];
 
                     echo '
                 <tr class="' . ($isReadOnly ? 'readonly' : '') . '">
-                    <td>' . $index . '</td>
+                    <td class="text-center">' . $index . '</td>
                     <td>' . htmlspecialchars($siswa['nama_siswa']) . '</td>
                     <td><span class="badge-status ' . $badgeClass . '">' . $statusText . '</span></td>
                     <td>
@@ -365,6 +366,8 @@ $jumlah_perusahaan = $data_perusahaan['total'];
               </div>
             <?php endif; ?>
           </div>
+        </div>
+      </div>
     </form>
 
     <?php
