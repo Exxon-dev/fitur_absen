@@ -152,7 +152,6 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
     @media (max-width: 991px) {
         body {
             padding-left: 0;
@@ -161,10 +160,6 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         .main-container {
             margin: 0 15px;
         }
-
-        .journal-text {
-            max-width: 150px;
-        }
     }
     </style>
 </head>
@@ -172,9 +167,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 <body>
     <h2 class="text-primary text-center text-md-left">Data Jurnal dan Catatan Harian</h2>
     <div class="main-container container-custom">
-
         <hr />
-
         <!-- Form Filter dan Pencarian -->
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <?php if ($level === 'siswa'): ?>
@@ -271,8 +264,9 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                     <?php endwhile; ?>
                     <?php else: ?>
                     <tr>
-                        <td colspan="4" class="text-center">Tidak ada data siswa ditemukan untuk tanggal
-                            <?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>.</td>
+
+                        <td colspan="5" class="text-center">Tidak ada data siswa ditemukan untuk tanggal
+                            <?= htmlspecialchars(date('m-d-Y', strtotime($tanggal))) ?>.</td>
                     </tr>
                     <?php endif; ?>
                 </tbody>
@@ -314,9 +308,6 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Choices.js -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
     $(document).ready(function() {
         $(".clickable-row").click(function() {
