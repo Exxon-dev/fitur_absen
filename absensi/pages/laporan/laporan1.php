@@ -8,7 +8,7 @@ if (!isset($_SESSION['id_guru'])) {
     header("Location: sign-in.php");
     exit();
 }
-
+    
 // Query untuk mengambil daftar siswa berdasarkan ID guru
 $query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_guru = '$id_guru'";
 $result = mysqli_query($coneksi, $query);
@@ -57,7 +57,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
+    h2 {
         color: #007bff;
     }
 
@@ -115,11 +115,44 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 </head>
 
 <body>
-    <h1>Laporan Siswa</h1>
+    <h2>Laporan Siswa</h2>
     <div class="main-container container-custom">
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="siswaSelect">Siswa:</label>
+                    <select id="siswaSelect" name="id_siswa" class="form-control" required>
+                        <option value="">Cari Siswa...</option>
+                        <?php
+                        mysqli_data_seek($result, 0);
+                        while ($row = mysqli_fetch_assoc($result)): ?>
+                        <option value="<?= $row['id_siswa'] ?>">
+                            <?= htmlspecialchars($row['nama_siswa']) ?>
+                        </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="reportSelect">Laporan:</label>
+                    <select id="reportSelect" name="page" class="form-control" required>
+                        <option value="">Cari laporan...</option>
+                        <option value="cover">Cover</option>
+                        <option value="df">Daftar Hadir</option>
+                        <option value="jr">Laporan Jurnal</option>
+                        <option value="catatan">Lembar Catatan Kegiatan</option>
+                        <option value="dn">Lembar Daftar Nilai</option>
+                        <option value="sk">Lembar Surat Keterangan</option>
+                        <option value="nkp">Lembar Nilai Kepuasan Pelanggan</option>
+                        <option value="lp">Lembar Pengesahan</option>
+                        <option value="bl">Lembar Bimbingan Laporan</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Filter Type Selection -->
             <div class="form-group">
                 <label for="filterType">Filter Berdasarkan:</label>
@@ -138,7 +171,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                         <input type="date" id="startDate" name="start_date" class="form-control" value="<?= $start_date ?>">
                     </div>
                     <div class="form-group col-md-6">
-                        <label for="endDate">Tanggal Akhir:</label>
+                        <label for="endDate">Tanggal Selesai:</label>
                         <input type="date" id="endDate" name="end_date" class="form-control" value="<?= $end_date ?>">
                     </div>
                 </div>
@@ -191,38 +224,6 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                             echo "<option value='$i' $selected>$i</option>";
                         }
                         ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label for="siswaSelect">Siswa:</label>
-                    <select id="siswaSelect" name="id_siswa" class="form-control" required>
-                        <option value="">Cari Siswa...</option>
-                        <?php
-                        mysqli_data_seek($result, 0);
-                        while ($row = mysqli_fetch_assoc($result)): ?>
-                        <option value="<?= $row['id_siswa'] ?>">
-                            <?= htmlspecialchars($row['nama_siswa']) ?>
-                        </option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-
-                <div class="form-group col-md-6">
-                    <label for="reportSelect">Laporan:</label>
-                    <select id="reportSelect" name="page" class="form-control" required>
-                        <option value="">Cari laporan...</option>
-                        <option value="cover">Cover</option>
-                        <option value="df">Daftar Hadir</option>
-                        <option value="jr">Laporan Jurnal</option>
-                        <option value="catatan">Lembar Catatan Kegiatan</option>
-                        <option value="dn">Lembar Daftar Nilai</option>
-                        <option value="sk">Lembar Surat Keterangan</option>
-                        <option value="nkp">Lembar Nilai Kepuasan Pelanggan</option>
-                        <option value="lp">Lembar Pengesahan</option>
-                        <option value="bl">Lembar Bimbingan Laporan</option>
                     </select>
                 </div>
             </div>

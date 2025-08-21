@@ -7,19 +7,19 @@ ini_set('display_startup_errors', 1);
 include('koneksi.php');
 
 // Cek id admin dari session atau GET
-if (!isset($_GET['id'])) {
+if (!isset($_GET['username'])) {
     // Jika tidak ada parameter id, coba dari session
-    if (!isset($_SESSION['id'])) {
-        header("Location: index.php?page=admin");
+    if (!isset($_SESSION['username'])) {
+        header("Location: sign-in.php");
         exit();
     } 
-    $id_admin = $_SESSION['id'];
+    $username = $_SESSION['username'];
 } else {
-    $id_admin = $_GET['id'];
+    $username = $_GET['username'];
 }
 
 // Get admin data
-$select = mysqli_query($coneksi, "SELECT * FROM users WHERE Id='$id_admin' AND level='admin'") 
+$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'") 
                                  or die(mysqli_error($coneksi));
 
 if (mysqli_num_rows($select) == 0) {
