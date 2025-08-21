@@ -227,7 +227,7 @@ if (count($kehadiran) === 0) {
 
         .align-justify {
             text-align: justify;
-        }
+        }a
 
         .align-center {
             text-align: center;
