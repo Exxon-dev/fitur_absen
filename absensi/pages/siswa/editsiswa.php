@@ -513,7 +513,7 @@ function getUploadError($errorCode)
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
                         </button>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Simpan
+                        <button type="submit" name="submit" class="btn btn-primary">Update
                         </button>
                     </div>
                 </div>
