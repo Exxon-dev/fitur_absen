@@ -11,15 +11,15 @@ if (!isset($_GET['username'])) {
     if (!isset($_SESSION['username'])) {
         header("Location: sign-in.php");
         exit();
-    }
+    } 
     $username = $_SESSION['username'];
 } else {
     $username = $_GET['username'];
 }
 
 // Get admin data
-$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'")
-    or die(mysqli_error($coneksi));
+$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'") 
+                                 or die(mysqli_error($coneksi));
 
 if (mysqli_num_rows($select) == 0) {
     echo '<div class="alert alert-warning">ID admin tidak ada dalam database.</div>';

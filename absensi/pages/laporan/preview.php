@@ -1,8 +1,9 @@
 <?php 
 // pages/laporan/preview.php
 include('../../koneksi.php');
-if (!isset($_SESSION['id_guru'])) {
-    header("Location: ../../sign-in.php");
+if (!isset($_SESSION['level'])) {
+    // Redirect atau tampilkan error jika role tidak terdeteksi
+    header('Location: login.php');
     exit();
 }
 
@@ -19,8 +20,8 @@ $_SESSION['filter_params'] = [
 
 // Set parameter berdasarkan jenis filter
 if ($filter_type == 'daily') {
-    $_SESSION['filter_params']['start_date'] = $_GET['start_date'];
-    $_SESSION['filter_params']['end_date'] = $_GET['end_date'];
+    // $_SESSION['filter_params']['start_date'] = $_GET['start_date'];
+    // $_SESSION['filter_params']['end_date'] = $_GET['end_date'];
 } elseif ($filter_type == 'monthly') {
     $_SESSION['filter_params']['month'] = $_GET['month'];
     $_SESSION['filter_params']['year'] = isset($_GET['year_monthly']) ? $_GET['year_monthly'] : date('Y');
