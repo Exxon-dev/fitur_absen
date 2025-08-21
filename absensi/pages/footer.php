@@ -4,8 +4,8 @@
       <div class="col-auto">
         <div class="copyright text-center text-muted">
           © <script>document.write(new Date().getFullYear())</script>
-          made with <i class="fa fa-heart"></i> by
-          <a class="font-weight-bold" target="_blank">Creative Tim</a>
+          made with by
+          <a class="font-weight-bold" target="_blank">PT ABT</a>
           for a better web.
         </div>
       </div>
