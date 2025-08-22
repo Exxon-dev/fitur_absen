@@ -1,83 +1,102 @@
 <?php
-// Debug: tampilkan error PHP di browser
+session_start();
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-include(__DIR__.'/../../koneksi.php');
+include('../../koneksi.php');
+
+// Fungsi untuk mengecek apakah NIS sudah ada di database
+function cekNisExist($nis, $exclude_id = null) {
+    global $coneksi;
+    $query = "SELECT * FROM siswa WHERE nis = '$nis'";
+    if ($exclude_id) {
+        $query .= " AND id_siswa != $exclude_id";
+    }
+    $result = mysqli_query($coneksi, $query);
+    return mysqli_num_rows($result) > 0;
+}
+
+// Fungsi untuk mengecek apakah NISN sudah ada di database
+function cekNisnExist($nisn, $exclude_id = null) {
+    global $coneksi;
+    $query = "SELECT * FROM siswa WHERE nisn = '$nisn'";
+    if ($exclude_id) {
+        $query .= " AND id_siswa != $exclude_id";
+    }
+    $result = mysqli_query($coneksi, $query);
+    return mysqli_num_rows($result) > 0;
+}
 
 if (isset($_POST['submit'])) {
-    $nis            = $_POST['nis'];
-    $nisn           = $_POST['nisn'];
-    $nama_siswa     = $_POST['nama_siswa'];
-    $no_wa          = $_POST['no_wa'];
-    $pro_keahlian   = $_POST['pro_keahlian'];
-    $TL             = $_POST['TL'];
-    $TTGL           = $_POST['TTGL'];
-    $id_sekolah     = $_POST['id_sekolah'];
-    $id_perusahaan  = $_POST['id_perusahaan'];
-    $tanggal_mulai  = $_POST['tanggal_mulai'];
-    $tanggal_selesai = $_POST['tanggal_selesai'];
-    $id_pembimbing  = $_POST['id_pembimbing'];   
-    $id_guru        = $_POST['id_guru'];
-    $username       = $_POST['username'];
-    $password       = $_POST['password']; // Sebaiknya di-hash
-
-    // 1. Cek apakah ID siswa atau username sudah ada
-    $cek = mysqli_query($coneksi, "SELECT * FROM siswa WHERE nisn='$nisn' OR username='$username'");
+    // Escape semua input dengan nilai default jika tidak ada
+    $nis = mysqli_real_escape_string($coneksi, $_POST['nis']);
+    $nisn = mysqli_real_escape_string($coneksi, $_POST['nisn']);
+    $nama_siswa = mysqli_real_escape_string($coneksi, $_POST['nama_siswa']);
+    $id_sekolah = mysqli_real_escape_string($coneksi, $_POST['id_sekolah'] ?? '');
+    $id_perusahaan = mysqli_real_escape_string($coneksi, $_POST['id_perusahaan'] ?? '');
+    $id_pembimbing = mysqli_real_escape_string($coneksi, $_POST['id_pembimbing'] ?? '');
+    $id_guru = mysqli_real_escape_string($coneksi, $_POST['id_guru'] ?? '');
+    $username = mysqli_real_escape_string($coneksi, $_POST['username']);
+    $password = mysqli_real_escape_string($coneksi, $_POST['password']);
     
-    if(!$cek) {
-        echo '<pre>Query error: '.mysqli_error($coneksi).'</pre>';
+    // Field tambahan yang diperlukan oleh database
+    $pro_keahlian = mysqli_real_escape_string($coneksi, $_POST['pro_keahlian'] ?? 'Multimedia');
+    $TL = mysqli_real_escape_string($coneksi, $_POST['TL'] ?? '');
+    $TTGL = mysqli_real_escape_string($coneksi, $_POST['TTGL'] ?? date('Y-m-d'));
+    $tanggal_mulai = mysqli_real_escape_string($coneksi, $_POST['tanggal_mulai'] ?? date('Y-m-d'));
+    $tanggal_selesai = mysqli_real_escape_string($coneksi, $_POST['tanggal_selesai'] ?? date('Y-m-d', strtotime('+3 months')));
+    $no_wa = mysqli_real_escape_string($coneksi, $_POST['no_wa'] ?? '0000000000');
+    
+    // Validasi format NIS dan NISN
+    $nis_valid = (strlen($nis) >= 8 && strlen($nis) <= 12 && is_numeric($nis));
+    $nisn_valid = (strlen($nisn) == 10 && is_numeric($nisn));
+    
+    if (!$nis_valid) {
+        $_SESSION['error_nis'] = 'NIS harus terdiri dari 8-12 digit angka';
+        $_SESSION['form_data'] = $_POST;
+        header('Location: ../../index.php?page=tambahsiswa');
         exit();
-    }
-    
-    if(mysqli_num_rows($cek) == 0){
-        $sql = mysqli_query($coneksi, "INSERT INTO siswa (
-        nis,
-        nisn,
-        nama_siswa,
-        no_wa,
-        pro_keahlian,
-        TL,
-        TTGL,
-        id_sekolah,
-        id_perusahaan,
-        tanggal_mulai,
-        tanggal_selesai,
-        id_pembimbing,
-        id_guru,
-        username,
-        password)
-        VALUES (
-        '$nis',
-        '$nisn',
-        '$nama_siswa',
-        '$no_wa',
-        '$pro_keahlian',
-        '$TL',
-        '$TTGL',
-        '$id_sekolah',
-        '$id_perusahaan',
-        '$tanggal_mulai',
-        '$tanggal_selesai',
-        '$id_pembimbing',
-        '$id_guru',
-        '$username',
-        '$password')");
+    } elseif (!$nisn_valid) {
+        $_SESSION['error_nisn'] = 'NISN harus terdiri dari 10 digit angka';
+        $_SESSION['form_data'] = $_POST;
+        header('Location: ../../index.php?page=tambahsiswa');
+        exit();
+    } else {
+        // Validasi NIS dan NISN di database
+        $nis_exist = cekNisExist($nis);
+        $nisn_exist = cekNisnExist($nisn);
         
-        if ($sql) {
-            $_SESSION['flash_tambah'] = 'sukses';
-            header('Location: ../../index.php?page=siswa');
+        if ($nis_exist) {
+            $_SESSION['error_nis'] = 'NIS sudah digunakan';
+            $_SESSION['form_data'] = $_POST;
+            header('Location: ../../index.php?page=tambahsiswa');
+            exit();
+        } elseif ($nisn_exist) {
+            $_SESSION['error_nisn'] = 'NISN sudah digunakan';
+            $_SESSION['form_data'] = $_POST;
+            header('Location: ../../index.php?page=tambahsiswa');
             exit();
         } else {
-            $_SESSION['flash_error'] = mysqli_error($coneksi);
-            header('Location: ../../index.php?page=siswa');
-            exit();
+            // Jika NIS dan NISN belum ada, simpan data dengan semua field yang diperlukan
+            $query = "INSERT INTO siswa (nis, nisn, nama_siswa, id_sekolah, id_perusahaan, id_pembimbing, id_guru, username, password, no_wa, pro_keahlian, TL, TTGL, tanggal_mulai, tanggal_selesai) 
+                      VALUES ('$nis', '$nisn', '$nama_siswa', '$id_sekolah', '$id_perusahaan', '$id_pembimbing', '$id_guru', '$username', '$password', '$no_wa', '$pro_keahlian', '$TL', '$TTGL', '$tanggal_mulai', '$tanggal_selesai')";
+            
+            if (mysqli_query($coneksi, $query)) {
+                $_SESSION['flash_tambah'] = 'sukses';
+                header('Location: ../../index.php?page=siswa');
+                exit();
+            } else {
+                $_SESSION['flash_error'] = "Error: " . mysqli_error($coneksi);
+                $_SESSION['form_data'] = $_POST;
+                header('Location: ../../index.php?page=tambahsiswa');
+                exit();
+            }
         }
-    } else {
-        $_SESSION['flash_duplikat'] = true;
-        header('Location: ../../index.php?page=siswa');
-        exit();
     }
+} else {
+    // Jika tidak ada submit, redirect ke form
+    header('Location: ../../index.php?page=tambahsiswa');
+    exit();
 }
 ?>

@@ -1,4 +1,19 @@
-<?php include('koneksi.php'); ?>
+<?php 
+include('koneksi.php');
+
+// Mengambil data dari session jika ada (setelah redirect dari proses)
+$error_nis = $_SESSION['error_nis'] ?? '';
+$error_nisn = $_SESSION['error_nisn'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
+
+// Hapus data session setelah digunakan
+unset($_SESSION['error_nis']);
+unset($_SESSION['error_nisn']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -72,6 +87,19 @@
             margin-top: 5px;
         }
 
+        .success-message {
+            color: green;
+            font-size: 1em;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #d4edda;
+            border-radius: 5px;
+        }
+
+        .is-invalid {
+            border-color: red !important;
+        }
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -88,47 +116,30 @@
 <body>
     <h2 class="text-left">Tambah Siswa</h2>
     <div class="main-container container-custom">
+        <?php if (!empty($success)): ?>
+            <div class="success-message"><?php echo $success; ?></div>
+        <?php endif; ?>
+        
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
-                    <input type="text" name="nis" id="nis" class="form-control" required minlength="8" maxlength="12" oninput="validateNIS()">
-                    <div id="nisError" class="error-message"></div>
+                    <input type="text" name="nis" id="nis" class="form-control <?php echo !empty($error_nis) ? 'is-invalid' : ''; ?>" 
+                           value="<?php echo isset($form_data['nis']) ? $form_data['nis'] : ''; ?>" 
+                           required minlength="8" maxlength="12" oninput="validateNIS()">
+                    <div id="nisError" class="error-message"><?php echo $error_nis; ?></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
-                    <input type="text" name="nisn" id="nisn" class="form-control" required maxlength="10" minlength="10" oninput="validateNISN()">
-                    <div id="nisnError" class="error-message"></div>
+                    <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>" 
+                           value="<?php echo isset($form_data['nisn']) ? $form_data['nisn'] : ''; ?>" 
+                           required maxlength="10" minlength="10" oninput="validateNISN()">
+                    <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
-                    <input type="text" name="nama_siswa" class="form-control" required>
-                </div>
-                <!-- <div class="form-group col-md-3">
-                    <label>Kelas</label>
-                    <select name="kelas" class="form-control" required>
-                        <option value="">Pilih Kelas</option>
-                        <option value="12 MM">12 MM</option>
-                        <option value="12 RPL">12 RPL</option>
-                        <option value="12 MPLB">12 MPLB</option>
-                    </select>
-                </div> -->
-                <div class="form-group col-md-3">
-                    <label>Program Keahlian</label>
-                    <select name="pro_keahlian" class="form-control" required>
-                        <option value="">Pilih Program Keahlian</option>
-                        <option value="Multimedia">Multimedia</option>
-                        <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
-                        <option value="Perkantoran">Perkantoran</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" required>
+                    <input type="text" name="nama_siswa" class="form-control" 
+                           value="<?php echo isset($form_data['nama_siswa']) ? $form_data['nama_siswa'] : ''; ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -137,8 +148,11 @@
                         <?php
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {
+                            $selected = (isset($form_data['id_sekolah']) && $form_data['id_sekolah'] == $row['id_sekolah']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>"><?php echo htmlspecialchars($row['nama_sekolah']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_sekolah']); ?>
+                            </option>
                         <?php } ?>
                     </select>
                 </div>
@@ -149,18 +163,13 @@
                         <?php
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
+                            $selected = (isset($form_data['id_perusahaan']) && $form_data['id_perusahaan'] == $row['id_perusahaan']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>"><?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_perusahaan']); ?>
+                            </option>
                         <?php } ?>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="form-control" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Pembimbing</label>
@@ -169,8 +178,11 @@
                         <?php
                         $data_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
+                            $selected = (isset($form_data['id_pembimbing']) && $form_data['id_pembimbing'] == $row['id_pembimbing']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>"><?php echo htmlspecialchars($row['nama_pembimbing']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_pembimbing']); ?>
+                            </option>
                         <?php } ?>
                     </select>
                 </div>
@@ -181,22 +193,22 @@
                         <?php
                         $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
                         while ($row = mysqli_fetch_array($data_guru)) {
+                            $selected = (isset($form_data['id_guru']) && $form_data['id_guru'] == $row['id_guru']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>"><?php echo htmlspecialchars($row['nama_guru']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_guru']); ?>
+                            </option>
                         <?php } ?>
                     </select>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Username</label>
-                    <input type="text" name="username" class="form-control" required>
+                    <input type="text" name="username" class="form-control" 
+                           value="<?php echo isset($form_data['username']) ? $form_data['username'] : ''; ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" placeholder="628xxx" required>
                 </div>
             </div>
 
@@ -221,9 +233,15 @@
 
             if (nisValue.length < 8 || nisValue.length > 12) {
                 nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
+                nisInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisValue)) {
+                nisError.textContent = 'NIS harus berupa angka';
+                nisInput.classList.add('is-invalid');
                 return false;
             } else {
                 nisError.textContent = '';
+                nisInput.classList.remove('is-invalid');
                 return true;
             }
         }
@@ -235,9 +253,15 @@
 
             if (nisnValue.length !== 10) {
                 nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisnValue)) {
+                nisnError.textContent = 'NISN harus berupa angka';
+                nisnInput.classList.add('is-invalid');
                 return false;
             } else {
                 nisnError.textContent = '';
+                nisnInput.classList.remove('is-invalid');
                 return true;
             }
         }
@@ -256,6 +280,10 @@
             }
             return true;
         }
+
+        // Validasi real-time saat pengguna mengetik
+        document.getElementById('nis').addEventListener('input', validateNIS);
+        document.getElementById('nisn').addEventListener('input', validateNISN);
     </script>
 </body>
 

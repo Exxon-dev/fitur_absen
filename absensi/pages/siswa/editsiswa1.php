@@ -2,6 +2,18 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 include('koneksi.php');
+
+// Mengambil data dari session jika ada (setelah redirect dari proses)
+$error_nis = $_SESSION['error_nis'] ?? '';
+$error_nisn = $_SESSION['error_nisn'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
+
+// Hapus data session setelah digunakan
+unset($_SESSION['error_nis']);
+unset($_SESSION['error_nisn']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -153,11 +165,15 @@ include('koneksi.php');
                     <label>NIS</label>
                     <input type="text" name="nis" class="form-control"
                         value="<?php echo htmlspecialchars($data['nis']); ?>" required>
+                    <div id="nisError" class="error-message"><?php echo $error_nis; ?>
+                    </div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
                     <input type="text" name="nisn" class="form-control"
                         value="<?php echo htmlspecialchars($data['nisn']); ?>" required>
+                    <div id="nisError" class="error-message"><?php echo $error_nis; ?>
+                </div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
@@ -306,6 +322,66 @@ include('koneksi.php');
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script>
+        function validateNIS() {
+            const nisInput = document.getElementById('nis');
+            const nisError = document.getElementById('nisError');
+            const nisValue = nisInput.value.trim();
+
+            if (nisValue.length < 8 || nisValue.length > 12) {
+                nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
+                nisInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisValue)) {
+                nisError.textContent = 'NIS harus berupa angka';
+                nisInput.classList.add('is-invalid');
+                return false;
+            } else {
+                nisError.textContent = '';
+                nisInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validateNISN() {
+            const nisnInput = document.getElementById('nisn');
+            const nisnError = document.getElementById('nisnError');
+            const nisnValue = nisnInput.value.trim();
+
+            if (nisnValue.length !== 10) {
+                nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisnValue)) {
+                nisnError.textContent = 'NISN harus berupa angka';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else {
+                nisnError.textContent = '';
+                nisnInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const isNISValid = validateNIS();
+            const isNISNValid = validateNISN();
+
+            if (!isNISValid || !isNISNValid) {
+                if (!isNISValid) {
+                    document.getElementById('nis').focus();
+                } else {
+                    document.getElementById('nisn').focus();
+                }
+                return false;
+            }
+            return true;
+        }
+
+        // Validasi real-time saat pengguna mengetik
+        document.getElementById('nis').addEventListener('input', validateNIS);
+        document.getElementById('nisn').addEventListener('input', validateNISN);
+    </script>
 </body>
 
 </html>
