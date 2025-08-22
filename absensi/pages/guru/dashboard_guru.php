@@ -253,7 +253,7 @@ $jumlah_catatan = $catatanData['jumlah'] ?? 0;
                 <i class="material-icons opacity-10">note_add</i>
               </div>
               <div class="text-end pt-1">
-                <p class="text-sm mb-0 text-capitalize">Catatan Siswa</p>
+                <p class="text-sm mb-0 text-capitalize">Jurnal Siswa</p>
                 <h4 class="mb-0"><?php echo $jumlah_catatan; ?></h4>
               </div>
             </div>

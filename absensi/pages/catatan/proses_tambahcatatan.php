@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
         $sql = mysqli_query($coneksi, "UPDATE catatan 
                                       SET catatan = '$catatan', tanggal = '$tanggal_hari_ini'
                                       WHERE id_catatan = '$id_catatan'");
-        
+
         if ($sql) {
             $_SESSION['flash_update'] = 'sukses';
         } else {
@@ -45,9 +45,11 @@ if (isset($_POST['submit'])) {
             exit();
         }
 
-        // Insert catatan baru
-        $sql = mysqli_query($coneksi, "INSERT INTO catatan (id_jurnal, tanggal, catatan, id_pembimbing) 
-                                       VALUES ('$id_jurnal', '$tanggal_hari_ini', '$catatan', '$id_pembimbing')");
+        $catatan = mysqli_real_escape_string($coneksi, $_POST['catatan']);
+
+        $sql = mysqli_query($coneksi, "INSERT INTO catatan (id_jurnal, tanggal, `catatan`, id_pembimbing) 
+        VALUES ('$id_jurnal', '$tanggal_hari_ini', '$catatan', '$id_pembimbing')");
+
 
         if ($sql) {
             $_SESSION['flash_tambah'] = 'sukses';
@@ -58,7 +60,6 @@ if (isset($_POST['submit'])) {
 
     header('Location: ../../index.php?page=catatan');
     exit();
-
 } else {
     // Kalau akses tanpa submit
     header('Location: ../../index.php?page=catatan');

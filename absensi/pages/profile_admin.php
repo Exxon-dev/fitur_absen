@@ -11,15 +11,15 @@ if (!isset($_GET['username'])) {
     if (!isset($_SESSION['username'])) {
         header("Location: sign-in.php");
         exit();
-    } 
+    }
     $username = $_SESSION['username'];
 } else {
     $username = $_GET['username'];
 }
 
 // Get admin data
-$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'") 
-                                 or die(mysqli_error($coneksi));
+$select = mysqli_query($coneksi, "SELECT * FROM users WHERE username='$username' AND level='admin'")
+    or die(mysqli_error($coneksi));
 
 if (mysqli_num_rows($select) == 0) {
     echo '<div class="alert alert-warning">ID admin tidak ada dalam database.</div>';
@@ -515,7 +515,8 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label for="no_telp">Nomor Telepon</label>
                                 <input type="text" class="form-control" id="no_telp" name="no_telp"
-                                    value="<?php echo htmlspecialchars($data['no_telp']); ?>" placeholder="628xxxxxx" required>
+                                    value="<?php echo htmlspecialchars($data['no_telp'] ?? ''); ?>"
+                                    placeholder="628xxxxxx" required>
                             </div>
 
                             <div class="form-group">
@@ -532,7 +533,7 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label for="alamat">Alamat</label>
                                 <input type="text" class="form-control" id="alamat" name="alamat"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                                    value="<?php echo htmlspecialchars($data['alamat']?? ''); ?>" required>
                             </div>
 
                             <div class="form-group">
