@@ -55,8 +55,8 @@
                     $profile_link = "index.php?page=editpembimbing&id_pembimbing=$id_pembimbing";
                     break;
                   case 'admin':
-                    $id = $_SESSION['id'] ?? '';
-                    $profile_link = "index.php?page=editsiswa&id=$id";
+                    $username = $_SESSION['username'] ?? '';
+                    $profile_link = "index.php?page=profile_admin&username=$username";
                     break;
                   // tambahkan role lain jika perlu
                   default:
