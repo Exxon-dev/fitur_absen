@@ -4,7 +4,7 @@ include('koneksi.php');
 $id_guru = $_SESSION['id_guru'];
 
 // Cek kalau BELUM login
-if (!isset($_SESSION['id_guru'])) {
+if (!isset($_SESSION['level'])) {
     header("Location: sign-in.php");
     exit();
 }

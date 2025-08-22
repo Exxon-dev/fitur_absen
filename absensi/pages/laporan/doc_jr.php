@@ -1,5 +1,6 @@
 <?php
 include('../../koneksi.php');
+
 $filter_params = $_SESSION['filter_params'] ?? [];
 $id_siswa = $filter_params['id_siswa'] ?? $_GET['id_siswa'] ?? null;
 $filter_type = $filter_params['filter_type'] ?? 'daily';
@@ -127,7 +128,7 @@ foreach ($jurnal_data as $row) {
 
 // Jika tidak ada data, tampilkan pesan
 if (empty($jurnal_data)) {
-    echo "<p>Tidak ada data jurnal untuk periode yang dipilih.</p>";
+    echo "<p>Tidak ada data jurnal untuk periode yang dipilih.</p>";    
     exit();
 }
 ?>
