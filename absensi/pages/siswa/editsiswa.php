@@ -11,6 +11,18 @@ if (!isset($_SESSION['id_siswa'])) {
     exit();
 }
 
+// Inisialisasi variabel error
+$error_nis = $_SESSION['error_nis'] ?? '';
+$error_nisn = $_SESSION['error_nisn'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
+
+// Hapus data session setelah digunakan
+unset($_SESSION['error_nis']);
+unset($_SESSION['error_nisn']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
+
 // Get student data
 $id_siswa = $_SESSION['id_siswa'];
 $select = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_siswa='$id_siswa'") or die(mysqli_error($coneksi));
@@ -43,6 +55,31 @@ if (isset($_POST['submit'])) {
     $foto_lama = $_POST['foto_lama'] ?? 'default.png';
 
     $profile = $foto_lama;
+
+    // Validasi NIS
+    if (strlen($nis) < 8 || strlen($nis) > 12) {
+        $_SESSION['error_nis'] = 'NIS harus terdiri dari 8-12 karakter';
+        $has_error = true;
+    } elseif (!is_numeric($nis)) {
+        $_SESSION['error_nis'] = 'NIS harus berupa angka';
+        $has_error = true;
+    }
+
+    // Validasi NISN
+    if (strlen($nisn) !== 10) {
+        $_SESSION['error_nisn'] = 'NISN harus terdiri dari 10 karakter';
+        $has_error = true;
+    } elseif (!is_numeric($nisn)) {
+        $_SESSION['error_nisn'] = 'NISN harus berupa angka';
+        $has_error = true;
+    }
+
+    // Jika ada error, redirect kembali ke form
+    if (isset($has_error)) {
+        $_SESSION['form_data'] = $_POST;
+        header("Location: index.php?page=editsiswa&id_siswa=" . $id_siswa);
+        exit();
+    }
 
     // Handle file upload
     if (!empty($_FILES['foto']['name'])) {
@@ -138,18 +175,12 @@ if (isset($_POST['submit'])) {
         nama_siswa='$nama_siswa', 
         username='$username', 
         password='$password', 
-        -- id_sekolah='$id_sekolah',
-        -- id_perusahaan='$id_perusahaan',
-        -- tanggal_mulai='$tanggal_mulai',
-        -- tanggal_selesai='$tanggal_selesai',
-        -- id_pembimbing='$id_pembimbing',
-        -- id_guru='$id_guru',
-        -- pro_keahlian='$pro_keahlian',
         TL='$TL',
         TTGL='$TTGL'
         WHERE id_siswa='$id_siswa'");
 
     if ($sql) {
+        $_SESSION['success'] = "Data siswa berhasil diupdate";
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data siswa berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
         exit();
@@ -450,6 +481,16 @@ function getUploadError($errorCode)
             width: auto !important;
             max-width: 400px !important;
         }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .is-invalid {
+            border-color: #e74c3c !important;
+        }
     </style>
 </head>
 
@@ -457,7 +498,7 @@ function getUploadError($errorCode)
     <div class="main-content">
         <h2>Profil Siswa</h2>
 
-        <form action="" method="post" enctype="multipart/form-data" id="profile-form">
+        <form action="" method="post" enctype="multipart/form-data" id="profile-form" onsubmit="return validateForm()">
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
             <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
 
@@ -527,23 +568,27 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label class="info-label">NIS</label>
                                 <div class="info-value editable">
-                                    <input type="text" name="nis" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nis']); ?>" required>
+                                    <input type="text" name="nis" id="nis" class="form-control <?php echo !empty($error_nis) ? 'is-invalid' : ''; ?>"
+                                        value="<?php echo htmlspecialchars($data['nis']); ?>" 
+                                        required minlength="8" maxlength="12" oninput="validateNIS()">
+                                    <div id="nisError" class="error-message"><?php echo $error_nis; ?></div>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">NISN</label>
                                 <div class="info-value editable">
-                                    <input type="text" name="nisn" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nisn']); ?>" required>
+                                    <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>"
+                                        value="<?php echo htmlspecialchars($data['nisn']); ?>" 
+                                        required minlength="10" maxlength="10" oninput="validateNISN()">
+                                    <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="no_wa">Nomor WhatsApp</label>
                                 <input type="text" class="form-control" id="no_wa" name="no_wa"
-                                    value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
+                                    value="<?php echo htmlspecialchars($data['no_wa']); ?>" placeholder="628xxxxxxx" required>
                             </div>
 
                             <div class="form-group">
@@ -736,6 +781,84 @@ function getUploadError($errorCode)
         setTimeout(function() {
             $('.alert').alert('close');
         }, 5000);
+    </script>
+    <script>
+        function validateNIS() {
+            const nisInput = document.getElementById('nis');
+            const nisError = document.getElementById('nisError');
+            const nisValue = nisInput.value.trim();
+
+            if (nisValue.length < 8 || nisValue.length > 12) {
+                nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
+                nisInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisValue)) {
+                nisError.textContent = 'NIS harus berupa angka';
+                nisInput.classList.add('is-invalid');
+                return false;
+            } else {
+                nisError.textContent = '';
+                nisInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validateNISN() {
+            const nisnInput = document.getElementById('nisn');
+            const nisnError = document.getElementById('nisnError');
+            const nisnValue = nisnInput.value.trim();
+
+            if (nisnValue.length !== 10) {
+                nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisnValue)) {
+                nisnError.textContent = 'NISN harus berupa angka';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else {
+                nisnError.textContent = '';
+                nisnInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const isNISValid = validateNIS();
+            const isNISNValid = validateNISN();
+
+            if (!isNISValid || !isNISNValid) {
+                if (!isNISValid) {
+                    document.getElementById('nis').focus();
+                } else {
+                    document.getElementById('nisn').focus();
+                }
+
+                // Tampilkan pesan error dengan SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'Silakan periksa kembali data NIS dan NISN',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+
+                return false;
+            }
+            return true;
+        }
+
+        // Validasi real-time saat pengguna mengetik
+        document.getElementById('nis').addEventListener('input', validateNIS);
+        document.getElementById('nisn').addEventListener('input', validateNISN);
+
+        // Jalankan validasi saat halaman dimuat untuk menampilkan error dari server
+        document.addEventListener('DOMContentLoaded', function() {
+            validateNIS();
+            validateNISN();
+        });
     </script>
 </body>
 

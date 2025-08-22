@@ -1,84 +1,17 @@
 <?php 
 include('koneksi.php');
 
-// Fungsi untuk mengecek apakah NIS sudah ada di database
-function cekNisExist($nis, $exclude_id = null) {
-    global $coneksi;
-    $query = "SELECT * FROM siswa WHERE nis = '$nis'";
-    if ($exclude_id) {
-        $query .= " AND id_siswa != $exclude_id";
-    }
-    $result = mysqli_query($coneksi, $query);
-    return mysqli_num_rows($result) > 0;
-}
+// Mengambil data dari session jika ada (setelah redirect dari proses)
+$error_nis = $_SESSION['error_nis'] ?? '';
+$error_nisn = $_SESSION['error_nisn'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
 
-// Fungsi untuk mengecek apakah NISN sudah ada di database
-function cekNisnExist($nisn, $exclude_id = null) {
-    global $coneksi;
-    $query = "SELECT * FROM siswa WHERE nisn = '$nisn'";
-    if ($exclude_id) {
-        $query .= " AND id_siswa != $exclude_id";
-    }
-    $result = mysqli_query($coneksi, $query);
-    return mysqli_num_rows($result) > 0;
-}
-
-// Proses form submission
-$error_nis = '';
-$error_nisn = '';
-$success = '';
-
-if (isset($_POST['submit'])) {
-    $nis = mysqli_real_escape_string($coneksi, $_POST['nis']);
-    $nisn = mysqli_real_escape_string($coneksi, $_POST['nisn']);
-    $nama_siswa = mysqli_real_escape_string($coneksi, $_POST['nama_siswa']);
-    $pro_keahlian = mysqli_real_escape_string($coneksi, $_POST['pro_keahlian']);
-    $TL = mysqli_real_escape_string($coneksi, $_POST['TL']);
-    $TTGL = mysqli_real_escape_string($coneksi, $_POST['TTGL']);
-    $id_sekolah = mysqli_real_escape_string($coneksi, $_POST['id_sekolah']);
-    $id_perusahaan = mysqli_real_escape_string($coneksi, $_POST['id_perusahaan']);
-    $tanggal_mulai = mysqli_real_escape_string($coneksi, $_POST['tanggal_mulai']);
-    $tanggal_selesai = mysqli_real_escape_string($coneksi, $_POST['tanggal_selesai']);
-    $id_pembimbing = mysqli_real_escape_string($coneksi, $_POST['id_pembimbing']);
-    $id_guru = mysqli_real_escape_string($coneksi, $_POST['id_guru']);
-    $username = mysqli_real_escape_string($coneksi, $_POST['username']);
-    $password = mysqli_real_escape_string($coneksi, $_POST['password']);
-    $no_wa = mysqli_real_escape_string($coneksi, $_POST['no_wa']);
-    
-    // Validasi format NIS dan NISN
-    $nis_valid = (strlen($nis) >= 8 && strlen($nis) <= 12 && is_numeric($nis));
-    $nisn_valid = (strlen($nisn) == 10 && is_numeric($nisn));
-    
-    if (!$nis_valid) {
-        $error_nis = 'NIS harus terdiri dari 8-12 digit angka';
-    } elseif (!$nisn_valid) {
-        $error_nisn = 'NISN harus terdiri dari 10 digit angka';
-    } else {
-        // Validasi NIS dan NISN di database
-        $nis_exist = cekNisExist($nis);
-        $nisn_exist = cekNisnExist($nisn);
-        
-        if ($nis_exist) {
-            $error_nis = 'NIS sudah digunakan';
-        } elseif ($nisn_exist) {
-            $error_nisn = 'NISN sudah digunakan';
-        } else {
-            // Jika NIS dan NISN belum ada, simpan data
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
-            $query = "INSERT INTO siswa (nis, nisn, nama_siswa, pro_keahlian, TL, TTGL, id_sekolah, id_perusahaan, tanggal_mulai, tanggal_selesai, id_pembimbing, id_guru, username, password, no_wa) 
-                      VALUES ('$nis', '$nisn', '$nama_siswa', '$pro_keahlian', '$TL', '$TTGL', '$id_sekolah', '$id_perusahaan', '$tanggal_mulai', '$tanggal_selesai', '$id_pembimbing', '$id_guru', '$username', '$hashed_password', '$no_wa')";
-            
-            if (mysqli_query($coneksi, $query)) {
-                $success = 'Data siswa berhasil ditambahkan';
-                // Reset form values
-                $_POST = array();
-            } else {
-                $error_nis = 'Terjadi kesalahan: ' . mysqli_error($coneksi);
-            }
-        }
-    }
-}
+// Hapus data session setelah digunakan
+unset($_SESSION['error_nis']);
+unset($_SESSION['error_nisn']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
 ?>
 
 <!DOCTYPE html>
@@ -187,45 +120,26 @@ if (isset($_POST['submit'])) {
             <div class="success-message"><?php echo $success; ?></div>
         <?php endif; ?>
         
-        <form action="" method="POST" onsubmit="return validateForm()">
+        <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>NIS</label>
                     <input type="text" name="nis" id="nis" class="form-control <?php echo !empty($error_nis) ? 'is-invalid' : ''; ?>" 
-                           value="<?php echo isset($_POST['nis']) ? $_POST['nis'] : ''; ?>" 
+                           value="<?php echo isset($form_data['nis']) ? $form_data['nis'] : ''; ?>" 
                            required minlength="8" maxlength="12" oninput="validateNIS()">
                     <div id="nisError" class="error-message"><?php echo $error_nis; ?></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
                     <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>" 
-                           value="<?php echo isset($_POST['nisn']) ? $_POST['nisn'] : ''; ?>" 
+                           value="<?php echo isset($form_data['nisn']) ? $form_data['nisn'] : ''; ?>" 
                            required maxlength="10" minlength="10" oninput="validateNISN()">
                     <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
                     <input type="text" name="nama_siswa" class="form-control" 
-                           value="<?php echo isset($_POST['nama_siswa']) ? $_POST['nama_siswa'] : ''; ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Program Keahlian</label>
-                    <select name="pro_keahlian" class="form-control" required>
-                        <option value="">Pilih Program Keahlian</option>
-                        <option value="Multimedia" <?php echo (isset($_POST['pro_keahlian']) && $_POST['pro_keahlian'] == 'Multimedia') ? 'selected' : ''; ?>>Multimedia</option>
-                        <option value="Rekayasa Perangkat Lunak" <?php echo (isset($_POST['pro_keahlian']) && $_POST['pro_keahlian'] == 'Rekayasa Perangkat Lunak') ? 'selected' : ''; ?>>Rekayasa Perangkat Lunak</option>
-                        <option value="Perkantoran" <?php echo (isset($_POST['pro_keahlian']) && $_POST['pro_keahlian'] == 'Perkantoran') ? 'selected' : ''; ?>>Perkantoran</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" 
-                           value="<?php echo isset($_POST['TL']) ? $_POST['TL'] : ''; ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" 
-                           value="<?php echo isset($_POST['TTGL']) ? $_POST['TTGL'] : ''; ?>" required>
+                           value="<?php echo isset($form_data['nama_siswa']) ? $form_data['nama_siswa'] : ''; ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -234,7 +148,7 @@ if (isset($_POST['submit'])) {
                         <?php
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {
-                            $selected = (isset($_POST['id_sekolah']) && $_POST['id_sekolah'] == $row['id_sekolah']) ? 'selected' : '';
+                            $selected = (isset($form_data['id_sekolah']) && $form_data['id_sekolah'] == $row['id_sekolah']) ? 'selected' : '';
                         ?>
                             <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>" <?php echo $selected; ?>>
                                 <?php echo htmlspecialchars($row['nama_sekolah']); ?>
@@ -249,7 +163,7 @@ if (isset($_POST['submit'])) {
                         <?php
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
-                            $selected = (isset($_POST['id_perusahaan']) && $_POST['id_perusahaan'] == $row['id_perusahaan']) ? 'selected' : '';
+                            $selected = (isset($form_data['id_perusahaan']) && $form_data['id_perusahaan'] == $row['id_perusahaan']) ? 'selected' : '';
                         ?>
                             <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>" <?php echo $selected; ?>>
                                 <?php echo htmlspecialchars($row['nama_perusahaan']); ?>
@@ -258,23 +172,13 @@ if (isset($_POST['submit'])) {
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="form-control" 
-                           value="<?php echo isset($_POST['tanggal_mulai']) ? $_POST['tanggal_mulai'] : ''; ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="form-control" 
-                           value="<?php echo isset($_POST['tanggal_selesai']) ? $_POST['tanggal_selesai'] : ''; ?>" required>
-                </div>
-                <div class="form-group col-md-3">
                     <label>Pembimbing</label>
                     <select name="id_pembimbing" class="form-control" required>
                         <option value="">Pilih Pembimbing</option>
                         <?php
                         $data_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
-                            $selected = (isset($_POST['id_pembimbing']) && $_POST['id_pembimbing'] == $row['id_pembimbing']) ? 'selected' : '';
+                            $selected = (isset($form_data['id_pembimbing']) && $form_data['id_pembimbing'] == $row['id_pembimbing']) ? 'selected' : '';
                         ?>
                             <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>" <?php echo $selected; ?>>
                                 <?php echo htmlspecialchars($row['nama_pembimbing']); ?>
@@ -289,7 +193,7 @@ if (isset($_POST['submit'])) {
                         <?php
                         $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
                         while ($row = mysqli_fetch_array($data_guru)) {
-                            $selected = (isset($_POST['id_guru']) && $_POST['id_guru'] == $row['id_guru']) ? 'selected' : '';
+                            $selected = (isset($form_data['id_guru']) && $form_data['id_guru'] == $row['id_guru']) ? 'selected' : '';
                         ?>
                             <option value="<?php echo htmlspecialchars($row['id_guru']); ?>" <?php echo $selected; ?>>
                                 <?php echo htmlspecialchars($row['nama_guru']); ?>
@@ -300,16 +204,11 @@ if (isset($_POST['submit'])) {
                 <div class="form-group col-md-3">
                     <label>Username</label>
                     <input type="text" name="username" class="form-control" 
-                           value="<?php echo isset($_POST['username']) ? $_POST['username'] : ''; ?>" required>
+                           value="<?php echo isset($form_data['username']) ? $form_data['username'] : ''; ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" placeholder="628xxx" 
-                           value="<?php echo isset($_POST['no_wa']) ? $_POST['no_wa'] : ''; ?>" required>
                 </div>
             </div>
 
