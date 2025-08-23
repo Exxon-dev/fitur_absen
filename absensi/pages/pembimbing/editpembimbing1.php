@@ -227,7 +227,7 @@ if (isset($_POST['submit'])) {
                             text: "Data yang dihapus tidak dapat dikembalikan!",
                             icon: "warning",
                             showCancelButton: true,
-                            confirmButtonColor: "#d33",
+                            confirmButtonColor: "#344767",
                             cancelButtonColor: "#3085d6",
                             confirmButtonText: "Ya, hapus!",
                             cancelButtonText: "Batal"

@@ -112,17 +112,13 @@
 			$nama_sekolah	 = $_POST['nama_sekolah'];
 			$alamat_sekolah	 = $_POST['alamat_sekolah'];
 			$kepala_sekolah	 = $_POST['kepala_sekolah'];
-			$username		 = $_POST['username'];
-			$password		 = $_POST['password'];
 			$logo_sekolah	 = $_FILES['logo_sekolah']['name'];
 
 
 			$sql = mysqli_query($coneksi, "UPDATE sekolah SET 
 			nama_sekolah='$nama_sekolah',
 			alamat_sekolah='$alamat_sekolah', 
-			kepala_sekolah='$kepala_sekolah',
-			username='$username',
-			password='$password', 
+			kepala_sekolah='$kepala_sekolah', 
 			logo_sekolah='$logo_sekolah' 
 			WHERE 
 			id_sekolah='$id_sekolah'")
@@ -151,14 +147,6 @@
 				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
 				<div class="col-sm-15">
 					<input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Username</label>
-				<div class="col-sm-15">
-					<input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Password</label>
-				<div class="col-sm-15">
-					<input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>" required>
 				</div>
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-15">
@@ -195,13 +183,13 @@
 						text: "Data yang dihapus tidak dapat dikembalikan!",
 						icon: "warning",
 						showCancelButton: true,
-						confirmButtonColor: "#d33",
+						confirmButtonColor: "#344767",
 						cancelButtonColor: "#3085d6",
 						confirmButtonText: "Ya, hapus!",
 						cancelButtonText: "Batal"
 					}).then((result) => {
 						if (result.isConfirmed) {
-							window.location.href = `index.php?page=hapusperusahaan&id_perusahaan=${id}`;
+							window.location.href = `index.php?page=hapussekolah&id_sekolah=${id}`;
 						}
 					});
 				});

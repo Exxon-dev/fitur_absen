@@ -19,9 +19,7 @@ if (isset($_POST['submit'])) {
 	$id_sekolah = $_POST['id_sekolah'];
 	$nama_sekolah = $_POST['nama_sekolah'];
 	$alamat_sekolah = $_POST['alamat_sekolah'];
-	$kepala_sekolah = $_POST['kepala_sekolah'];
-	$username = $_POST['username'];
-	$password = $_POST['password'];
+	$kepala_sekolah = $_POST['kepala_sekolah']; 
 	$logo_sekolah = $_FILES['logo_sekolah']['name'];
 
 
@@ -29,8 +27,6 @@ if (isset($_POST['submit'])) {
 	nama_sekolah='$nama_sekolah',
 	alamat_sekolah='$alamat_sekolah', 
 	kepala_sekolah='$kepala_sekolah', 
-	username='$username', 
-	password='$password', 
 	logo_sekolah='$logo_sekolah'
 	WHERE 
 	id_sekolah='$id_sekolah'")

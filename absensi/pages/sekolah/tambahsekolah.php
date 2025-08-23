@@ -19,7 +19,7 @@
 			color: #007bff;
 		}
 
-				.form-control {
+		.form-control {
 			border: none;
 			border-bottom: 2px solid #007bff;
 			border-radius: 0;
@@ -45,6 +45,12 @@
 			border-radius: 10px;
 			padding: 20px;
 			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		}
+
+		.file-info {
+			font-size: 0.875rem;
+			color: #6c757d;
+			margin-top: 5px;
 		}
 
 		@media (max-width: 991px) {
@@ -85,19 +91,13 @@
 					<input type="text" name="kepala_sekolah" class="form-control" size="4" required>
 				</div>
 
-				<label class="col-sm-2 col-form-label">Username</label>
-				<div class="col-sm-15">
-					<input type="text" name="username" class="form-control" size="4" required>
-				</div>
-
-				<label class="col-sm-2 col-form-label">Password</label>
-				<div class="col-sm-15">
-					<input type="password" name="password" class="form-control" size="4" required>
-				</div>
-
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-15">
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
+					<input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" required>
+					<div class="file-info">Maksimal ukuran file: 2MB. Format yang diterima: JPG, PNG, GIF.</div>
+					<div id="preview" class="mt-2" style="display:none;">
+						<img id="preview-image" src="#" alt="Preview Logo" style="max-width: 200px; max-height: 200px;">
+					</div>
 				</div>
 			</div>
 			<div class="form-row">
@@ -118,6 +118,27 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
 		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 		crossorigin="anonymous"></script>
+	
+	<script>
+		// Preview image sebelum upload
+		document.getElementById('logo_sekolah').addEventListener('change', function(e) {
+			const preview = document.getElementById('preview');
+			const previewImage = document.getElementById('preview-image');
+			
+			if (this.files && this.files[0]) {
+				const reader = new FileReader();
+				
+				reader.onload = function(e) {
+					previewImage.src = e.target.result;
+					preview.style.display = 'block';
+				}
+				
+				reader.readAsDataURL(this.files[0]);
+			} else {
+				preview.style.display = 'none';
+			}
+		});
+	</script>
 
 </body>
 
