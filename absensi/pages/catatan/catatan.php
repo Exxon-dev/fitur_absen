@@ -246,12 +246,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <?php
                             $id_jurnal = $row['id_jurnal'] ?? 0;
+                            $id_siswa = $row['id_siswa']; // ambil id_siswa
                             $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
                             $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Belum ada jurnal';
                             $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
 
-                            // Link tambah catatan
-                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
+                            // Link tambah catatan (kirim id_jurnal + id_siswa)
+                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa";
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
                                 <td class="text-center"><?= $no ?></td>
@@ -263,6 +264,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             </tr>
                             <?php $no++; ?>
                         <?php endwhile; ?>
+
                     <?php else: ?>
                         <tr>
 
