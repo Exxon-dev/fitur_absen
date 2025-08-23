@@ -303,10 +303,10 @@ unset($_SESSION['form_data']);
                         text: "Data yang dihapus tidak dapat dikembalikan!",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonColor: "#d33",
                         cancelButtonColor: "#3085d6",
-                        confirmButtonText: "Ya, hapus!",
-                        cancelButtonText: "Batal"
+                        confirmButtonColor: "#344767",
+                        cancelButtonText: "Batal",
+                        confirmButtonText: "Ya, hapus!"
                     }).then((result) => {
                         if (result.isConfirmed) {
                             window.location.href = `index.php?page=hapussiswa&id_siswa=${id}`;
