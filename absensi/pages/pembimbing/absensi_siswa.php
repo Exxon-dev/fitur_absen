@@ -272,13 +272,14 @@ $jumlah_perusahaan = $data_perusahaan['total'];
           <div class="table-responsive">
             <table class="table table-hover table-bordered">
               <thead class="table-light">
-                <tr>
-                  <th class="text-center">No</th>
-                  <th class="text-center">Nama</th>
-                  <th class="text-center">Status</th>
-                  <th class="text-center">Sakit</th>
-                  <th class="text-center">Izin</th>
-                  <th class="text-center">Alpa</th>
+                <tr class="text-center">
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>Status</th>
+                  <th>Sakit</th>
+                  <th>Izin</th>
+                  <th>Alpa</th>
+                  <th>Hadir</th>
                 </tr>
               </thead>
               <tbody>
@@ -349,6 +350,12 @@ $jumlah_perusahaan = $data_perusahaan['total'];
                           <span>Alpa</span>
                         </label>
                     </td>
+                    <td>
+                        <label class="radio-label ' . ($isReadOnly ? 'disabled' : '') . '">
+                          <input type="radio" id="Hadir_' . $siswa['id_siswa'] . '" name="absen_' . $siswa['id_siswa'] . '" value="hadir" ' . ($keterangan === 'hadir' ? 'checked' : '') . ($isReadOnly ? ' disabled' : '') . '>
+                          <span>Hadir</span>
+                        </label>
+                    </td>
                 </tr>
                 ';
                     $index++;
@@ -371,34 +378,54 @@ $jumlah_perusahaan = $data_perusahaan['total'];
     </form>
 
     <?php
-    if (isset($_POST['simpan_semua'])) {
-      foreach ($_POST as $key => $value) {
-        if (strpos($key, 'absen_') === 0) {
-          $id_siswa = str_replace('absen_', '', $key);
-          $keterangan = mysqli_real_escape_string($coneksi, $value);
-          $tanggal = date('Y-m-d');
-          $jam_masuk = date('H:i:s');
-          $jam_keluar = date('H:i:s');
+if (isset($_POST['simpan_semua'])) {
+  foreach ($_POST as $key => $value) {
+    if (strpos($key, 'absen_') === 0) {
+      $id_siswa = str_replace('absen_', '', $key);
+      $keterangan = mysqli_real_escape_string($coneksi, $value);
+      $tanggal = date('Y-m-d');
+      $jam_masuk = date('H:i:s');
+      $jam_keluar = null; // default null dulu
 
-          // Cek jika data sudah ada di database
-          $checkQuery = mysqli_query($coneksi, "SELECT * FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'");
-
-          if (mysqli_num_rows($checkQuery) > 0) {
-            // Update data jika sudah ada
-            $updateQuery = "UPDATE absen SET keterangan = '$keterangan', jam_keluar = '$jam_keluar' WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
-            $result = mysqli_query($coneksi, $updateQuery);
-          } else {
-            // Insert data baru
-            $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk, jam_keluar) VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jam_masuk', '$jam_keluar')";
-            $result = mysqli_query($coneksi, $insertQuery);
-          }
-        }
+      if ($keterangan === 'hadir') {
+        $jam_masuk = date('H:i:s');
+        $jam_keluar = null; // bisa diisi nanti saat pulang
       }
 
-      $_SESSION['show_alert'] = true;
-      echo '<script>window.location.href = "index.php?page=pembimbing_absen";</script>';
-      exit();
+      // Cek jika data sudah ada di database
+      $checkQuery = mysqli_query($coneksi, "SELECT * FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'");
+
+      if (mysqli_num_rows($checkQuery) > 0) {
+        // Update data jika sudah ada
+        if ($keterangan === 'hadir') {
+          $updateQuery = "UPDATE absen 
+                          SET keterangan = '$keterangan', jam_masuk = IFNULL(jam_masuk, '$jam_masuk') 
+                          WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
+        } else {
+          $updateQuery = "UPDATE absen 
+                          SET keterangan = '$keterangan', jam_keluar = '$jam_masuk' 
+                          WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
+        }
+        $result = mysqli_query($coneksi, $updateQuery);
+      } else {
+        // Insert data baru
+        if ($keterangan === 'hadir') {
+          $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk) 
+                          VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jam_masuk')";
+        } else {
+          $insertQuery = "INSERT INTO absen (id_siswa, tanggal, keterangan, jam_masuk, jam_keluar) 
+                          VALUES ('$id_siswa', '$tanggal', '$keterangan', '$jam_masuk', '$jam_masuk')";
+        }
+        $result = mysqli_query($coneksi, $insertQuery);
+      }
     }
+  }
+
+  $_SESSION['show_alert'] = true;
+  echo '<script>window.location.href = "index.php?page=pembimbing_absen";</script>';
+  exit();
+}
+
 
     if (isset($_SESSION['show_alert'])) {
       echo '<script>
