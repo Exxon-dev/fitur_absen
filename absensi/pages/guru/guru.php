@@ -174,22 +174,6 @@ include('koneksi.php');
     });</script>";
             unset($_SESSION['flash_error']);
         }
-
-        // Notifikasi duplikat
-        if (isset($_SESSION['flash_duplikat'])) {
-            echo "<script>document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan!',
-            text: 'ID guru atau Username sudah terdaftar',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });</script>";
-            unset($_SESSION['flash_duplikat']);
-        }
         ?>
 
 </body>
