@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 include('koneksi.php');
 if (isset($_SESSION['id_pembimbing'])) {
     header("Location: sign-in.php");
@@ -9,15 +13,18 @@ if (isset($_SESSION['id_pembimbing'])) {
 if (isset($_POST['submit'])) {
     $id_pembimbing      = $_POST['id_pembimbing'];
     $nama_pembimbing    = $_POST['nama_pembimbing'];
-    $username           = $_POST['username'];
-    $password           = $_POST['password'];
+    $no_tlp             = $_POST['no_tlp'];
+    $alamat             = $_POST['alamat'];
+    $id_perusahaan      = $_POST['id_perusahaan'];
+    $jenis_kelamin      = $_POST['jenis_kelamin'];
 
     $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
-    nama_pembimbing = '$nama_pembimbing', 
-    username        = '$username', 
-    password        = '$password' 
-    WHERE 
-    id_pembimbing   ='$id_pembimbing'");
+        nama_pembimbing = '$nama_pembimbing', 
+        no_tlp = '$no_tlp',
+        alamat = '$alamat',
+        id_perusahaan = '$id_perusahaan',
+        jenis_kelamin = '$jenis_kelamin'
+        WHERE id_pembimbing = '$id_pembimbing'");
 
     if ($sql) {
         header('Location: index.php?page=pembimbing&pesan=sukses');
@@ -91,30 +98,19 @@ if (isset($_POST['submit'])) {
 
         .hapusPembimbing {
             color: white;
-            /* Text putih */
             background-color: #344767;
-            /* Warna abu-abu Bootstrap */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            /* Shadow */
             border: none;
-            /* Hilangkan border */
             padding: 8px 16px;
-            /* Padding yang sesuai */
             border-radius: 4px;
-            /* Sedikit rounded corners */
             transition: all 0.3s ease;
-            /* Efek transisi halus */
         }
 
         .hapusPembimbing:hover {
             background-color: #5a6268;
-            /* Warna lebih gelap saat hover */
             color: white;
-            /* Tetap putih saat hover */
             transform: translateY(-1px);
-            /* Sedikit efek angkat */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            /* Shadow lebih besar saat hover */
         }
 
         @media (max-width: 991px) {
@@ -147,7 +143,7 @@ if (isset($_POST['submit'])) {
         }
         ?>
 
-        <form action="pages/pembimbing/proses_editpembimbing.php" method="post">
+        <form action="editpembimbing1.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
             <div class="row">
                 <div class="form-group col-md-6">
@@ -159,14 +155,14 @@ if (isset($_POST['submit'])) {
                     <label>No. Telepon / HP</label>
                     <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Alamat</label>
                     <input type="text" name="alamat" class="form-control" value="<?php echo $data['alamat']; ?>" required>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Perusahaan</label>
                     <select name="id_perusahaan" class="form-control" required>
-                        <option value="">Perusahaan</option>
+                        <option value="">Pilih Perusahaan</option>
                         <?php
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
@@ -178,22 +174,12 @@ if (isset($_POST['submit'])) {
                         <?php } ?>
                     </select>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
                         <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
                         <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                     </select>
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>"
-                        required>
-                </div>
-                <div class="form-group col-md-6">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>"
-                        required>
                 </div>
                 <div class="form-group">
                     <div class="d-flex flex-wrap justify-content-between align-items-center">
@@ -203,14 +189,13 @@ if (isset($_POST['submit'])) {
                             HAPUS
                         </button>
 
-                        <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
+                        <!-- Tombol Kembali dan Simpan di kanan -->
                         <div class="d-flex flex-wrap justify-content-end gap-2">
                             <a href="index.php?page=pembimbing" class="btn btn-warning mr-2">KEMBALI</a>
                             <input type="submit" name="submit" class="btn btn-primary" value="Update">
                         </div>
                     </div>
                 </div>
-
             </div>
         </form>
 
@@ -246,5 +231,4 @@ if (isset($_POST['submit'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 </body>
-
 </html>
