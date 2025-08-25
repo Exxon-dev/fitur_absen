@@ -13,15 +13,15 @@ if ($role !== 'pembimbing') {
     $_SESSION['flash_error'] = 'Akses ditolak';
     header('Location: ../../index.php?page=catatan');
     exit();
-}
+}   
 
 if (isset($_POST['submit'])) {
-    // Validasi input wajib
-    if (empty($id_jurnal) || empty($catatan)) {
-        $_SESSION['flash_error'] = 'ID Jurnal dan Catatan wajib diisi!';
-        header('Location: ../../index.php?page=catatan');
-        exit();
-    }
+    // Validasi input wajiba
+if (empty($catatan)) {
+    $_SESSION['flash_error'] = 'Catatan wajib diisi!';
+    header('Location: ../../index.php?page=catatan');
+    exit();
+}
 
     if ($mode === 'update' && !empty($id_catatan)) {
         // Update catatan yang sudah ada

@@ -8,55 +8,41 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 $tanggal_hari_ini = date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 
-if (!$id_jurnal) {
-    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error!",
-                        text: "ID Jurnal tidak ditemukan",
-                        toast: true,
-                        position: "top",
-                        showConfirmButton: false,
-                        timer: 2000,
-                        timerProgressBar: true
-                    });
-                    setTimeout(function () {
-                        window.location.href = "index.php?page=catatan&pesan=gagal&error=' . urlencode("ID Jurnal tidak ditemukan") . '";
-                    }, 3000);
-                });
-            </script>';
-    exit();
-}
-
-$jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_jurnal = '$id_jurnal'");
-$jurnal_data = mysqli_fetch_assoc($jurnal_result);
-if (!$jurnal_data) {
-    header('Location: index.php?page=catatan&pesan=gagal&error=' . urlencode('Data jurnal tidak ditemukan'));
-    exit();
-}
-
-// Get notes - tampilkan semua catatan untuk jurnal ini, tidak peduli pembimbing mana
-$catatan_result = mysqli_query(
-    $coneksi,
-    "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
-     FROM catatan c
-     LEFT JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
-     WHERE c.id_jurnal = '$id_jurnal'
-     ORDER BY c.id_catatan ASC"
-);
-
+// Inisialisasi variabel
+$jurnal_data = null;
 $catatan_list = [];
-if ($catatan_result) {
-    while ($r = mysqli_fetch_assoc($catatan_result)) {
-        $catatan_list[] = $r;
+$catatan_pembimbing = null;
+$keterangan = 'Tidak ada jurnal';
+
+// Jika ada id_jurnal, ambil data jurnal
+if ($id_jurnal) {
+    $jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_jurnal = '$id_jurnal'");
+    $jurnal_data = mysqli_fetch_assoc($jurnal_result);
+
+    if ($jurnal_data) {
+        $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
+
+        // Get notes - tampilkan semua catatan untuk jurnal ini
+        $catatan_result = mysqli_query(
+            $coneksi,
+            "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
+             FROM catatan c
+             LEFT JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+             WHERE c.id_jurnal = '$id_jurnal'
+             ORDER BY c.id_catatan ASC"
+        );
+
+        if ($catatan_result) {
+            while ($r = mysqli_fetch_assoc($catatan_result)) {
+                $catatan_list[] = $r;
+            }
+        }
     }
 }
 
 // Cek apakah pembimbing sudah punya catatan untuk jurnal ini
-$catatan_pembimbing = null;
-if ($level === 'pembimbing' && $id_pembimbing) {
+// Hanya jika ada id_jurnal, jika tidak maka mode akan selalu 'tambah'
+if ($level === 'pembimbing' && $id_pembimbing && $id_jurnal) {
     foreach ($catatan_list as $catatan) {
         if ($catatan['id_pembimbing'] == $id_pembimbing) {
             $catatan_pembimbing = $catatan;
@@ -65,10 +51,9 @@ if ($level === 'pembimbing' && $id_pembimbing) {
     }
 }
 
-$keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
-
 // Tentukan mode dan teks tombol
-$mode = ($level === 'pembimbing' && $catatan_pembimbing) ? 'update' : 'tambah';
+// Jika tidak ada id_jurnal, mode selalu 'tambah'
+$mode = ($level === 'pembimbing' && $catatan_pembimbing && $id_jurnal) ? 'update' : 'tambah';
 $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'SIMPAN') : '';
 ?>
 
@@ -118,10 +103,10 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
         }
 
         .note-container {
-            background:#f1f1f1;
-            padding:10px;
-            margin-bottom:8px;
-            border-radius:5px;
+            background: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
         }
 
         @media (max-width: 991px) {
@@ -181,9 +166,9 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
             <?php else: ?>
                 <!--  -->
             <?php endif; ?>
-            
+
             <br>
-            
+
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group row">
                     <div class="col text-left">
@@ -231,4 +216,5 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
         });
     </script>
 </body>
+
 </html>
