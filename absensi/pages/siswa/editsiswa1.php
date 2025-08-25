@@ -1,17 +1,18 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 include('koneksi.php');
 
 // Mengambil data dari session jika ada (setelah redirect dari proses)
-$error_nis = $_SESSION['error_nis'] ?? '';
-$error_nisn = $_SESSION['error_nisn'] ?? '';
+$username_error = $_SESSION['username_error'] ?? '';
+$password_error = $_SESSION['password_error'] ?? '';
 $success = $_SESSION['success'] ?? '';
 $form_data = $_SESSION['form_data'] ?? array();
 
 // Hapus data session setelah digunakan
-unset($_SESSION['error_nis']);
-unset($_SESSION['error_nisn']);
+unset($_SESSION['username_error']);
+unset($_SESSION['password_error']);
 unset($_SESSION['success']);
 unset($_SESSION['form_data']);
 ?>
@@ -76,41 +77,34 @@ unset($_SESSION['form_data']);
         .btn-primary:hover {
             background-color: #0056b3;
             transform: translateY(-1px);
-            /* Sedikit efek angkat */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            /* Shadow lebih besar saat hover */
         }
 
         .hapusSiswa {
             color: white;
-            /* Text putih */
             background-color: #344767;
-            /* Warna abu-abu Bootstrap */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            /* Shadow */
             border: none;
-            /* Hilangkan border */
             padding: 8px 16px;
-            /* Padding yang sesuai */
             border-radius: 4px;
-            /* Sedikit rounded corners */
             transition: all 0.3s ease;
-            /* Efek transisi halus */
         }
 
         .hapusSiswa:hover {
             background-color: #5a6268;
-            /* Warna lebih gelap saat hover */
             color: white;
-            /* Tetap putih saat hover */
             transform: translateY(-1px);
-            /* Sedikit efek angkat */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            /* Shadow lebih besar saat hover */
         }
 
         .form-row {
             margin-bottom: 15px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 5px;
         }
 
         @media (max-width: 991px) {
@@ -140,7 +134,12 @@ unset($_SESSION['form_data']);
             } else {
                 $data = mysqli_fetch_assoc($select);
             }
+        } else {
+            // Redirect jika tidak ada id_siswa
+            echo '<script>window.location.replace("index.php?page=siswa");</script>';
+            exit();
         }
+        
         // Notifikasi update dari proses_editsiswa.php
         if (isset($_GET['pesan'])) {
             echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
@@ -165,15 +164,11 @@ unset($_SESSION['form_data']);
                     <label>NIS</label>
                     <input type="text" name="nis" class="form-control"
                         value="<?php echo htmlspecialchars($data['nis']); ?>" required>
-                    <div id="nisError" class="error-message"><?php echo $error_nis; ?>
-                    </div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>NISN</label>
                     <input type="text" name="nisn" class="form-control"
                         value="<?php echo htmlspecialchars($data['nisn']); ?>" required>
-                    <div id="nisError" class="error-message"><?php echo $error_nis; ?>
-                </div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Nama Siswa</label>
@@ -183,20 +178,13 @@ unset($_SESSION['form_data']);
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>
-                        <option value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>">
-                            <?php echo htmlspecialchars($data['pro_keahlian']); ?></option>
-                        <option value="Multimedia">Multimedia"</option>
+                        <option value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" selected>
+                            <?php echo htmlspecialchars($data['pro_keahlian']); ?>
+                        </option>
+                        <option value="Multimedia">Multimedia</option>
                         <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
                         <option value="Perkantoran">Perkantoran</option>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" value="<?php echo htmlspecialchars($data['TL']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -223,16 +211,6 @@ unset($_SESSION['form_data']);
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="form-control"
-                        value="<?php echo htmlspecialchars($data['tanggal_mulai']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="form-control"
-                        value="<?php echo htmlspecialchars($data['tanggal_selesai']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
                     <label>Pembimbing</label>
                     <select name="id_pembimbing" class="form-control" required>
                         <?php
@@ -255,20 +233,6 @@ unset($_SESSION['form_data']);
                                 <?php echo htmlspecialchars($row['nama_guru']); ?></option>
                         <?php } ?>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control"
-                        value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control"
-                        value="<?php echo htmlspecialchars($data['password']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
                 </div>
             </div>
 
@@ -316,72 +280,11 @@ unset($_SESSION['form_data']);
             }
         });
     </script>
-    </div>
 
     <!-- Script lainnya tetap sama -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-    <script>
-        function validateNIS() {
-            const nisInput = document.getElementById('nis');
-            const nisError = document.getElementById('nisError');
-            const nisValue = nisInput.value.trim();
-
-            if (nisValue.length < 8 || nisValue.length > 12) {
-                nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
-                nisInput.classList.add('is-invalid');
-                return false;
-            } else if (!/^\d+$/.test(nisValue)) {
-                nisError.textContent = 'NIS harus berupa angka';
-                nisInput.classList.add('is-invalid');
-                return false;
-            } else {
-                nisError.textContent = '';
-                nisInput.classList.remove('is-invalid');
-                return true;
-            }
-        }
-
-        function validateNISN() {
-            const nisnInput = document.getElementById('nisn');
-            const nisnError = document.getElementById('nisnError');
-            const nisnValue = nisnInput.value.trim();
-
-            if (nisnValue.length !== 10) {
-                nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
-                nisnInput.classList.add('is-invalid');
-                return false;
-            } else if (!/^\d+$/.test(nisnValue)) {
-                nisnError.textContent = 'NISN harus berupa angka';
-                nisnInput.classList.add('is-invalid');
-                return false;
-            } else {
-                nisnError.textContent = '';
-                nisnInput.classList.remove('is-invalid');
-                return true;
-            }
-        }
-
-        function validateForm() {
-            const isNISValid = validateNIS();
-            const isNISNValid = validateNISN();
-
-            if (!isNISValid || !isNISNValid) {
-                if (!isNISValid) {
-                    document.getElementById('nis').focus();
-                } else {
-                    document.getElementById('nisn').focus();
-                }
-                return false;
-            }
-            return true;
-        }
-
-        // Validasi real-time saat pengguna mengetik
-        document.getElementById('nis').addEventListener('input', validateNIS);
-        document.getElementById('nisn').addEventListener('input', validateNISN);
-    </script>
 </body>
 
 </html>
