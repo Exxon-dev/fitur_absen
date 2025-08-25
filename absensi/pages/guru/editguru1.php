@@ -204,7 +204,7 @@ if (isset($_GET['id_guru'])) {
 </head>
 
 <body>
-    <h2 class="text-left">Data Guru</h2>
+    <h2 class="text-left">Edit Guru</h2>
     <div class="main-container container-custom">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <?php if (isset($_GET['pesan'])): ?>
@@ -249,30 +249,30 @@ if (isset($_GET['id_guru'])) {
             <form action="pages/guru/proses_editguru.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Nama Guru</label>
                         <input type="text" name="nama_guru" class="form-control" value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Nip</label>
                         <input type="text" name="nip" class="form-control" value="<?php echo htmlspecialchars($data['nip']); ?>" required>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Jenis Kelamin</label>
                         <select name="jenis_kelamin" class="form-control">
                             <option value="Laki-laki" <?php if (($data['jenis_kelamin'] ?? '') == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
                             <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Alamat</label>
                         <input type="text" name="alamat" class="form-control" value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>No. Telepon / HP</label>
                         <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Nama Sekolah</label>
                         <select name="id_sekolah" class="form-control" required>
                             <?php
@@ -283,14 +283,6 @@ if (isset($_GET['id_guru'])) {
                             }
                             ?>
                         </select>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password']); ?>" required>
                     </div>
                 </div>
                 <div class="form-group row">

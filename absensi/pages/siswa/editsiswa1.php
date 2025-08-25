@@ -121,7 +121,7 @@ unset($_SESSION['form_data']);
 </head>
 
 <body>
-    <h2 class="text-left">Data Siswa</h2>
+    <h2 class="text-left">Edit Siswa</h2>
     <div class="main-container container-custom">
         <?php
         if (isset($_GET['id_siswa'])) {
