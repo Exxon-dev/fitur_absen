@@ -125,17 +125,17 @@ unset($_SESSION['form_data']);
     <div class="main-container container-custom">
         <form action="pages/guru/proses_tambahguru.php" method="post" onsubmit="return validateForm()">
             <div class="form-row">
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>Nama Guru</label>
                     <input type="text" name="nama_guru" class="form-control" 
                            value="<?php echo isset($form_data['nama_guru']) ? $form_data['nama_guru'] : ''; ?>" required>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>Nip</label>
                     <input type="text" name="nip" class="form-control" 
                            value="<?php echo isset($form_data['nip']) ? $form_data['nip'] : ''; ?>" required>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
                         <option value="">Jenis Kelamin</option>
@@ -143,17 +143,17 @@ unset($_SESSION['form_data']);
                         <option value="Perempuan" <?php if (($form_data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                     </select>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>Alamat</label>
                     <input type="text" name="alamat" class="form-control" 
                            value="<?php echo isset($form_data['alamat']) ? $form_data['alamat'] : ''; ?>">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>No. Telepon / HP</label>
                     <input type="text" name="no_tlp" class="form-control" 
                            value="<?php echo isset($form_data['no_tlp']) ? $form_data['no_tlp'] : ''; ?>">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
                         <option value="">Pilih Sekolah</option>
@@ -166,14 +166,14 @@ unset($_SESSION['form_data']);
                         ?>
                     </select>
                 </div>
-                
-                <div class="form-group col-md-4">
+
+                <div class="form-group col-md-3">
                     <label>Username</label>
                     <input type="text" name="username" id="username" class="form-control <?php echo !empty($error_username) ? 'is-invalid' : ''; ?>" 
                            value="<?php echo isset($form_data['username']) ? $form_data['username'] : ''; ?>" required>
                     <div id="usernameError" class="error-message"><?php echo $error_username; ?></div>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <label>Password</label>
                     <input type="password" name="password" id="password" class="form-control <?php echo !empty($error_password) ? 'is-invalid' : ''; ?>" required>
                     <div id="passwordError" class="error-message"><?php echo $error_password; ?></div>

@@ -126,26 +126,26 @@ unset($_SESSION['form_data']);
         
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>NIS</label>
                     <input type="text" name="nis" id="nis" class="form-control <?php echo !empty($error_nis) ? 'is-invalid' : ''; ?>" 
                            value="<?php echo isset($form_data['nis']) ? $form_data['nis'] : ''; ?>" 
                            required minlength="8" maxlength="12" oninput="validateNIS()">
                     <div id="nisError" class="error-message"><?php echo $error_nis; ?></div>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>NISN</label>
                     <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>" 
                            value="<?php echo isset($form_data['nisn']) ? $form_data['nisn'] : ''; ?>" 
                            required maxlength="10" minlength="10" oninput="validateNISN()">
                     <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Nama Siswa</label>
                     <input type="text" name="nama_siswa" class="form-control" 
                            value="<?php echo isset($form_data['nama_siswa']) ? $form_data['nama_siswa'] : ''; ?>" required>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
                         <option value="">Pilih Sekolah</option>
@@ -160,12 +160,12 @@ unset($_SESSION['form_data']);
                         <?php } ?>
                     </select>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Program Keahlian</label>
                     <input type="text" name="pro_keahlian" class="form-control" 
                            value="<?php echo isset($form_data['pro_keahlian']) ? $form_data['pro_keahlian'] : ''; ?>" required>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label>Perusahaan</label>
                     <select name="id_perusahaan" class="form-control" required>
                         <option value="">Pilih Perusahaan</option>
