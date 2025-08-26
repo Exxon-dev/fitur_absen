@@ -14,6 +14,7 @@ if (isset($_POST['submit'])) {
     $alamat = mysqli_real_escape_string($coneksi, $_POST['alamat']);
     $no_tlp = mysqli_real_escape_string($coneksi, $_POST['no_tlp']);
     $id_sekolah = mysqli_real_escape_string($coneksi, $_POST['id_sekolah']);
+    $id_perusahaan = mysqli_real_escape_string($coneksi, $_POST['id_perusahaan']);
     $username = mysqli_real_escape_string($coneksi, $_POST['username']);
     $password = mysqli_real_escape_string($coneksi, $_POST['password']);
 
@@ -45,6 +46,7 @@ if (isset($_POST['submit'])) {
         alamat,
         no_tlp,
         id_sekolah,
+        id_perusahaan,
         username,
         password
     ) VALUES (
@@ -55,6 +57,7 @@ if (isset($_POST['submit'])) {
         '$alamat',
         '$no_tlp',
         '$id_sekolah',
+        '$id_perusahaan',
         '$username',
         '$password'
     )");
