@@ -7,12 +7,23 @@ $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 
 $tanggal_hari_ini = date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
+$id_siswa = $_GET['id_siswa'] ?? null;
 
 // Inisialisasi variabel
 $jurnal_data = null;
 $catatan_list = [];
 $catatan_pembimbing = null;
 $keterangan = 'Tidak ada jurnal';
+$nama_siswa = '';
+
+// Jika ada id_siswa, ambil nama siswa
+if ($id_siswa) {
+    $siswa_result = mysqli_query($coneksi, "SELECT nama_siswa FROM siswa WHERE id_siswa = '$id_siswa'");
+    if ($siswa_result && mysqli_num_rows($siswa_result) > 0) {
+        $siswa_data = mysqli_fetch_assoc($siswa_result);
+        $nama_siswa = $siswa_data['nama_siswa'];
+    }
+}
 
 // Jika ada id_jurnal, ambil data jurnal
 if ($id_jurnal) {
@@ -21,39 +32,43 @@ if ($id_jurnal) {
 
     if ($jurnal_data) {
         $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
+        $id_siswa = $jurnal_data['id_siswa'] ?? $id_siswa;
+    }
+}
 
-        // Get notes - tampilkan semua catatan untuk jurnal ini
-        $catatan_result = mysqli_query(
-            $coneksi,
-            "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
-             FROM catatan c
-             LEFT JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
-             WHERE c.id_jurnal = '$id_jurnal'
-             ORDER BY c.id_catatan ASC"
-        );
+// Get notes - tampilkan semua catatan untuk siswa ini, terlepas dari ada jurnal atau tidak
+if ($id_siswa) {
+    $catatan_query = "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
+                     FROM catatan c
+                     LEFT JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+                     WHERE c.id_siswa = '$id_siswa'
+                     ORDER BY c.id_catatan DESC"; // Urutkan dari yang terbaru
+}
 
-        if ($catatan_result) {
-            while ($r = mysqli_fetch_assoc($catatan_result)) {
-                $catatan_list[] = $r;
-            }
+if (!empty($catatan_query)) {
+    $catatan_result = mysqli_query($coneksi, $catatan_query);
+    if ($catatan_result) {
+        while ($r = mysqli_fetch_assoc($catatan_result)) {
+            $catatan_list[] = $r;
         }
     }
 }
 
-// Cek apakah pembimbing sudah punya catatan untuk jurnal ini
-// Hanya jika ada id_jurnal, jika tidak maka mode akan selalu 'tambah'
-if ($level === 'pembimbing' && $id_pembimbing && $id_jurnal) {
-    foreach ($catatan_list as $catatan) {
-        if ($catatan['id_pembimbing'] == $id_pembimbing) {
-            $catatan_pembimbing = $catatan;
-            break;
-        }
+// Cek apakah pembimbing sudah punya catatan untuk siswa ini
+if ($level === 'pembimbing' && $id_pembimbing && $id_siswa) {
+    $cek_catatan_query = "SELECT * FROM catatan 
+                         WHERE id_siswa = '$id_siswa' 
+                         AND id_pembimbing = '$id_pembimbing'
+                         ORDER BY id_catatan DESC LIMIT 1";
+    $cek_catatan_result = mysqli_query($coneksi, $cek_catatan_query);
+    
+    if ($cek_catatan_result && mysqli_num_rows($cek_catatan_result) > 0) {
+        $catatan_pembimbing = mysqli_fetch_assoc($cek_catatan_result);
     }
 }
 
 // Tentukan mode dan teks tombol
-// Jika tidak ada id_jurnal, mode selalu 'tambah'
-$mode = ($level === 'pembimbing' && $catatan_pembimbing && $id_jurnal) ? 'update' : 'tambah';
+$mode = ($level === 'pembimbing' && $catatan_pembimbing) ? 'update' : 'tambah';
 $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'SIMPAN') : '';
 ?>
 
@@ -131,6 +146,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
             <?php endif; ?>
             <input type="hidden" name="mode" value="<?= $mode ?>">
             <input type="hidden" name="id_jurnal" value="<?= htmlspecialchars($id_jurnal) ?>">
+            <input type="hidden" name="id_siswa" value="<?= htmlspecialchars($id_siswa) ?>">
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Tanggal</label>
@@ -139,12 +155,14 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Jurnal</label>
-                <div class="col-sm-15">
-                    <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($keterangan) ?></textarea>
+            <?php if ($id_jurnal && $jurnal_data): ?>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Jurnal</label>
+                    <div class="col-sm-15">
+                        <textarea class="form-control" rows="2" readonly><?= htmlspecialchars($keterangan) ?></textarea>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
 
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group">
@@ -154,7 +172,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
             <?php endif; ?>
 
             <?php if (!empty($catatan_list)): ?>
-                <h5>Catatan:</h5>
+                <h5>Catatan Pembimbing:</h5>
                 <?php foreach ($catatan_list as $row): ?>
                     <div class="note-container">
                         <strong><?= htmlspecialchars($row['nama_pembimbing'] ?? 'Tidak diketahui') ?>:</strong>
@@ -164,7 +182,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <!--  -->
+                <p class="text-muted">Belum ada catatan.</p>
             <?php endif; ?>
 
             <br>
@@ -173,7 +191,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                 <div class="form-group row">
                     <div class="col text-left">
                         <?php if ($catatan_pembimbing): ?>
-                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_pembimbing['id_catatan'] ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
+                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_pembimbing['id_catatan'] ?>&id_siswa=<?= $id_siswa ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
                     <div class="col text-right">
