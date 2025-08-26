@@ -162,6 +162,54 @@ if (isset($_POST['submit'])) {
             }
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary);
+            margin: 0 auto 15px;
+            display: block;
+        }
+
         .profile-info {
             background-color: white;
             border-radius: 5px;
@@ -246,6 +294,12 @@ if (isset($_POST['submit'])) {
 
                     <div id="edit-mode" class="edit-mode">
 
+                        <div class="form-group">
+                            <label for="nama_guru">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="nama_guru" name="nama_guru"
+                                value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                        </div>
+
                         <div class="form-group text-left">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
@@ -269,12 +323,6 @@ if (isset($_POST['submit'])) {
                         <div class="form-col">
 
                             <div class="form-group">
-                                <label for="nama_guru">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
-                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
-                            </div>
-
-                            <div class="form-group">
                                 <label>No. Telepon</label>
                                 <input type="text" name="no_tlp" class="form-control"
                                     value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
@@ -287,22 +335,23 @@ if (isset($_POST['submit'])) {
                                     <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <!-- Right Column -->
-                        <div class="form-col">
                             <div class="form-group">
                                 <label>NIP</label>
                                 <input type="text" name="nip" class="form-control"
                                     value="<?php echo htmlspecialchars($data['nip']); ?>" required>
                             </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="form-col">
+                            
 
                             <div class="form-group">
                                 <label>Alamat</label>
                                 <input type="text" name="alamat" class="form-control"
-                                value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="">Sekolah</label>
                                 <select class="form-control" disabled>
@@ -319,6 +368,21 @@ if (isset($_POST['submit'])) {
                                 <input type="hidden" name="id_sekolah" value="<?= $data['id_sekolah'] ?>">
                             </div>
 
+                            <div class="form-group">
+                                <label for="">Perusahaan</label>
+                                <select class="form-control" disabled>
+                                    <?php
+                                    $perusahaan_query = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                                    while ($perusahaan = mysqli_fetch_assoc($perusahaan_query)) {
+                                        $selected = ($perusahaan['id_perusahaan'] == $data['id_perusahaan']) ? 'selected' : '';
+                                        echo '<option value="' . $perusahaan['id_perusahaan'] . '" ' . $selected . '>' . htmlspecialchars($perusahaan['nama_perusahaan']) . '</option>';
+                                    }
+                                    ?>
+                                </select>
+
+                                <!-- Hidden input agar tetap dikirim -->
+                                <input type="hidden" name="id_perusahaan" value="<?= $data['id_perusahaan'] ?>">
+                            </div>
                         </div>
                     </div>
                 </div>

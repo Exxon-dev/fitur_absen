@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $alamat = $_POST['alamat'];
     $no_tlp = $_POST['no_tlp'];
     $id_sekolah = $_POST['id_sekolah'];
+    $id_perusahaan = $_POST['id_perusahaan'];
 
     // Update ke database TANPA menyentuh kolom profile
     // PERBAIKAN: Hapus koma (,) sebelum WHERE

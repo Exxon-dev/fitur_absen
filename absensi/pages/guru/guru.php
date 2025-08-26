@@ -88,15 +88,16 @@ include('koneksi.php');
                         <th class="text-center">No</th>
                         <th class="text-center">Nama</th>
                         <th class="text-center">Sekolah</th>
-                        <th class="text-center">Alamat Sekolah</th>
+                        <th class="text-center">Perusahaan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     // Mengubah ORDER BY dari ASC menjadi DESC agar data terbaru muncul pertama
-                    $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, s.alamat_sekolah
+                    $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, p.nama_perusahaan
                                                    FROM guru g 
                                                    LEFT JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
+                                                   LEFT JOIN perusahaan p ON g.id_perusahaan = p.id_perusahaan
                                                    ORDER BY g.id_guru DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
@@ -106,7 +107,7 @@ include('koneksi.php');
                         <td>' . $no . '</td>
                         <td class="text-left">' . $data['nama_guru'] . '</td>
                         <td class="text-left">' . $data['nama_sekolah'] . '</td>
-                        <td class="text-left">' . $data['alamat_sekolah'] . '</td>
+                        <td class="text-left">' . $data['nama_perusahaan'] . '</td>
                     </tr>
                     ';
                             $no++;

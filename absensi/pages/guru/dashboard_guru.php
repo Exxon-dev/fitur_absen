@@ -72,6 +72,7 @@ $jumlah_catatan = $catatanData['jumlah'] ?? 0;
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       padding-left: 270px;
@@ -332,7 +333,34 @@ $jumlah_catatan = $catatanData['jumlah'] ?? 0;
     }
     ?>
   </div>
-  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!localStorage.getItem('guruWelcomeShown')) {
+        const namaGuru = "<?php echo !empty($nama_guru) ? htmlspecialchars($nama_guru, ENT_QUOTES) : 'Guru'; ?>";
+
+        setTimeout(() => {
+          Swal.fire({
+            title: `Selamat datang ${namaGuru}!`,
+            text: "Anda berhasil login ke sistem",
+            icon: 'success',
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            toast: true,
+            background: '#f8f9fa',
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer);
+              toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+          });
+        }, 300);
+
+        localStorage.setItem('guruWelcomeShown', 'true');
+      }
+    });
+  </script>
 </body>
 
 </html>
