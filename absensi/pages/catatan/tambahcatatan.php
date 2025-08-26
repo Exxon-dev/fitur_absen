@@ -6,6 +6,7 @@ $level = $_SESSION['level'] ?? '';
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 
 $tanggal_hari_ini = date('Y-m-d');
+$tanggal = $_GET['tanggal'] ?? date('Y-m-d');
 $id_jurnal = $_GET['id_jurnal'] ?? null;
 $id_siswa = $_GET['id_siswa'] ?? null;
 
@@ -25,7 +26,7 @@ if ($id_siswa) {
     }
 }
 
-// Jika ada id_jurnal, ambil data jurnal
+// Jika ada id_jurnal, ambil data jurnal berdasarkan tanggal yang difilter
 if ($id_jurnal) {
     $jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_jurnal = '$id_jurnal'");
     $jurnal_data = mysqli_fetch_assoc($jurnal_result);
@@ -34,6 +35,14 @@ if ($id_jurnal) {
         $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
         $id_siswa = $jurnal_data['id_siswa'] ?? $id_siswa;
     }
+} elseif ($id_siswa) {
+    // Jika tidak ada id_jurnal tetapi ada id_siswa, cari jurnal berdasarkan tanggal
+    $jurnal_result = mysqli_query($coneksi, "SELECT * FROM jurnal WHERE id_siswa = '$id_siswa' AND DATE(tanggal) = '$tanggal'");
+    if ($jurnal_result && mysqli_num_rows($jurnal_result) > 0) {
+        $jurnal_data = mysqli_fetch_assoc($jurnal_result);
+        $id_jurnal = $jurnal_data['id_jurnal'];
+        $keterangan = $jurnal_data['keterangan'] ?? 'Tidak ada jurnal';
+    }
 }
 
 // Get notes - tampilkan semua catatan untuk siswa ini, terlepas dari ada jurnal atau tidak
@@ -41,7 +50,7 @@ if ($id_siswa) {
     $catatan_query = "SELECT c.*, p.nama_pembimbing, c.tanggal AS tanggal_catatan 
                      FROM catatan c
                      LEFT JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
-                     WHERE c.id_siswa = '$id_siswa'
+                     WHERE c.id_siswa = '$id_siswa' AND DATE(c.tanggal) = '$tanggal'
                      ORDER BY c.id_catatan DESC"; // Urutkan dari yang terbaru
 }
 
@@ -54,14 +63,15 @@ if (!empty($catatan_query)) {
     }
 }
 
-// Cek apakah pembimbing sudah punya catatan untuk siswa ini
+// Cek apakah pembimbing sudah punya catatan untuk siswa ini pada tanggal yang dipilih
 if ($level === 'pembimbing' && $id_pembimbing && $id_siswa) {
     $cek_catatan_query = "SELECT * FROM catatan 
                          WHERE id_siswa = '$id_siswa' 
                          AND id_pembimbing = '$id_pembimbing'
+                         AND DATE(tanggal) = '$tanggal'
                          ORDER BY id_catatan DESC LIMIT 1";
     $cek_catatan_result = mysqli_query($coneksi, $cek_catatan_query);
-    
+
     if ($cek_catatan_result && mysqli_num_rows($cek_catatan_result) > 0) {
         $catatan_pembimbing = mysqli_fetch_assoc($cek_catatan_result);
     }
@@ -147,15 +157,25 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
             <input type="hidden" name="mode" value="<?= $mode ?>">
             <input type="hidden" name="id_jurnal" value="<?= htmlspecialchars($id_jurnal) ?>">
             <input type="hidden" name="id_siswa" value="<?= htmlspecialchars($id_siswa) ?>">
+            <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>">
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Tanggal</label>
                 <div class="col-sm-15">
-                    <input type="text" class="form-control" value="<?= htmlspecialchars($tanggal_hari_ini) ?>" readonly>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>" readonly>
                 </div>
             </div>
 
-            <?php if ($id_jurnal && $jurnal_data): ?>
+            <?php if ($id_siswa): ?>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Nama Siswa</label>
+                    <div class="col-sm-15">
+                        <input type="text" class="form-control" value="<?= htmlspecialchars($nama_siswa) ?>" readonly>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($jurnal_data): ?>
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Jurnal</label>
                     <div class="col-sm-15">
@@ -167,7 +187,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
             <?php if ($level === 'pembimbing'): ?>
                 <div class="form-group">
                     <label for="catatan">Catatan Pembimbing</label>
-                    <textarea name="catatan" class="form-control mb-3" rows="4" placeholder="Tulis catatan..." required><?= $catatan_pembimbing ? htmlspecialchars($catatan_pembimbing['catatan']) : '' ?></textarea>
+                    <textarea name="catatan" class="form-control mb-3" rows="4" placeholder="Tulis catatan..." required><?= htmlspecialchars($catatan_pembimbing['catatan'] ?? '') ?></textarea>
                 </div>
             <?php endif; ?>
 
@@ -178,7 +198,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                         <strong><?= htmlspecialchars($row['nama_pembimbing'] ?? 'Tidak diketahui') ?>:</strong>
                         <?= nl2br(htmlspecialchars($row['catatan'] ?? '')) ?>
                         <br>
-                        <small><em><?= htmlspecialchars($row['tanggal_catatan'] ?? '') ?></em></small>
+                        <small><em><?= htmlspecialchars(date('d-m-Y H:i', strtotime($row['tanggal_catatan'] ?? ''))) ?></em></small>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -191,18 +211,18 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                 <div class="form-group row">
                     <div class="col text-left">
                         <?php if ($catatan_pembimbing): ?>
-                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_pembimbing['id_catatan'] ?>&id_siswa=<?= $id_siswa ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
+                            <a href="pages/catatan/hapuscatatan.php?id_catatan=<?= $catatan_pembimbing['id_catatan'] ?>&id_siswa=<?= $id_siswa ?>&tanggal=<?= $tanggal ?>" class="hapusCatatan" id="btnHapusCatatan">Hapus</a>
                         <?php endif; ?>
                     </div>
                     <div class="col text-right">
-                        <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
+                        <a href="index.php?page=catatan&tanggal=<?= $tanggal ?>" class="btn btn-warning">KEMBALI</a>
                         <input type="submit" name="submit" class="btn btn-primary" value="<?= $teks_tombol ?>">
                     </div>
                 </div>
             <?php else: ?>
                 <div class="form-group row">
                     <div class="col text-right">
-                        <a href="index.php?page=catatan" class="btn btn-warning">KEMBALI</a>
+                        <a href="index.php?page=catatan&tanggal=<?= $tanggal ?>" class="btn btn-warning">KEMBALI</a>
                     </div>
                 </div>
             <?php endif; ?>
@@ -231,6 +251,33 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                     });
                 });
             }
+
+            // Tampilkan SweetAlert berdasarkan status flash message
+            <?php if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses'): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sukses!',
+                    text: 'Catatan berhasil ditambahkan',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+                <?php unset($_SESSION['flash_tambah']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['flash_update']) && $_SESSION['flash_update'] == 'sukses'): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sukses!',
+                    text: 'Catatan berhasil diupdate',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+                <?php unset($_SESSION['flash_update']); ?>
+            <?php endif; ?>
         });
     </script>
 </body>

@@ -75,6 +75,7 @@ $total_rows = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = max(1, ceil($total_rows / $limit));
 
 // Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
+// Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
 $sql = "
     SELECT
         siswa.id_siswa,
@@ -82,11 +83,13 @@ $sql = "
         jurnal.id_jurnal,
         jurnal.keterangan AS keterangan_jurnal,
         (
-            SELECT catatan.catatan
-            FROM catatan
-            WHERE catatan.id_jurnal = jurnal.id_jurnal
-            " . ($level === 'pembimbing' ? "AND catatan.id_pembimbing = '$id_pembimbing'" : "") . "
-            ORDER BY catatan.tanggal ASC
+            SELECT c.catatan
+            FROM catatan c
+            WHERE 
+                (c.id_jurnal = jurnal.id_jurnal OR c.id_siswa = siswa.id_siswa)
+                AND DATE(c.tanggal) = '$tanggal'
+                " . ($level === 'pembimbing' ? "AND c.id_pembimbing = '$id_pembimbing'" : "") . "
+            ORDER BY c.tanggal DESC
             LIMIT 1
         ) AS catatan
     FROM siswa
@@ -217,22 +220,19 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <?php endif; ?>
 
             <!-- Form Filter Tanggal -->
-            <form method="GET" class="form-inline">
+            <form method="GET" class="form-inline" id="filterForm">
                 <input type="hidden" name="page" value="catatan" />
 
                 <?php
-                // jika ada tanggal dari GET, gunakan itu, kalau tidak pakai hari ini
                 $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
                 ?>
 
                 <input type="date" name="tanggal" class="form-control date-picker mb-2"
-                    value="<?= htmlspecialchars($tanggal) ?>" pattern="\d{4}-\d{2}-\d{2}" />
-
-                <button type="submit" class="btn btn-primary ml-2 mb-2">
+                    value="<?= htmlspecialchars($tanggal) ?>" pattern="\d{4}-\d{2}-\d{2}" onchange="document.getElementById('filterForm').submit();" />
+                <button class="btn btn-primary ml-2 mb-2">
                     <i class="fa-solid fa-filter"></i>
                 </button>
             </form>
-
         </div>
 
         <!-- Tabel Data (kolom waktu dihapus) -->
@@ -259,7 +259,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
 
                             // Link tambah catatan (kirim id_jurnal + id_siswa)
-                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa";
+                          $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa&tanggal=$tanggal";
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
                                 <td class="text-center"><?= $no ?></td>
