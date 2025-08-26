@@ -43,24 +43,35 @@ $tanggal_mulai   = $data_siswa['tanggal_mulai'] ?? '';
 $tanggal_selesai = $data_siswa['tanggal_selesai'] ?? '';
 
 // Fungsi untuk format periode PKL (bulan dan tahun saja)
-function formatPeriodePKL($tanggal_mulai, $tanggal_selesai) {
+function formatPeriodePKL($tanggal_mulai, $tanggal_selesai)
+{
     if (empty($tanggal_mulai) || empty($tanggal_selesai)) {
         return "Periode PKL Belum Ditentukan";
     }
-    
+
     $bulan_indonesia = [
-        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        1 => 'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
     ];
-    
+
     $bulan_mulai = (int)date('m', strtotime($tanggal_mulai));
     $tahun_mulai = date('Y', strtotime($tanggal_mulai));
     $bulan_selesai = (int)date('m', strtotime($tanggal_selesai));
     $tahun_selesai = date('Y', strtotime($tanggal_selesai));
-    
+
     $nama_bulan_mulai = $bulan_indonesia[$bulan_mulai];
     $nama_bulan_selesai = $bulan_indonesia[$bulan_selesai];
-    
+
     if ($tahun_mulai === $tahun_selesai) {
         return "$nama_bulan_mulai $tahun_mulai / $nama_bulan_selesai $tahun_selesai";
     } else {
@@ -68,11 +79,10 @@ function formatPeriodePKL($tanggal_mulai, $tanggal_selesai) {
     }
 }
 
-// Query jurnal dengan filter
+// Query untuk mengambil data jurnal
 $query_jurnal = "
-    SELECT j.tanggal, j.keterangan, c.catatan
+    SELECT j.id_jurnal, j.tanggal, j.keterangan
     FROM jurnal j
-    LEFT JOIN catatan c ON j.id_jurnal = c.id_jurnal
     WHERE j.id_siswa = ? 
 ";
 
@@ -106,13 +116,52 @@ while ($row = $result_jurnal->fetch_assoc()) {
     $jurnal_data[] = $row;
 }
 
+// Ambil semua catatan untuk jurnal-jurnal ini
+if (!empty($jurnal_data)) {
+    $jurnal_ids = array_column($jurnal_data, 'id_jurnal');
+    $placeholders = implode(',', array_fill(0, count($jurnal_ids), '?'));
+
+    $query_catatan = "
+        SELECT c.id_jurnal, c.catatan
+        FROM catatan c
+        WHERE c.id_jurnal IN ($placeholders)
+        ORDER BY c.id_catatan ASC
+    ";
+
+    $stmt_catatan = $coneksi->prepare($query_catatan);
+    $stmt_catatan->bind_param(str_repeat('i', count($jurnal_ids)), ...$jurnal_ids);
+    $stmt_catatan->execute();
+    $result_catatan = $stmt_catatan->get_result();
+
+    $catatan_data = [];
+    while ($row = $result_catatan->fetch_assoc()) {
+        $catatan_data[$row['id_jurnal']][] = $row['catatan'];
+    }
+
+    // Gabungkan data jurnal dengan catatan
+    foreach ($jurnal_data as &$jurnal) {
+        $id_jurnal = $jurnal['id_jurnal'];
+        $jurnal['catatan_list'] = $catatan_data[$id_jurnal] ?? [];
+    }
+}
+
 // Buat judul berdasarkan jenis filter
 if ($filter_type == 'daily') {
     $judul_periode = "Tanggal: " . date('d-m-Y', strtotime($start_date)) . " - " . date('d-m-Y', strtotime($end_date));
 } elseif ($filter_type == 'monthly') {
     $month_names = [
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
     ];
     $judul_periode = "Bulan: " . $month_names[$month - 1] . " " . $year;
 } elseif ($filter_type == 'yearly') {
@@ -128,7 +177,7 @@ foreach ($jurnal_data as $row) {
 
 // Jika tidak ada data, tampilkan pesan
 if (empty($jurnal_data)) {
-    echo "<p>Tidak ada data jurnal untuk periode yang dipilih.</p>";    
+    echo "<p>Tidak ada data jurnal untuk periode yang dipilih.</p>";
     exit();
 }
 ?>
@@ -175,6 +224,11 @@ if (empty($jurnal_data)) {
             border: 1px solid #000;
             padding: 6px;
             font-size: 11px;
+        }
+
+        .catatan-list {
+            margin: 0;
+            padding-left: 15px;
         }
 
         .ttd {
@@ -234,7 +288,17 @@ if (empty($jurnal_data)) {
                     <td style="text-align: center;"><?= $no++ ?></td>
                     <td style="text-align: center;"><?= date("d-m-Y", strtotime($row['tanggal'])) ?></td>
                     <td><?= htmlspecialchars($row['keterangan']) ?></td>
-                    <td><?= htmlspecialchars($row['catatan'] ?? '') ?></td>
+                    <td>
+                        <?php if (!empty($row['catatan_list'])): ?>
+                            <ul class="catatan-list">
+                                <?php foreach ($row['catatan_list'] as $catatan): ?>
+                                    <li><?= htmlspecialchars($catatan) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            -
+                        <?php endif; ?>
+                    </td>
                     <td></td>
                 </tr>
             <?php endforeach; ?>
@@ -268,4 +332,5 @@ if (empty($jurnal_data)) {
         <?php endif; ?>
     <?php endforeach; ?>
 </body>
+
 </html>
