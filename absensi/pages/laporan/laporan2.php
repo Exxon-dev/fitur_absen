@@ -10,7 +10,7 @@ if (!isset($_SESSION['id_pembimbing'])) {
 }
 
 // Query untuk mengambil daftar siswa berdasarkan ID guru
-$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_pembimbing = '$id_pembimbing'";
+$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_perusahaan = '$id_perusahaan'";
 $result = mysqli_query($coneksi, $query);
 
 // Cek jika query berhasil
@@ -129,7 +129,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                         <?php
                         mysqli_data_seek($result, 0);
                         while ($row = mysqli_fetch_assoc($result)): ?>
-                        <option value="<?= $row['id_perusahaan'] ?>">
+                        <option value="<?= $row['id_siswa'] ?>">
                             <?= htmlspecialchars($row['nama_siswa']) ?>
                         </option>
                         <?php endwhile; ?>
