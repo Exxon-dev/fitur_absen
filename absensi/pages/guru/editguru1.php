@@ -162,32 +162,32 @@ if (isset($_GET['id_guru'])) {
             }
 
             .hapusGuru {
-            color: white;
-            /* Text putih */
-            background-color: #344767;
-            /* Warna abu-abu Bootstrap */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            /* Shadow */
-            border: none;
-            /* Hilangkan border */
-            padding: 8px 16px;
-            /* Padding yang sesuai */
-            border-radius: 4px;
-            /* Sedikit rounded corners */
-            transition: all 0.3s ease;
-            /* Efek transisi halus */
-        }
+                color: white;
+                /* Text putih */
+                background-color: #344767;
+                /* Warna abu-abu Bootstrap */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                /* Shadow */
+                border: none;
+                /* Hilangkan border */
+                padding: 8px 16px;
+                /* Padding yang sesuai */
+                border-radius: 4px;
+                /* Sedikit rounded corners */
+                transition: all 0.3s ease;
+                /* Efek transisi halus */
+            }
 
-        .hapusGuru:hover {
-            background-color: #5a6268;
-            /* Warna lebih gelap saat hover */
-            color: white;
-            /* Tetap putih saat hover */
-            transform: translateY(-1px);
-            /* Sedikit efek angkat */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            /* Shadow lebih besar saat hover */
-        }
+            .hapusGuru:hover {
+                background-color: #5a6268;
+                /* Warna lebih gelap saat hover */
+                color: white;
+                /* Tetap putih saat hover */
+                transform: translateY(-1px);
+                /* Sedikit efek angkat */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+                /* Shadow lebih besar saat hover */
+            }
 
             @media (max-width: 991px) {
                 body {
@@ -287,6 +287,7 @@ if (isset($_GET['id_guru'])) {
                     <div class="form-group col-md-4">
                         <label>Perusahaan</label>
                         <select name="id_perusahaan" class="form-control" required>
+                            <option value="">-- Pilih Perusahaan --</option>
                             <?php
                             $queryPerusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                             while ($perusahaan = mysqli_fetch_assoc($queryPerusahaan)) {
