@@ -162,7 +162,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Tanggal</label>
                 <div class="col-sm-15">
-                    <input type="text" class="form-control" value="<?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>" readonly>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars(date('m-d-Y', strtotime($tanggal))) ?>" readonly>
                 </div>
             </div>
 

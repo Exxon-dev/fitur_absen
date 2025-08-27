@@ -63,7 +63,6 @@ include('koneksi.php');
             vertical-align: middle;
         }
 
-
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -84,13 +83,14 @@ include('koneksi.php');
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                    <th class="text-center">No</th>
-                    <th class="text-center">NISN</th>
-                    <th class="text-center">Nama</th>
-                    <th class="text-center">Sekolah</th>
-                    <th class="text-center">Tempat Prakerin</th>
-                    <th class="text-center">Tanggal Mulai</th>
-                    <th class="text-center">Tanggal Selesai</th>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">NISN</th>
+                        <th class="text-center">Nama</th>
+                        <th class="text-center">Sekolah</th>
+                        <th class="text-center">Tempat Prakerin</th>
+                        <th class="text-center">Tanggal Mulai</th>
+                        <th class="text-center">Tanggal Selesai</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,6 +111,10 @@ include('koneksi.php');
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
+                            // Format tanggal dari Y-m-d ke m-d-Y
+                            $tanggal_mulai = !empty($data['tanggal_mulai']) ? date('m-d-Y', strtotime($data['tanggal_mulai'])) : '';
+                            $tanggal_selesai = !empty($data['tanggal_selesai']) ? date('m-d-Y', strtotime($data['tanggal_selesai'])) : '';
+                            
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td class="text-center">' . $no++ . '</td>
@@ -118,14 +122,14 @@ include('koneksi.php');
                             <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
-                            <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
-                            <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
+                            <td>' . htmlspecialchars($tanggal_mulai) . '</td>
+                            <td>' . htmlspecialchars($tanggal_selesai) . '</td>
                         </tr>';
                         }
                     } else {
                         echo '
                         <tr>
-                            <td colspan="8" class="text-center">Tidak ada data.</td>
+                            <td colspan="7" class="text-center">Tidak ada data.</td>
                         </tr>';
                     }
                     ?>
