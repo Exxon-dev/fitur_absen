@@ -94,7 +94,6 @@
 				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
 				<div class="col-sm-15">
 					<input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" required>
-					<div class="file-info">Maksimal ukuran file: 2MB. Format yang diterima: JPG, PNG, GIF.</div>
 					<div id="preview" class="mt-2" style="display:none;">
 						<img id="preview-image" src="#" alt="Preview Logo" style="max-width: 200px; max-height: 200px;">
 					</div>

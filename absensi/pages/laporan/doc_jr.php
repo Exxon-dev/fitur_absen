@@ -116,32 +116,43 @@ while ($row = $result_jurnal->fetch_assoc()) {
     $jurnal_data[] = $row;
 }
 
-// Ambil semua catatan untuk jurnal-jurnal ini
+// PERBAIKAN: Ambil catatan berdasarkan id_siswa dan tanggal, bukan hanya id_jurnal
 if (!empty($jurnal_data)) {
-    $jurnal_ids = array_column($jurnal_data, 'id_jurnal');
-    $placeholders = implode(',', array_fill(0, count($jurnal_ids), '?'));
-
+    // Buat array tanggal untuk filter catatan
+    $tanggal_jurnal = array_map(function($item) {
+        return $item['tanggal'];
+    }, $jurnal_data);
+    
+    $placeholders = implode(',', array_fill(0, count($tanggal_jurnal), '?'));
+    
     $query_catatan = "
-        SELECT c.id_jurnal, c.catatan
+        SELECT c.id_jurnal, c.catatan, c.tanggal as catatan_tanggal
         FROM catatan c
-        WHERE c.id_jurnal IN ($placeholders)
-        ORDER BY c.id_catatan ASC
+        WHERE c.id_siswa = ? 
+        AND DATE(c.tanggal) IN ($placeholders)
+        ORDER BY c.tanggal ASC
     ";
-
+    
+    // Siapkan parameter
+    $params = array_merge([$id_siswa], $tanggal_jurnal);
+    $param_types = str_repeat('s', count($tanggal_jurnal));
+    $param_types = 'i' . $param_types; // i untuk id_siswa, s untuk setiap tanggal
+    
     $stmt_catatan = $coneksi->prepare($query_catatan);
-    $stmt_catatan->bind_param(str_repeat('i', count($jurnal_ids)), ...$jurnal_ids);
+    $stmt_catatan->bind_param($param_types, ...$params);
     $stmt_catatan->execute();
     $result_catatan = $stmt_catatan->get_result();
 
     $catatan_data = [];
     while ($row = $result_catatan->fetch_assoc()) {
-        $catatan_data[$row['id_jurnal']][] = $row['catatan'];
+        $catatan_tanggal = date('Y-m-d', strtotime($row['catatan_tanggal']));
+        $catatan_data[$catatan_tanggal][] = $row['catatan'];
     }
 
     // Gabungkan data jurnal dengan catatan
     foreach ($jurnal_data as &$jurnal) {
-        $id_jurnal = $jurnal['id_jurnal'];
-        $jurnal['catatan_list'] = $catatan_data[$id_jurnal] ?? [];
+        $tanggal_jurnal = date('Y-m-d', strtotime($jurnal['tanggal']));
+        $jurnal['catatan_list'] = $catatan_data[$tanggal_jurnal] ?? [];
     }
 }
 
@@ -263,7 +274,7 @@ if (empty($jurnal_data)) {
 
     <?php foreach ($grouped_by_month as $bulan => $records): ?>
         <div class="judul">
-            <div>JURNAL PRAKERIN</div>
+            <div>JURNAL PRAKERIN</div>  
             <div>SMA N 1 Magelang</div>
             <div class="periode-pkl" style="font-size: 11px;"><?= formatPeriodePKL($tanggal_mulai, $tanggal_selesai) ?></div>
             <div class="periode-filter"><?= $judul_periode ?></div>
@@ -320,7 +331,7 @@ if (empty($jurnal_data)) {
         <!-- tanda tangan -->
         <div class="ttd">
             <div>
-                <div>................., .......... <?= date('Y') ?></div>
+                <div>.................,<?= date('Y') ?></div>
                 <div style="margin-top:20px;">PEMBIMBING DUDI</div>
                 <br><br><br><br><br><br>
                 <div>(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
