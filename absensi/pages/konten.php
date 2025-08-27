@@ -36,7 +36,7 @@ function checkAccess($requiredLevel)
 }
 
 $accessControl = [
-    'dashboard' => ['admin', 'pembimbing', 'siswa', 'guru', 'sekolah'],
+    'dashboard' => ['admin'],
     'profile_admin' => ['admin'],
     'rekap_absen' => ['pembimbing'],
     'dashboard_pembimbing' => ['pembimbing'],

@@ -161,9 +161,10 @@
                 preview.style.display = 'none';
                 return;
             }
-
+            
             if (file) {
                 const reader = new FileReader();
+
 
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
