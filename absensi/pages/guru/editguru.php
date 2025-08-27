@@ -371,6 +371,7 @@ if (isset($_POST['submit'])) {
                             <div class="form-group">
                                 <label for="">Perusahaan</label>
                                 <select class="form-control" disabled>
+                                    <option value="">-- Belum Memiliki Perusahaan --</option>
                                     <?php
                                     $perusahaan_query = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                                     while ($perusahaan = mysqli_fetch_assoc($perusahaan_query)) {
