@@ -38,7 +38,8 @@ if ($current_day == 7) { // Hari Minggu
         $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
         $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
     } else { // Hari Senin-Jumat
-        $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
+
+        $allow_jurnal = ($current_time >= '09:00' && $current_time <= '16:15');
         $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
     }
 }
@@ -74,6 +75,7 @@ $total_rows = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = max(1, ceil($total_rows / $limit));
 
 // Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
+// Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
 $sql = "
     SELECT
         siswa.id_siswa,
@@ -81,11 +83,13 @@ $sql = "
         jurnal.id_jurnal,
         jurnal.keterangan AS keterangan_jurnal,
         (
-            SELECT catatan.catatan
-            FROM catatan
-            WHERE catatan.id_jurnal = jurnal.id_jurnal
-            " . ($level === 'pembimbing' ? "AND catatan.id_pembimbing = '$id_pembimbing'" : "") . "
-            ORDER BY catatan.tanggal ASC
+            SELECT c.catatan
+            FROM catatan c
+            WHERE 
+                (c.id_jurnal = jurnal.id_jurnal OR c.id_siswa = siswa.id_siswa)
+                AND DATE(c.tanggal) = '$tanggal'
+                " . ($level === 'pembimbing' ? "AND c.id_pembimbing = '$id_pembimbing'" : "") . "
+            ORDER BY c.tanggal DESC
             LIMIT 1
         ) AS catatan
     FROM siswa
@@ -138,6 +142,12 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
         .table tbody tr:hover {
             background-color: #e9ecef;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #dee2e6 !important;
+            vertical-align: middle;
         }
 
         .time-alert {
@@ -219,12 +229,25 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <?php endif; ?>
 
             <!-- Form Filter Tanggal -->
-            <form method="GET" class="form-inline">
+            <form method="GET" class="form-inline" id="filterForm">
                 <input type="hidden" name="page" value="catatan" />
+<<<<<<< HEAD
                 <input type="date" name="tanggal" class="form-control date-picker mb-2"
                     value="<?= htmlspecialchars($tanggal) ?>"
                     pattern="\d{4}-\d{2}-\d{2}" />
                 <button type="submit" class="btn btn-primary ml-2 mb-2"> <i class="fa-solid fa-filter"></i></button>
+=======
+
+                <?php
+                $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+                ?>
+
+                <input type="date" name="tanggal" class="form-control date-picker mb-2"
+                    value="<?= htmlspecialchars($tanggal) ?>" pattern="\d{4}-\d{2}-\d{2}" onchange="document.getElementById('filterForm').submit();" />
+                <button class="btn btn-primary ml-2 mb-2">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+>>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
             </form>
         </div>
 
@@ -249,8 +272,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Belum ada jurnal';
                             $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
 
+<<<<<<< HEAD
                             // Link tambah catatan
                             $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
+=======
+                            // Link tambah catatan (kirim id_jurnal + id_siswa)
+                          $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa&tanggal=$tanggal";
+>>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
                                 <td class="text-center"><?= $no ?></td>

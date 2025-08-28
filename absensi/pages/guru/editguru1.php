@@ -161,6 +161,37 @@ if (isset($_GET['id_guru'])) {
                 background-color: #e0a800;
             }
 
+<<<<<<< HEAD
+=======
+            .hapusGuru {
+                color: white;
+                /* Text putih */
+                background-color: #344767;
+                /* Warna abu-abu Bootstrap */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                /* Shadow */
+                border: none;
+                /* Hilangkan border */
+                padding: 8px 16px;
+                /* Padding yang sesuai */
+                border-radius: 4px;
+                /* Sedikit rounded corners */
+                transition: all 0.3s ease;
+                /* Efek transisi halus */
+            }
+
+            .hapusGuru:hover {
+                background-color: #5a6268;
+                /* Warna lebih gelap saat hover */
+                color: white;
+                /* Tetap putih saat hover */
+                transform: translateY(-1px);
+                /* Sedikit efek angkat */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+                /* Shadow lebih besar saat hover */
+            }
+
+>>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
             @media (max-width: 991px) {
                 body {
                     padding-left: 0;
@@ -176,6 +207,10 @@ if (isset($_GET['id_guru'])) {
 </head>
 
 <body>
+<<<<<<< HEAD
+=======
+    <h2 class="text-left">Edit Guru</h2>
+>>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
     <div class="main-container container-custom">
         <h2 class="text-center">Data Guru</h2>
         <hr>
@@ -243,11 +278,11 @@ if (isset($_GET['id_guru'])) {
                         <label>Alamat</label>
                         <input type="text" name="alamat" class="form-control" value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>No. Telepon / HP</label>
                         <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Nama Sekolah</label>
                         <select name="id_sekolah" class="form-control" required>
                             <?php
@@ -259,13 +294,18 @@ if (isset($_GET['id_guru'])) {
                             ?>
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                    <div class="form-group col-md-4">
+                        <label>Perusahaan</label>
+                        <select name="id_perusahaan" class="form-control" required>
+                            <option value="">-- Pilih Perusahaan --</option>
+                            <?php
+                            $queryPerusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                            while ($perusahaan = mysqli_fetch_assoc($queryPerusahaan)) {
+                                $selected = ($data['id_perusahaan'] == $perusahaan['id_perusahaan']) ? 'selected' : '';
+                                echo "<option value='{$perusahaan['id_perusahaan']}' $selected>{$perusahaan['nama_perusahaan']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
