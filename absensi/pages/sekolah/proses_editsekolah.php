@@ -23,7 +23,7 @@ if (isset($_POST['submit'])) {
     
     // Jika ada file logo baru yang diupload
     if (!empty($_FILES['logo_sekolah']['name'])) {
-        $target_dir = "../../../uploads";
+        $target_dir = "../../../uploads/";
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0755, true);
         }

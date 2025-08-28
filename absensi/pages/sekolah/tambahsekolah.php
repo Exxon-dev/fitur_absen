@@ -195,6 +195,7 @@
                 preview.style.display = 'none';
                 return;
             }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 				<label class="col-sm-2 col-form-label">Username</label>
@@ -231,8 +232,12 @@
 		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
 		crossorigin="anonymous"></script>
 =======
+=======
+            
+>>>>>>> e656d2ea044033902097cd437be3dbdaf7015d89
             if (file) {
                 const reader = new FileReader();
+
 
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;

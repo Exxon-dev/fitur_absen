@@ -39,7 +39,7 @@ if ($current_day == 7) { // Hari Minggu
         $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
     } else { // Hari Senin-Jumat
 
-        $allow_jurnal = ($current_time >= '09:00' && $current_time <= '16:15');
+        $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
         $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
     }
 }

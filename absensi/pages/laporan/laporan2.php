@@ -9,11 +9,16 @@ if (!isset($_SESSION['id_pembimbing'])) {
     exit();
 }
 
+<<<<<<< HEAD
 // Ambil data siswa (dengan atau tanpa pencarian)
 $search = $_GET['search'] ?? '';
 $query = "SELECT id_siswa, nama_siswa FROM siswa 
           WHERE id_perusahaan = '$id_perusahaan' 
           AND nama_siswa LIKE '%$search%'";
+=======
+// Query untuk mengambil daftar siswa berdasarkan ID guru
+$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_perusahaan = '$id_perusahaan'";
+>>>>>>> e656d2ea044033902097cd437be3dbdaf7015d89
 $result = mysqli_query($coneksi, $query);
 
 if (!$result) {
@@ -120,6 +125,7 @@ if (!$result) {
                 placeholder="Ketik nama siswa..."
                 autocomplete="off">
 
+<<<<<<< HEAD
             <datalist id="siswa_list">
                 <?php
                 mysqli_data_seek($result, 0);
@@ -127,6 +133,22 @@ if (!$result) {
                     <option value="<?= htmlspecialchars($row['nama_siswa']) ?>" data-id="<?= $row['id_siswa'] ?>">
                     <?php endwhile; ?>
             </datalist>
+=======
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="siswaSelect">Siswa:</label>
+                    <select id="siswaSelect" name="id_siswa" class="form-control" required>
+                        <option value="">Cari Siswa...</option>
+                        <?php
+                        mysqli_data_seek($result, 0);
+                        while ($row = mysqli_fetch_assoc($result)): ?>
+                        <option value="<?= $row['id_siswa'] ?>">
+                            <?= htmlspecialchars($row['nama_siswa']) ?>
+                        </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+>>>>>>> e656d2ea044033902097cd437be3dbdaf7015d89
 
             <!-- Input hidden untuk menyimpan ID siswa -->
             <input type="hidden" name="id_siswa" id="selected_siswa_id">
