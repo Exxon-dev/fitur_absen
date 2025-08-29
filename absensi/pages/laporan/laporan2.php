@@ -1,7 +1,10 @@
 <?php
 include('koneksi.php');
 
-$id_perusahaan = $_SESSION['id_perusahaan'];
+// Inisialisasi session jika belum ada
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Cek kalau BELUM login
 if (!isset($_SESSION['id_pembimbing'])) {
@@ -9,8 +12,11 @@ if (!isset($_SESSION['id_pembimbing'])) {
     exit();
 }
 
-// Query untuk mengambil daftar siswa berdasarkan ID guru
-$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_pembimbing = '$id_pembimbing'";
+// Ambil id_pembimbing dari session
+$id_pembimbing = $_SESSION['id_pembimbing'];
+
+// Query untuk mengambil daftar siswa berdasarkan ID pembimbing
+$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY nama_siswa";
 $result = mysqli_query($coneksi, $query);
 
 // Cek jika query berhasil
@@ -115,8 +121,8 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 </head>
 
 <body>
-    <h2>Laporan Siswa</h2>
     <div class="main-container container-custom">
+        <h2 class="text-center">Laporan Siswa</h2>
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
@@ -127,9 +133,13 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                     <select id="siswaSelect" name="id_siswa" class="form-control" required>
                         <option value="">Cari Siswa...</option>
                         <?php
+                        // Reset pointer hasil query ke awal
                         mysqli_data_seek($result, 0);
-                        while ($row = mysqli_fetch_assoc($result)): ?>
-                        <option value="<?= $row['id_perusahaan'] ?>">
+                        
+                        // Loop melalui hasil query
+                        while ($row = mysqli_fetch_assoc($result)): 
+                        ?>
+                        <option value="<?= $row['id_siswa'] ?>">
                             <?= htmlspecialchars($row['nama_siswa']) ?>
                         </option>
                         <?php endwhile; ?>
@@ -238,7 +248,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Choices.js for selects
-            new Choices('#siswaSelect', {
+            const siswaSelect = new Choices('#siswaSelect', {
                 searchEnabled: true,
                 searchPlaceholderValue: 'Ketik nama siswa...',
                 itemSelectText: 'Pilih',
@@ -246,7 +256,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                 noChoicesText: 'Tidak ada data siswa'
             });
 
-            new Choices('#reportSelect', {
+            const reportSelect = new Choices('#reportSelect', {
                 searchEnabled: true,
                 searchPlaceholderValue: 'Cari laporan...',
                 shouldSort: false,
