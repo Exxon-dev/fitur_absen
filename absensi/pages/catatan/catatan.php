@@ -171,27 +171,22 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             .main-container {
                 margin: 0 15px;
             }
-            
-            .journal-text {
-                max-width: 150px;
-            }
         }
     </style>
 </head>
 
 <body>
-    <h2 class="text-primary">Data Jurnal dan Catatan Harian</h2>
+    <h2 class="text-primary text-center text-md-left">Data Jurnal dan Catatan Harian</h2>
     <div class="main-container container-custom">
-
         <hr />
-
         <!-- Form Filter dan Pencarian -->
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <?php if ($level === 'siswa'): ?>
                 <div class="form-inline">
                     <div class="from-control mb-3">
                         <?php if ($allow_jurnal): ?>
-                            <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>" class="btn btn-<?= $jurnal_hari_ini ? 'primary' : 'primary' ?>">
+                            <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>"
+                                class="btn btn-<?= $jurnal_hari_ini ? 'primary' : 'primary' ?>">
                                 <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
                                 <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
                             </a>
@@ -212,12 +207,8 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                     <input type="hidden" name="page" value="catatan" />
                     <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" />
                     <div class="input-group-append">
-                        <input type="text"
-                            name="search"
-                            class="form-control"
-                            placeholder="Cari nama siswa..."
-                            value="<?= htmlspecialchars($search) ?>"
-                            aria-label="Cari nama siswa"
+                        <input type="text" name="search" class="form-control" placeholder="cari nama siswa..."
+                            value="<?= htmlspecialchars($search) ?>" aria-label="Cari nama siswa"
                             aria-describedby="button-search">
                         <button class="btn btn-primary ms-1" type="submit" id="button-search">
                             <i class="fas fa-search"></i>
@@ -231,12 +222,6 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <!-- Form Filter Tanggal -->
             <form method="GET" class="form-inline" id="filterForm">
                 <input type="hidden" name="page" value="catatan" />
-<<<<<<< HEAD
-                <input type="date" name="tanggal" class="form-control date-picker mb-2"
-                    value="<?= htmlspecialchars($tanggal) ?>"
-                    pattern="\d{4}-\d{2}-\d{2}" />
-                <button type="submit" class="btn btn-primary ml-2 mb-2"> <i class="fa-solid fa-filter"></i></button>
-=======
 
                 <?php
                 $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
@@ -247,7 +232,6 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                 <button class="btn btn-primary ml-2 mb-2">
                     <i class="fa-solid fa-filter"></i>
                 </button>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
             </form>
         </div>
 
@@ -255,12 +239,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-primary">
+                    <tr class="text-center">
+                        <th>No</th>
+                        <th>Nama Siswa</th>
+                        <th>Jurnal</th>
+                        <th>Catatan Pembimbing</th>
                     <tr>
-                        <th class="text-center">No</th>
-                        <th class="text-center">Nama Siswa</th>
-                        <th class="text-center">Jurnal</th>
-                        <th class="text-center">Catatan Pembimbing</th>
-                    </tr>
+
                 </thead>
                 <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
@@ -268,17 +253,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <?php
                             $id_jurnal = $row['id_jurnal'] ?? 0;
+                            $id_siswa = $row['id_siswa']; // ambil id_siswa
                             $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
                             $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Belum ada jurnal';
                             $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
 
-<<<<<<< HEAD
-                            // Link tambah catatan
-                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal";
-=======
                             // Link tambah catatan (kirim id_jurnal + id_siswa)
                           $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa&tanggal=$tanggal";
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
                                 <td class="text-center"><?= $no ?></td>
@@ -290,9 +271,12 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             </tr>
                             <?php $no++; ?>
                         <?php endwhile; ?>
+
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">Tidak ada data siswa ditemukan untuk tanggal <?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>.</td>
+
+                            <td colspan="5" class="text-center">Tidak ada data siswa ditemukan untuk tanggal
+                                <?= htmlspecialchars(date('m-d-Y', strtotime($tanggal))) ?>.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -304,7 +288,8 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             <ul class="pagination justify-content-center">
                 <?php if ($page_no > 1): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $page_no - 1 ?>">
+                        <a class="page-link"
+                            href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $page_no - 1 ?>">
                             &laquo; Sebelumnya
                         </a>
                     </li>
@@ -312,7 +297,8 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                     <li class="page-item <?= ($i == $page_no) ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $i ?>">
+                        <a class="page-link"
+                            href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $i ?>">
                             <?= $i ?>
                         </a>
                     </li>
@@ -320,7 +306,8 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
                 <?php if ($page_no < $total_pages): ?>
                     <li class="page-item">
-                        <a class="page-link" href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $page_no + 1 ?>">
+                        <a class="page-link"
+                            href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $page_no + 1 ?>">
                             Selanjutnya &raquo;
                         </a>
                     </li>
@@ -351,6 +338,148 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             });
         });
     </script>
+
+    <!-- SweetAlert Flash Notifications untuk Jurnal -->
+    <?php
+    if (isset($_SESSION['flash_jurnal_tambah']) && $_SESSION['flash_jurnal_tambah'] == 'sukses') {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Jurnal berhasil ditambahkan',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_jurnal_tambah']);
+    }
+
+    if (isset($_SESSION['flash_jurnal_update']) && $_SESSION['flash_jurnal_update'] == 'sukses') {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Jurnal berhasil diupdate',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_jurnal_update']);
+    }
+
+    if (isset($_SESSION['flash_jurnal_error'])) {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '" . addslashes($_SESSION['flash_jurnal_error']) . "',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_jurnal_error']);
+    }
+    ?>
+
+    <!-- SweetAlert Flash Notifications -->
+    <?php
+    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'info',
+            title: 'Sukses!',
+            text: 'Catatan berhasil dihapus',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_hapus']);
+    }
+
+    if (isset($_SESSION['flash_update']) && $_SESSION['flash_update'] == 'sukses') {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Catatan berhasil diupdate',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_update']);
+    }
+
+    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Sukses!',
+            text: 'Catatan berhasil ditambahkan',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_tambah']);
+    }
+
+    if (isset($_SESSION['flash_error'])) {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '" . addslashes($_SESSION['flash_error']) . "',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_error']);
+    }
+
+    if (isset($_SESSION['flash_duplikat'])) {
+        echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan!',
+            text: 'Anda sudah membuat catatan untuk jurnal ini',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true
+        });
+    });
+    </script>";
+        unset($_SESSION['flash_duplikat']);
+    }
+    ?>
 </body>
 
 </html>

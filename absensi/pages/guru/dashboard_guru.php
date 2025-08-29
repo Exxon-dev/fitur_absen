@@ -254,13 +254,8 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
                 <i class="material-icons opacity-10">note_add</i>
               </div>
               <div class="text-end pt-1">
-<<<<<<< HEAD
-                <p class="text-sm mb-0 text-capitalize">Catatan Siswa</p>
-                <h4 class="mb-0"><?php echo $jumlah_catatan; ?></h4>
-=======
                 <p class="text-sm mb-0 text-capitalize">Jurnal Siswa</p>
                 <h4 class="mb-0"><?php echo $jumlah_jurnal; ?></h4>
->>>>>>> e656d2ea044033902097cd437be3dbdaf7015d89
               </div>
             </div>
             <hr class="dark horizontal my-0">

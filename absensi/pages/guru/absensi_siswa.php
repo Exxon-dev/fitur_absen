@@ -214,10 +214,8 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
       vertical-align: middle;
     }
 
-<<<<<<< HEAD
     /* ===== Responsif untuk layar kecil (mobile/tablet) ===== */
     @media (max-width: 768px) {
-=======
     /* Mobile Card View */
     .student-cards {
       display: none;
@@ -243,117 +241,15 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
     }
 
     @media (max-width: 991px) {
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
       body {
         padding-left: 0;
         /* hilangkan padding kiri agar konten muat penuh */
       }
-
-<<<<<<< HEAD
-      .body-card {
-        padding: 15px;
-        margin-bottom: 15px;
-      }
-
-      /* Supaya tabel bisa digulir horizontal */
-      .table-responsive {
-        overflow-x: scroll;
-      }
-
-      /* Ukuran font tabel bisa disesuaikan agar muat */
-      .table td,
-      .table th {
-        font-size: 14px;
-        padding: 8px;
-      }
-
-      /* Jika kamu ingin badge lebih kecil */
-      .badge-sakit,
-      .badge-izin,
-      .badge-alpa,
-      .badge-belum {
-        font-size: 0.8rem;
-        padding: 4px 8px;
-=======
-      .main-container {
-        margin-right: 15px;
-        margin-left: 15px;
-      }
-
-      .student-cards {
-        display: block;
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
       }
     }
   </style>
 </head>
 
-<<<<<<< HEAD
-<body class="row">
-        <h2 class="text-primary">Data Jurnal dan Catatan Harian <?= date('d-m-Y') ?> </h2>
-  <div class="body">
-    <div class="body-card p-3">
-      <div class="container-fluid my-4">
-        <a href="index.php?page=tambahsiswa_guru" class="btn btn-primary"><i class="fas fa-plus"></i>tambah</a>
-        <div class="table-responsive">
-          <table class="table table-hover table-bordered">
-            <thead class="thead-primary bg-primary text-white">
-              <tr>
-                <th>No</th>
-                <th>Nama Siswa</th>
-                <th>Status</th>
-                <th>Sakit</th>
-                <th>Izin</th>
-                <th>Alpa</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php
-              $index = 1;
-              // Reset pointer result set ke awal
-              mysqli_data_seek($query_siswa, 0);
-
-              while ($siswa = mysqli_fetch_assoc($query_siswa)) {
-                // Pastikan format tanggal sesuai database (YYYY-MM-DD)
-                $tanggal = date('Y-m-d'); // Contoh, sesuaikan dengan kebutuhan
-
-                // Query untuk mendapatkan data absen
-                $query_absen = mysqli_query(
-                  $coneksi,
-                  "SELECT keterangan FROM absen 
-             WHERE id_siswa = '" . $siswa['id_siswa'] . "' 
-             AND tanggal = '" . $tanggal . "'"
-                );
-
-                $absen = mysqli_fetch_assoc($query_absen);
-                $keterangan = isset($absen['keterangan']) ? $absen['keterangan'] : null;
-
-                // Tentukan kelas badge dan teks status
-                $badgeClass = 'badge-secondary'; // Default: Belum absen
-                $statusText = 'Belum Absen';
-
-                if ($keterangan) {
-                  switch (strtolower($keterangan)) {
-                    case 'hadir':
-                      $badgeClass = 'badge-success';
-                      $statusText = 'Hadir';
-                      break;
-                    case 'sakit':
-                      $badgeClass = 'badge-warning';
-                      $statusText = 'Sakit';
-                      break;
-                    case 'izin':
-                      $badgeClass = 'badge-info';
-                      $statusText = 'Izin';
-                      break;
-                    case 'alpa':
-                      $badgeClass = 'badge-danger';
-                      $statusText = 'Alpa';
-                      break;
-                  }
-                }
-              ?>
-=======
 <body>
   <h2 class="text-left my-4">Absensi Siswa <?= htmlspecialchars($tanggal) ?></h2>
   <!-- Main content -->
@@ -364,7 +260,6 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
           <div class="table-responsive">
             <table class="table table-hover table-bordered">
               <thead class="table-light">
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                 <tr>
                   <th class="text-center">No</th>
                   <th class="text-center">Nama</th>

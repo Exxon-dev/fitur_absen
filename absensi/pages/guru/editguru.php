@@ -256,26 +256,19 @@ if (isset($_POST['submit'])) {
 
         select.form-control:disabled {
             color: #495057;
-            /* sama seperti normal */
-            background-color: #fff;
-            /* agar putih, bukan abu-abu */
             height: calc(1.5em + .75rem + 2px);
-            /* pastikan height seperti normal bootstrap */
             padding: .375rem .75rem;
-            /* padding default bootstrap */
-            -webkit-text-fill-color: #495057;
-            /* untuk Chrome agar teks terlihat jelas */
         }
     </style>
 </head>
 
 <body>
     <div>
+        <h3 class="text-primary text-center text-md-left">Profile Guru</h3>
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
             <div class="profile-container">
                 <div class="profile-card">
-                    <h2>Profile Guru</h2>
                     <br>
                     <div class="profile-picture-container">
                         <img src="<?php echo $data['profile'] ? '../' . htmlspecialchars($data['profile']) : '../image/default.png'; ?>"
@@ -295,7 +288,7 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit data
+                            <i class="fas fa-edit"></i> Edit Profile
                         </button>
                     </div>
 
@@ -324,9 +317,9 @@ if (isset($_POST['submit'])) {
                 </div>
 
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Data Guru</h3>
+                    <h3 class="text-center">Data Guru</h3>
+                    <br>
                     <div class="form-row">
-                        <!-- Left Column -->
                         <div class="form-col">
 
                             <div class="form-group">
@@ -354,15 +347,12 @@ if (isset($_POST['submit'])) {
                             
 
                             <div class="form-group">
-<<<<<<< HEAD
-=======
                                 <label>Alamat</label>
                                 <input type="text" name="alamat" class="form-control"
                                     value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
 
                             <div class="form-group">
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                                 <label for="">Sekolah</label>
                                 <select class="form-control" disabled>
                                     <?php
@@ -379,16 +369,8 @@ if (isset($_POST['submit'])) {
                             </div>
 
                             <div class="form-group">
-<<<<<<< HEAD
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
-                            </div>
-
-=======
                                 <label for="">Perusahaan</label>
                                 <select class="form-control" disabled>
-                                    <option value="">-- Belum Memiliki Perusahaan --</option>
                                     <?php
                                     $perusahaan_query = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                                     while ($perusahaan = mysqli_fetch_assoc($perusahaan_query)) {
@@ -401,7 +383,6 @@ if (isset($_POST['submit'])) {
                                 <!-- Hidden input agar tetap dikirim -->
                                 <input type="hidden" name="id_perusahaan" value="<?= $data['id_perusahaan'] ?>">
                             </div>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                         </div>
                     </div>
                 </div>
