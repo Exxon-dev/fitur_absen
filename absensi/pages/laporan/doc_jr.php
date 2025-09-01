@@ -281,9 +281,20 @@ if (empty($jurnal_data)) {
         </div>
 
         <br>
-        <p>Nama : <?= htmlspecialchars($nama_siswa) ?></p>
-        <p>NISN : <?= htmlspecialchars($nisn) ?></p>
-        <p>Jurusan : <?= htmlspecialchars($jurusan) ?></p>
+        <table class="table border-0">
+            <tr>
+                <td style="width: 50px;">Nama</td>
+                <td>: <?= htmlspecialchars($nama_siswa) ?></td>
+            </tr>
+            <tr>
+                <td>NISN</td>
+                <td>: <?= htmlspecialchars($nisn) ?></td>
+            </tr>
+            <tr>
+                <td>Jurusan</td>
+                <td>: <?= htmlspecialchars($jurusan) ?></td>
+            </tr>
+        </table>
 
         <table>
             <tr>
