@@ -2,15 +2,6 @@
 <?php
 
 if (isset($_POST['submit'])) {
-<<<<<<< HEAD
-	$id_sekolah = $_POST['id_sekolah'];
-	$nama_sekolah = $_POST['nama_sekolah'];
-	$alamat_sekolah = $_POST['alamat_sekolah'];
-	$kepala_sekolah = $_POST['kepala_sekolah'];
-	$username = $_POST['username'];
-	$password = $_POST['password'];
-	$logo_sekolah = $_FILES['logo_sekolah']['name'];
-=======
     $id_sekolah = $_POST['id_sekolah'];
     $nama_sekolah = $_POST['nama_sekolah'];
     $alamat_sekolah = $_POST['alamat_sekolah'];
@@ -77,7 +68,6 @@ if (isset($_POST['submit'])) {
         // Jika tidak ada file baru, gunakan logo lama
         $logo_sekolah = $logo_lama;
     }
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 
     $sql = mysqli_query($coneksi, "UPDATE sekolah SET 
     nama_sekolah='$nama_sekolah',
@@ -88,24 +78,11 @@ if (isset($_POST['submit'])) {
     id_sekolah='$id_sekolah'")
         or die(mysqli_error($coneksi));
 
-<<<<<<< HEAD
-	$sql = mysqli_query($coneksi, "UPDATE sekolah SET 
-	nama_sekolah='$nama_sekolah',
-	alamat_sekolah='$alamat_sekolah', 
-	kepala_sekolah='$kepala_sekolah', 
-	username='$username', 
-	password='$password', 
-	logo_sekolah='$logo_sekolah'
-	WHERE 
-	id_sekolah='$id_sekolah'")
-		or die(mysqli_error($coneksi));
-=======
     if ($sql) {
         $_SESSION['flash_edit'] = 'sukses';
     } else {
         $_SESSION['flash_error'] = mysqli_error($coneksi);
     }
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 
     header("Location: ../../index.php?page=sekolah");
     exit();

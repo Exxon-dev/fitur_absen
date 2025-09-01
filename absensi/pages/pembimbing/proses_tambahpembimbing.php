@@ -10,11 +10,6 @@ $_SESSION['form_data'] = $_POST;
 // Validasi username sudah digunakan
 $username = mysqli_real_escape_string($coneksi, $_POST['username']);
 $check_username = mysqli_query($coneksi, "SELECT * FROM pembimbing WHERE username = '$username'");
-
-<<<<<<< HEAD
-    if (mysqli_num_rows($cek) == 0) {
-        $sql = mysqli_query($coneksi, "INSERT INTO pembimbing (
-=======
 if (!$check_username) {
     $_SESSION['error'] = 'Terjadi kesalahan dalam validasi username: ' . mysqli_error($coneksi);
     header("Location: ../../index.php?page=tambahpembimbing");
@@ -86,13 +81,8 @@ if (mysqli_num_rows($cek) == 0) {
         header('Location: ../../index.php?page=tambahpembimbing');
         exit();
     }
-<<<<<<< HEAD
-}
-=======
 } else {
     $_SESSION['error_nama'] = 'Nama pembimbing sudah digunakan';
     header('Location: ../../index.php?page=tambahpembimbing');
     exit();
 }
-?>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be

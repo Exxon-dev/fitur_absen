@@ -86,7 +86,6 @@ include('koneksi.php');
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-<<<<<<< HEAD
                     <th>No</th>
                     <th>NISN</th>
                     <th>Nama</th>
@@ -94,16 +93,6 @@ include('koneksi.php');
                     <th>Tempat Prakerin</th>
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Selesai</th>
-=======
-                    <tr>
-                        <th class="text-center">No</th>
-                        <th class="text-center">NISN</th>
-                        <th class="text-center">Nama</th>
-                        <th class="text-center">Sekolah</th>
-                        <th class="text-center">Tempat Prakerin</th>
-                        <th class="text-center">Tanggal Mulai</th>
-                        <th class="text-center">Tanggal Selesai</th>
->>>>>>> e656d2ea044033902097cd437be3dbdaf7015d89
                     </tr>
                 </thead>
                 <tbody>
@@ -131,19 +120,11 @@ include('koneksi.php');
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td>' . $no++ . '</td>
                             <td>' . htmlspecialchars($data['nisn']) . '</td>
-<<<<<<< HEAD
                             <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
                             <td>' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
                             <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
                             <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
-=======
-                            <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
-                            <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
-                            <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
-                            <td>' . htmlspecialchars($tanggal_mulai) . '</td>
-                            <td>' . htmlspecialchars($tanggal_selesai) . '</td>
->>>>>>> e656d2ea044033902097cd437be3dbdaf7015d89
                         </tr>';
                         }
                     } else {

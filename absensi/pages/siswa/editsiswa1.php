@@ -3,21 +3,11 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include('koneksi.php');
-<<<<<<< HEAD
-=======
-
-// Mengambil data dari session jika ada (setelah redirect dari proses)
-$username_error = $_SESSION['username_error'] ?? '';
-$password_error = $_SESSION['password_error'] ?? '';
-$success = $_SESSION['success'] ?? '';
-$form_data = $_SESSION['form_data'] ?? array();
-
 // Hapus data session setelah digunakan
 unset($_SESSION['username_error']);
 unset($_SESSION['password_error']);
 unset($_SESSION['success']);
 unset($_SESSION['form_data']);
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -124,10 +114,6 @@ unset($_SESSION['form_data']);
 </head>
 
 <body>
-<<<<<<< HEAD
-=======
-    <h2 class="text-left">Edit Siswa</h2>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
     <div class="main-container container-custom">
         <h2 class="text-center">Data Siswa</h2>
         <hr>

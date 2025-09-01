@@ -30,7 +30,7 @@ $current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
 $allow_jurnal = false;
 $time_message = '';
 
-if ($current_day == 7) { // Hari Minggu
+if ($current_day == 8) { // Hari Minggu
     $allow_jurnal = false;
     $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
 } else {

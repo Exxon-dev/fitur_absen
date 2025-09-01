@@ -124,12 +124,8 @@ unset($_SESSION['form_data']);
 
 <body>
     <div class="main-container container-custom">
-<<<<<<< HEAD
         <h2 class="text-center">Tambah Guru</h2>
-        <form action="pages/guru/proses_tambahguru.php" method="post">
-=======
         <form action="pages/guru/proses_tambahguru.php" method="post" onsubmit="return validateForm()">
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label>Nama Guru</label>

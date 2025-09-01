@@ -52,17 +52,12 @@
 			border-radius: 4px;
 			transition: all 0.3s ease;
 		}
-
-<<<<<<< HEAD
-=======
 		.hapusPerusahaan:hover {
 			background-color: #5a6268;
 			color: white;
 			transform: translateY(-1px);
 			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 		}
-
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 		@media (max-width: 991px) {
 			body {
 				padding-left: 0;
@@ -77,16 +72,8 @@
 </head>
 
 <body>
-<<<<<<< HEAD
-
-	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Edit Perusahaan</h2>
-		<hr>
-=======
 	<h2 class="text-left">Edit Perusahaan</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 		<?php
 		if (isset($_GET['id_perusahaan'])) {
 			$id_perusahaan = $_GET['id_perusahaan'];
@@ -154,29 +141,12 @@
 			</div>
 
 			<div class="form-group">
-<<<<<<< HEAD
-  <div class="d-flex flex-wrap justify-content-between align-items-center">
-    <!-- Tombol Hapus di kiri -->
-    <button type="button" class="btn btn-danger hapusPerusahaan"
-      id="btnHapus" data-id="<?php echo $data['id_perusahaan']; ?>">
-      HAPUS
-    </button>
-
-    <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
-    <div class="d-flex flex-wrap justify-content-end gap-2">
-      <a href="index.php?page=perusahaan" class="btn btn-warning mr-2">KEMBALI</a>
-      <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-    </div>
-  </div>
-</div>
-=======
 				<div class="d-flex flex-wrap justify-content-between align-items-center">
 					<!-- Tombol Hapus di kiri -->
 					<button type="button" class="btn btn-danger hapusPerusahaan"
 						id="btnHapus" data-id="<?php echo $data['id_perusahaan']; ?>">
 						HAPUS
 					</button>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 
 					<!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
 					<div class="d-flex flex-wrap justify-content-end gap-2">

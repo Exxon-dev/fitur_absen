@@ -1,6 +1,5 @@
 <?php
 include('koneksi.php');
-session_start();
 
 // Mengambil data dari session jika ada (setelah redirect dari proses)
 $error_username = $_SESSION['error_username'] ?? '';
@@ -102,14 +101,9 @@ unset($_SESSION['form_data']);
 
 <body>
     <div class="main-container container-custom">
-<<<<<<< HEAD
         <h2 class="text-center">Tambah Pembimbing</h2>
         <hr>
         <form action="pages/pembimbing/proses_tambahpembimbing.php" method="post" enctype="multipart/form-data">
-
-=======
-        <form action="pages/pembimbing/proses_tambahpembimbing.php" method="post">
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label>Nama Pembimbing</label>

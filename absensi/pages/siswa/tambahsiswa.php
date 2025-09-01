@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-<?php include('koneksi.php'); ?>
-=======
-<?php 
-include('koneksi.php');
-session_start();
+<?php include('koneksi.php');
 
 // Mengambil data dari session jika ada (setelah redirect dari proses)
 $error_nis = $_SESSION['error_nis'] ?? '';
@@ -21,8 +16,6 @@ unset($_SESSION['error_password']);
 unset($_SESSION['success']);
 unset($_SESSION['form_data']);
 ?>
-
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 <!DOCTYPE html>
 <html lang="id">
 
@@ -217,13 +210,9 @@ unset($_SESSION['form_data']);
                 </div>
                 <div class="form-group col-md-3">
                     <label>Username</label>
-<<<<<<< HEAD
-                    <input type="text" name="username" class="form-control" required>
-=======
                     <input type="text" name="username" id="username" class="form-control <?php echo !empty($error_username) ? 'is-invalid' : ''; ?>" 
                            value="<?php echo isset($form_data['username']) ? $form_data['username'] : ''; ?>" required>
                     <div id="usernameError" class="error-message"><?php echo $error_username; ?></div>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                 </div>
                 <div class="form-group col-md-3">
                     <label>Password</label>
@@ -257,10 +246,7 @@ unset($_SESSION['form_data']);
 
             if (nisValue.length < 8 || nisValue.length > 12) {
                 nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
-<<<<<<< HEAD
-=======
                 nisInput.classList.add('is-invalid');
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                 return false;
             } else {
                 nisError.textContent = '';
@@ -275,10 +261,7 @@ unset($_SESSION['form_data']);
 
             if (nisnValue.length !== 10) {
                 nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
-<<<<<<< HEAD
-=======
                 nisnInput.classList.add('is-invalid');
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                 return false;
             } else {
                 nisnError.textContent = '';
@@ -342,15 +325,11 @@ unset($_SESSION['form_data']);
             }
             return true;
         }
-<<<<<<< HEAD
-=======
-
         // Validasi real-time saat pengguna mengetik
         document.getElementById('nis').addEventListener('input', validateNIS);
         document.getElementById('nisn').addEventListener('input', validateNISN);
         document.getElementById('username').addEventListener('input', validateUsername);
         document.getElementById('password').addEventListener('input', validatePassword);
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
     </script>
 </body>
 

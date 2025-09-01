@@ -87,46 +87,29 @@ include('koneksi.php');
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
-<<<<<<< HEAD
                         <th>No</th>
                         <th>Nama</th>
                         <th>Username</th>
                         <th>Password</th>
-=======
-                        <th class="text-center">No</th>
-                        <th class="text-center">Nama</th>
-                        <th class="text-center">Sekolah</th>
-                        <th class="text-center">Perusahaan</th>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-<<<<<<< HEAD
-                    $sql = mysqli_query($coneksi, "SELECT * FROM guru ORDER BY id_guru ASC") or die(mysqli_error($coneksi));
-=======
                     // Mengubah ORDER BY dari ASC menjadi DESC agar data terbaru muncul pertama
                     $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, p.nama_perusahaan
-                                                   FROM guru g 
+                            FROM guru g 
                                                    LEFT JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
                                                    LEFT JOIN perusahaan p ON g.id_perusahaan = p.id_perusahaan
                                                    ORDER BY g.id_guru DESC") or die(mysqli_error($coneksi));
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
                             echo '
                     <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editguru1&id_guru=' . $data['id_guru'] . '\'">
                         <td>' . $no . '</td>
-<<<<<<< HEAD
                         <td>' . $data['nama_guru'] . '</td>
                         <td>' . $data['username'] . '</td>
                         <td>' . $data['password'] . '</td>
-=======
-                        <td class="text-left">' . $data['nama_guru'] . '</td>
-                        <td class="text-left">' . $data['nama_sekolah'] . '</td>
-                        <td class="text-left">' . $data['nama_perusahaan'] . '</td>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
                     </tr>
                     ';
                             $no++;

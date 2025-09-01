@@ -46,9 +46,6 @@
 			padding: 20px;
 			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 		}
-
-<<<<<<< HEAD
-=======
 		.hapusSekolah {
             color: white;
             /* Text putih */
@@ -82,8 +79,6 @@
 			color: #6c757d;
 			margin-top: 5px;
 		}
-
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 		@media (max-width: 991px) {
 			body {
 				padding-left: 0;
@@ -117,10 +112,6 @@
 				$data = mysqli_fetch_assoc($select);
 			}
 		}
-		?>
-
-<<<<<<< HEAD
-		<?php
 		if (isset($_POST['submit'])) {
 			$id_sekolah		 = $_POST['id_sekolah'];
 			$nama_sekolah	 = $_POST['nama_sekolah'];
@@ -150,43 +141,10 @@
 		}
 
 		?>
-
-=======
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 		<form action="pages/sekolah/proses_editsekolah.php?id_sekolah=<?php echo $id_sekolah; ?>" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="id_sekolah" value="<?php echo $data['id_sekolah']; ?>">
 			
 			<div class="form-group row">
-<<<<<<< HEAD
-				<label class="col-sm-2 col-form-label"> Nama Sekolah</label>
-				<div class="col-sm-15">
-					<input type="text" name="nama_sekolah" class="form-control" value="<?php echo $data['nama_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Alamat Sekolah</label>
-				<div class="col-sm-15">
-					<input type="text" name="alamat_sekolah" class="form-control" value="<?php echo $data['alamat_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
-				<div class="col-sm-15">
-					<input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Username</label>
-				<div class="col-sm-15">
-					<input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Password</label>
-				<div class="col-sm-15">
-					<input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
-				<div class="col-sm-15">
-					<?php if (!empty($data['logo_sekolah'])): ?>
-						<img src="<?php echo $data['logo_sekolah']; ?>" alt="Logo Sekolah" style="max-height: 80px; display: block; margin-bottom: 10px;">
-					<?php endif; ?>
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
-				</div>
-			</div><br>
-=======
                 <div class="col-sm-6">
                     <label>Nama Sekolah</label>
                     <input type="text" name="nama_sekolah" class="form-control" value="<?php echo $data['nama_sekolah']; ?>" required>
@@ -215,8 +173,6 @@
                     <div id="error-message" class="text-danger mt-2" style="display:none;"></div>
                 </div>
             </div>
-		
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
 			<div class="form-row">
 				<div class="col text-left">
 					<button type="button" class="btn btn-danger" id="btnHapus"

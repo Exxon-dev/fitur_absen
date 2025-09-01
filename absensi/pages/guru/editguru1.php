@@ -160,9 +160,6 @@ if (isset($_GET['id_guru'])) {
             .btn-warning:hover {
                 background-color: #e0a800;
             }
-
-<<<<<<< HEAD
-=======
             .hapusGuru {
                 color: white;
                 /* Text putih */
@@ -190,8 +187,6 @@ if (isset($_GET['id_guru'])) {
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
                 /* Shadow lebih besar saat hover */
             }
-
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
             @media (max-width: 991px) {
                 body {
                     padding-left: 0;
@@ -207,12 +202,8 @@ if (isset($_GET['id_guru'])) {
 </head>
 
 <body>
-<<<<<<< HEAD
-=======
     <h2 class="text-left">Edit Guru</h2>
->>>>>>> 1ba93e3e1841f0db196d55408850db39c813b6be
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Guru</h2>
         <hr>
 
 
@@ -297,7 +288,6 @@ if (isset($_GET['id_guru'])) {
                     <div class="form-group col-md-4">
                         <label>Perusahaan</label>
                         <select name="id_perusahaan" class="form-control" required>
-                            <option value="">-- Pilih Perusahaan --</option>
                             <?php
                             $queryPerusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                             while ($perusahaan = mysqli_fetch_assoc($queryPerusahaan)) {
