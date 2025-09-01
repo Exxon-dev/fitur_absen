@@ -154,14 +154,6 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
         font-size: 1.2rem;
       }
 
-      .body-card {
-        background-color: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-        margin-bottom: 20px;
-      }
-
       .chart {
         height: 170px;
         position: relative;
@@ -174,6 +166,14 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
       input[type="radio"] {
         transform: scale(1.1);
       }
+    }
+
+    .body-card {
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
     /* Refresh Indicator */
@@ -209,6 +209,12 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
     h2 {
       color: #007bff;
       font-weight: 550
+    }
+
+    .table td,
+    .table th {
+      border: 1px solid #dee2e6 !important;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -264,76 +270,80 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
       </div>
     </div>
   </div>
+  <div class="main-container mt-4">
+    <div class="body">
+      <div class="body-card">
+        <div class="container-fluid my-4">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+              <thead class="thead-primary bg-primary text-white">
+                <tr>
+                  <th>No</th>
+                  <th>Nama Siswa</th>
+                  <th>Status</th>
+                  <th>Sakit</th>
+                  <th>Izin</th>
+                  <th>Alpa</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                $index = 1;
+                // Ambil ulang data siswa
+                $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC");
 
-  <!-- Mobile Card View -->
-  <div class="student-cards d-block d-md-none">
-    <?php
-    $dataSiswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
-    $index = 1;
-    $today = date('Y-m-d');
+                while ($siswa = mysqli_fetch_assoc($query_siswa)) {
+                  $tanggal = date('Y-m-d');
+                  $query_absen = mysqli_query(
+                    $coneksi,
+                    "SELECT keterangan FROM absen 
+                 WHERE id_siswa = '" . $siswa['id_siswa'] . "' 
+                 AND tanggal = '$tanggal'"
+                  );
+                  $absen = mysqli_fetch_assoc($query_absen);
+                  $keterangan = $absen['keterangan'] ?? null;
 
-    while ($siswa = mysqli_fetch_assoc($dataSiswa)) {
-      $attendanceQuery = mysqli_query($coneksi, "SELECT keterangan FROM absen WHERE id_siswa = {$siswa['id_siswa']} AND tanggal = '$today'") or die(mysqli_error($coneksi));
-      $attendance = mysqli_fetch_assoc($attendanceQuery);
-
-      $keterangan = $attendance['keterangan'] ?? null;
-      $badgeClass = 'badge-belum';
-      $statusText = 'Belum Absen';
-
-      if ($keterangan) {
-        switch ($keterangan) {
-          case 'sakit':
-            $badgeClass = 'badge-sakit';
-            $statusText = 'Sakit';
-            break;
-          case 'izin':
-            $badgeClass = 'badge-izin';
-            $statusText = 'Izin';
-            break;
-          case 'alpa':
-            $badgeClass = 'badge-alpa';
-            $statusText = 'Alpa';
-            break;
-          default:
-            $badgeClass = 'badge-hadir';
-            $statusText = 'Hadir';
-        }
-      }
-
-      echo '
-          <div class="student-card">
-            <div class="student-header">
-              <div>
-                <div class="student-name">' . $index . '. ' . htmlspecialchars($siswa['nama_siswa']) . '</div>
-              </div>
-              <span class="badge-status ' . $badgeClass . '">' . $statusText . '</span>
-            </div>
-            
-            <div class="radio-section">
-              <label class="radio-label disabled">
-                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="hadir" ' . (!$keterangan || $keterangan === 'hadir' ? 'checked' : '') . ' disabled>
-                <span>Hadir</span>
-              </label>
-              <label class="radio-label disabled">
-                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="sakit" ' . ($keterangan === 'sakit' ? 'checked' : '') . ' disabled>
-                <span>Sakit</span>
-              </label>
-              <label class="radio-label disabled">
-                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="izin" ' . ($keterangan === 'izin' ? 'checked' : '') . ' disabled>
-                <span>Izin</span>
-              </label>
-              <label class="radio-label disabled">
-                <input type="radio" name="absen_mobile_' . $siswa['id_siswa'] . '" value="alpa" ' . ($keterangan === 'alpa' ? 'checked' : '') . ' disabled>
-                <span>Alpa</span>
-              </label>
-            </div>
+                  $badgeClass = 'badge-secondary';
+                  $statusText = 'Belum Absen';
+                  if ($keterangan) {
+                    switch (strtolower($keterangan)) {
+                      case 'hadir':
+                        $badgeClass = 'badge-success';
+                        $statusText = 'Hadir';
+                        break;
+                      case 'sakit':
+                        $badgeClass = 'badge-warning';
+                        $statusText = 'Sakit';
+                        break;
+                      case 'izin':
+                        $badgeClass = 'badge-info';
+                        $statusText = 'Izin';
+                        break;
+                      case 'alpa':
+                        $badgeClass = 'badge-danger';
+                        $statusText = 'Alpa';
+                        break;
+                    }
+                  }
+                ?>
+                  <tr>
+                    <td><?= $index++; ?></td>
+                    <td><?= htmlspecialchars($siswa['nama_siswa']); ?></td>
+                    <td><span class="badge <?= $badgeClass; ?>"><?= $statusText; ?></span></td>
+                    <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="sakit" <?= ($keterangan === 'sakit') ? 'checked' : ''; ?> disabled></td>
+                    <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="izin" <?= ($keterangan === 'izin') ? 'checked' : ''; ?> disabled></td>
+                    <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="alpa" <?= ($keterangan === 'alpa') ? 'checked' : ''; ?> disabled></td>
+                  </tr>
+                <?php } ?>
+              </tbody>
+            </table>
           </div>
-          ';
-      $index++;
-    }
-    ?>
+        </div>
+      </div>
+    </div>
   </div>
-  
+
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (!localStorage.getItem('guruWelcomeShown')) {

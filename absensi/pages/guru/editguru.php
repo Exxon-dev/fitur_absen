@@ -288,17 +288,11 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profile
+                            <i class="fas fa-edit"></i> Edit User
                         </button>
                     </div>
 
                     <div id="edit-mode" class="edit-mode">
-
-                        <div class="form-group">
-                            <label for="nama_guru">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="nama_guru" name="nama_guru"
-                                value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
-                        </div>
 
                         <div class="form-group text-left">
                             <label for="username">Username</label>
@@ -322,6 +316,13 @@ if (isset($_POST['submit'])) {
                     <div class="form-row">
                         <div class="form-col">
 
+
+                            <div class="form-group">
+                                <label for="nama_guru">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama_guru" name="nama_guru"
+                                    value="<?php echo htmlspecialchars($data['nama_guru']); ?>" required>
+                            </div>
+
                             <div class="form-group">
                                 <label>No. Telepon</label>
                                 <input type="text" name="no_tlp" class="form-control"
@@ -335,21 +336,22 @@ if (isset($_POST['submit'])) {
                                     <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                 </select>
                             </div>
+
+                            
                             <div class="form-group">
-                                <label>NIP</label>
-                                <input type="text" name="nip" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
                         </div>
 
                         <!-- Right Column -->
                         <div class="form-col">
-                            
 
                             <div class="form-group">
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                                <label>NIP</label>
+                                <input type="text" name="nip" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['nip']); ?>" required>
                             </div>
 
                             <div class="form-group">
