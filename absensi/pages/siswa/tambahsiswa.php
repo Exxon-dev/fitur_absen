@@ -109,8 +109,9 @@ unset($_SESSION['form_data']);
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label>NIS</label>
-                    <input type="text" name="nis" id="nis" class="form-control" required minlength="8" maxlength="12" oninput="validateNIS()">
-                    <div id="nisError" class="error-message"></div>
+                    <input type="text" name="nis" id="nis" class="form-control" 
+                           value="<?php echo isset($form_data['nis']) ? $form_data['nis'] : ''; ?>" 
+                           oninput="generateUsernamePassword()">
                 </div>
                 <div class="form-group col-md-4">
                     <label>NISN</label>
@@ -211,12 +212,13 @@ unset($_SESSION['form_data']);
                 <div class="form-group col-md-3">
                     <label>Username</label>
                     <input type="text" name="username" id="username" class="form-control <?php echo !empty($error_username) ? 'is-invalid' : ''; ?>" 
-                           value="<?php echo isset($form_data['username']) ? $form_data['username'] : ''; ?>" required>
+                           value="<?php echo isset($form_data['username']) ? $form_data['username'] : ''; ?>" required readonly>
                     <div id="usernameError" class="error-message"><?php echo $error_username; ?></div>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Password</label>
-                    <input type="password" name="password" id="password" class="form-control <?php echo !empty($error_password) ? 'is-invalid' : ''; ?>" required>
+                    <input type="password" name="password" id="password" class="form-control <?php echo !empty($error_password) ? 'is-invalid' : ''; ?>" 
+                           value="<?php echo isset($form_data['password']) ? $form_data['password'] : ''; ?>" required readonly>
                     <div id="passwordError" class="error-message"><?php echo $error_password; ?></div>
                 </div>
                 <div class="form-group col-md-3">
@@ -239,19 +241,24 @@ unset($_SESSION['form_data']);
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 
     <script>
-        function validateNIS() {
+        function generateUsernamePassword() {
             const nisInput = document.getElementById('nis');
-            const nisError = document.getElementById('nisError');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
             const nisValue = nisInput.value.trim();
-
-            if (nisValue.length < 8 || nisValue.length > 12) {
-                nisError.textContent = 'NIS harus terdiri dari 8-12 karakter';
-                nisInput.classList.add('is-invalid');
-                return false;
+            
+            if (nisValue) {
+                usernameInput.value = nisValue;
+                passwordInput.value = nisValue;
             } else {
-                nisError.textContent = '';
-                return true;
+                usernameInput.value = '';
+                passwordInput.value = '';
             }
+            
+            // Tetap jalankan validasi
+            validateUsername();
+            validatePassword();
         }
 
         function validateNISN() {
@@ -274,8 +281,6 @@ unset($_SESSION['form_data']);
             const usernameError = document.getElementById('usernameError');
             const usernameValue = usernameInput.value.trim();
 
-            // Hanya memvalidasi bahwa username tidak kosong
-            // Validasi ke database dilakukan di server-side
             if (usernameValue === '') {
                 usernameError.textContent = 'USERNAME harus diisi';
                 usernameInput.classList.add('is-invalid');
@@ -292,8 +297,6 @@ unset($_SESSION['form_data']);
             const passwordError = document.getElementById('passwordError');
             const passwordValue = passwordInput.value.trim();
 
-            // Hanya memvalidasi bahwa password tidak kosong
-            // Validasi ke database dilakukan di server-side
             if (passwordValue === '') {
                 passwordError.textContent = 'PASSWORD harus diisi';
                 passwordInput.classList.add('is-invalid');
@@ -306,15 +309,12 @@ unset($_SESSION['form_data']);
         }
 
         function validateForm() {
-            const isNISValid = validateNIS();
             const isNISNValid = validateNISN();
             const isUsernameValid = validateUsername();
             const isPasswordValid = validatePassword();
 
-            if (!isNISValid || !isNISNValid || !isUsernameValid || !isPasswordValid) {
-                if (!isNISValid) {
-                    document.getElementById('nis').focus();
-                } else if (!isNISNValid) {
+            if (!isNISNValid || !isUsernameValid || !isPasswordValid) {
+                if (!isNISNValid) {
                     document.getElementById('nisn').focus();
                 } else if (!isUsernameValid) {
                     document.getElementById('username').focus();
@@ -326,10 +326,14 @@ unset($_SESSION['form_data']);
             return true;
         }
         // Validasi real-time saat pengguna mengetik
-        document.getElementById('nis').addEventListener('input', validateNIS);
         document.getElementById('nisn').addEventListener('input', validateNISN);
         document.getElementById('username').addEventListener('input', validateUsername);
         document.getElementById('password').addEventListener('input', validatePassword);
+        
+        // Jalankan fungsi generate saat halaman dimuat jika NIS sudah ada nilai
+        window.onload = function() {
+            generateUsernamePassword();
+        };
     </script>
 </body>
 

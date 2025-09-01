@@ -10,7 +10,15 @@ if (!isset($_SESSION['id_siswa'])) {
     header("Location: sign-in.php");
     exit();
 }
+// Inisialisasi variabel error
+$error_nisn = $_SESSION['error_nisn'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
 
+// Hapus data session setelah digunakan
+unset($_SESSION['error_nisn']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
 // Get student data
 $id_siswa = $_SESSION['id_siswa'];
 $select = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_siswa='$id_siswa'") or die(mysqli_error($coneksi));
@@ -43,7 +51,21 @@ if (isset($_POST['submit'])) {
     $foto_lama = $_POST['foto_lama'] ?? 'default.png';
 
     $profile = $foto_lama;
+    // Validasi NISN
+    if (strlen($nisn) !== 10) {
+        $_SESSION['error_nisn'] = 'NISN harus terdiri dari 10 karakter';
+        $has_error = true;
+    } elseif (!is_numeric($nisn)) {
+        $_SESSION['error_nisn'] = 'NISN harus berupa angka';
+        $has_error = true;
+    }
 
+    // Jika ada error, redirect kembali ke form
+    if (isset($has_error)) {
+        $_SESSION['form_data'] = $_POST;
+        header("Location: index.php?page=editsiswa&id_siswa=" . $id_siswa);
+        exit();
+    }
     // Handle file upload
     if (!empty($_FILES['foto']['name'])) {
         $fotoName = $_FILES['foto']['name'];
@@ -493,12 +515,6 @@ function getUploadError($errorCode)
 
                     <div id="edit-mode" class="edit-mode">
                         <div class="form-group">
-                            <label for="nama_siswa">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="nama_siswa" name="nama_siswa"
-                                value="<?php echo htmlspecialchars($data['nama_siswa']); ?>" required>
-                        </div>
-
-                        <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
                                 value="<?php echo htmlspecialchars($data['username']); ?>" required>
@@ -509,7 +525,12 @@ function getUploadError($errorCode)
                             <input type="password" class="form-control" id="password" name="password"
                                 value="<?php echo htmlspecialchars($data['password']); ?>" required>
                         </div>
-
+                        
+                        <div class="form-group">
+                            <label for="konfirmasi-password">Konfirmasi Password</label>
+                            <input type="text" class="form-control" id="konfirmasi-password" name="konfirmasi-password"
+                                value="<?php echo htmlspecialchars($data['konfirmasi-password']); ?>" required>
+                        </div>
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
                         </button>
 
@@ -525,18 +546,26 @@ function getUploadError($errorCode)
                         <!-- Left Column -->
                         <div class="form-col">
                             <div class="form-group">
+                                <label for="nama_siswa">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="nama_siswa" name="nama_siswa"
+                                    value="<?php echo htmlspecialchars($data['nama_siswa']); ?>" required>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="info-label">NIS</label>
                                 <div class="info-value editable">
-                                    <input type="text" name="nis" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nis']); ?>" required>
+                                    <input type="text" name="nis" id="nis" class="form-control" value="<?php echo htmlspecialchars($data['nis']); ?>" required">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">NISN</label>
                                 <div class="info-value editable">
-                                    <input type="text" name="nisn" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nisn']); ?>" required>
+
+                                    <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>"
+                                        value="<?php echo htmlspecialchars($data['nisn']); ?>"
+                                        required minlength="10" maxlength="10" oninput="validateNISN()">
+                                    <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                                 </div>
                             </div>
 
@@ -736,6 +765,59 @@ function getUploadError($errorCode)
         setTimeout(function() {
             $('.alert').alert('close');
         }, 5000);
+    </script>
+    <script>
+        function validateNISN() {
+            const nisnInput = document.getElementById('nisn');
+            const nisnError = document.getElementById('nisnError');
+            const nisnValue = nisnInput.value.trim();
+
+            if (nisnValue.length !== 10) {
+                nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisnValue)) {
+                nisnError.textContent = 'NISN harus berupa angka';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else {
+                nisnError.textContent = '';
+                nisnInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validateForm() {
+            const isNISNValid = validateNISN();
+
+            if (!isNISNValid) {
+                if (!isNISNValid) {
+                    document.getElementById('nisn').focus();
+                }
+
+                // Tampilkan pesan error dengan SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'Silakan periksa kembali data NISN',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+
+                return false;
+            }
+            return true;
+        }
+
+        // Validasi real-time saat pengguna mengetik
+        document.getElementById('nisn').addEventListener('input', validateNISN);
+
+        // Jalankan validasi saat halaman dimuat untuk menampilkan error dari server
+        document.addEventListener('DOMContentLoaded', function() {
+            validateNISN();
+        });
     </script>
 </body>
 

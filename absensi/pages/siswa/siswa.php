@@ -99,8 +99,7 @@ include('koneksi.php');
                     <?php
                     $sql = mysqli_query($coneksi, "
                     SELECT 
-                        s.id_siswa, s.nis, s.nisn, s.nama_siswa,
-                        s.tanggal_mulai, s.tanggal_selesai,
+                        s.id_siswa, s.nama_siswa,
                         sk.nama_sekolah, 
                         p.nama_perusahaan
                     FROM siswa s
@@ -118,13 +117,10 @@ include('koneksi.php');
                             
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
-                            <td>' . $no++ . '</td>
-                            <td>' . htmlspecialchars($data['nisn']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_siswa']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_sekolah']) . '</td>
-                            <td>' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
-                            <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
-                            <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
+                            <td class="text-center">' . $no++ . '</td>
+                            <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
+                            <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
+                            <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
                         </tr>';
                         }
                     } else {
