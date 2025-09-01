@@ -85,12 +85,9 @@ include('koneksi.php');
                 <thead class="table-light">
                     <tr>
                         <th class="text-center">No</th>
-                        <th class="text-center">NISN</th>
                         <th class="text-center">Nama</th>
                         <th class="text-center">Sekolah</th>
                         <th class="text-center">Tempat Prakerin</th>
-                        <th class="text-center">Tanggal Mulai</th>
-                        <th class="text-center">Tanggal Selesai</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,8 +95,7 @@ include('koneksi.php');
                     // Query untuk mengambil data siswa dengan urutan terbaru di atas
                     $sql = mysqli_query($coneksi, "
                     SELECT 
-                        s.id_siswa, s.nis, s.nisn, s.nama_siswa,
-                        s.tanggal_mulai, s.tanggal_selesai,
+                        s.id_siswa, s.nama_siswa,
                         sk.nama_sekolah, 
                         p.nama_perusahaan
                     FROM siswa s
@@ -118,12 +114,9 @@ include('koneksi.php');
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td class="text-center">' . $no++ . '</td>
-                            <td>' . htmlspecialchars($data['nisn']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
-                            <td>' . htmlspecialchars($tanggal_mulai) . '</td>
-                            <td>' . htmlspecialchars($tanggal_selesai) . '</td>
                         </tr>';
                         }
                     } else {

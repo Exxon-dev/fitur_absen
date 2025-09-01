@@ -1,4 +1,8 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 include('koneksi.php');
 
 // Cek apakah siswa sudah login
@@ -36,32 +40,94 @@ if ($absen) {
 }
 $_SESSION['status_absen'] = $status;
 
+// Konfigurasi pagination untuk catatan pembimbing
+$limit = 5; // Jumlah catatan per halaman
+$page = isset($_GET['page_catatan']) ? (int)$_GET['page_catatan'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Filter tanggal jika ada
+$filter_tanggal = isset($_GET['filter_tanggal']) ? $_GET['filter_tanggal'] : '';
+
 // Ambil catatan pembimbing
 $catatan_pembimbing = [];
+$total_catatan = 0;
 if ($id_perusahaan) {
+    // Query untuk total catatan
+    $sql_count = "
+        SELECT COUNT(*) as total
+        FROM catatan c
+        JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+        JOIN jurnal j ON c.id_jurnal = j.id_jurnal
+        WHERE j.id_siswa = ?
+    ";
+    
     $sql_catatan = "
         SELECT 
             c.catatan,
             c.tanggal,
-            p.nama_pembimbing
+            p.nama_pembimbing,
+            j.keterangan,
+            j.tanggal as tanggal_jurnal
         FROM catatan c
         JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
         JOIN jurnal j ON c.id_jurnal = j.id_jurnal
-        WHERE j.id_siswa = '$id_siswa'
-        ORDER BY c.tanggal DESC
-        LIMIT 5
+        WHERE j.id_siswa = ?
     ";
-    $result_catatan = mysqli_query($coneksi, $sql_catatan);
+    
+    // Tambahkan filter tanggal jika ada
+    $params = [$id_siswa];
+    $param_types = "i";
+    
+    if (!empty($filter_tanggal)) {
+        $sql_count .= " AND DATE(c.tanggal) = ?";
+        $sql_catatan .= " AND DATE(c.tanggal) = ?";
+        $params[] = $filter_tanggal;
+        $param_types .= "s";
+    }
+    
+    $sql_catatan .= " ORDER BY c.tanggal DESC LIMIT ? OFFSET ?";
+    $params[] = $limit;
+    $params[] = $offset;
+    $param_types .= "ii";
+    
+    // Hitung total catatan
+    $stmt_count = mysqli_prepare($coneksi, $sql_count);
+    if (!empty($filter_tanggal)) {
+        mysqli_stmt_bind_param($stmt_count, "is", $id_siswa, $filter_tanggal);
+    } else {
+        mysqli_stmt_bind_param($stmt_count, "i", $id_siswa);
+    }
+    mysqli_stmt_execute($stmt_count);
+    $result_count = mysqli_stmt_get_result($stmt_count);
+    $total_data = mysqli_fetch_assoc($result_count);
+    $total_catatan = $total_data['total'];
+    
+    // Ambil data catatan
+    $stmt_catatan = mysqli_prepare($coneksi, $sql_catatan);
+    mysqli_stmt_bind_param($stmt_catatan, $param_types, ...$params);
+    mysqli_stmt_execute($stmt_catatan);
+    $result_catatan = mysqli_stmt_get_result($stmt_catatan);
+    
     if ($result_catatan) {
         $catatan_pembimbing = mysqli_fetch_all($result_catatan, MYSQLI_ASSOC);
     }
 }
 
+// Hitung total halaman
+$total_pages = ceil($total_catatan / $limit);
+
 // Format tanggal function
 function formatTanggal($dateString)
 {
     $date = new DateTime($dateString);
-    return $date->format('m-d-Y');
+    return $date->format('d-m-Y');
+}
+
+// Format tanggal untuk input date
+function formatTanggalInput($dateString)
+{
+    $date = new DateTime($dateString);
+    return $date->format('Y-m-d');
 }
 ?>
 <!DOCTYPE html>
@@ -149,11 +215,62 @@ function formatTanggal($dateString)
         }
 
         .notes-section {
-            width: 350px;
+            width: 400px;
             background-color: #f8f9fa;
             border-radius: 8px;
             padding: 20px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+
+        .pagination-btn {
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .pagination-btn.active {
+            background-color: #007bff;
+            color: white;
         }
 
         #btnAbsensi {
@@ -238,11 +355,21 @@ function formatTanggal($dateString)
             margin-bottom: 8px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
 
         .note-header i {
             margin-right: 8px;
             font-size: 14px;
+        }
+
+        .note-jurnal {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
         }
 
         .note-body {
@@ -299,13 +426,25 @@ function formatTanggal($dateString)
             .notes-section {
                 width: 100%;
                 height: auto;
-                max-height: 300px;
+                max-height: 400px;
+            }
+
+            .notes-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .filter-form {
+                width: 100%;
+            }
+
+            .filter-input {
+                flex: 1;
             }
         }
     </style>
 </head>
-
-
 
 <body>
     <div class="main-container">
@@ -322,29 +461,57 @@ function formatTanggal($dateString)
                 </div>
 
                 <div class="notes-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
-                    </h2>
+                    <div class="notes-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
+                        </h2>
+                        
+                        <form method="GET" class="filter-form">
+                            <input type="date" name="filter_tanggal" value="<?= $filter_tanggal ?>" class="filter-input">
+                            <button type="submit" class="filter-btn">Filter</button>
+                            <?php if (!empty($filter_tanggal)): ?>
+                                <a href="?" class="filter-btn" style="background-color: #6c757d;">Reset</a>
+                            <?php endif; ?>
+                        </form>
+                    </div>
 
                     <?php if (!empty($catatan_pembimbing)): ?>
                         <?php foreach ($catatan_pembimbing as $catatan): ?>
                             <div class="note-card">
                                 <div class="note-header">
-                                    <i class="fas fa-user-tie"></i>
-                                    <?= htmlspecialchars($catatan['nama_pembimbing']) ?>
+                                    <span>
+                                        <i class="fas fa-user-tie"></i>
+                                        <?= htmlspecialchars($catatan['nama_pembimbing']) ?>
+                                    </span>
+                                    <span><?= formatTanggal($catatan['tanggal']) ?></span>
                                 </div>
+                                <?php if (!empty($catatan['keterangan'])): ?>
+                                    <div class="note-jurnal">
+                                        <i class="fas fa-book"></i> Jurnal: <?= htmlspecialchars($catatan['keterangan']) ?>
+                                        (<?= formatTanggal($catatan['tanggal_jurnal']) ?>)
+                                    </div>
+                                <?php endif; ?>
                                 <div class="note-body">
-                                    <?= htmlspecialchars($catatan['catatan']) ?>
-                                </div>
-                                <div class="note-footer">
-                                    <i class="far fa-clock"></i>
-                                    <?= formatTanggal($catatan['tanggal']) ?>
+                                    <?= nl2br(htmlspecialchars($catatan['catatan'])) ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
+                        
+                        <!-- Pagination -->
+                        <?php if ($total_pages > 1): ?>
+                            <div class="pagination">
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <a href="?page_catatan=<?= $i ?><?= !empty($filter_tanggal) ? '&filter_tanggal=' . $filter_tanggal : '' ?>" 
+                                       class="pagination-btn <?= $i == $page ? 'active' : '' ?>">
+                                        <?= $i ?>
+                                    </a>
+                                <?php endfor; ?>
+                            </div>
+                        <?php endif; ?>
                     <?php else: ?>
                         <div class="empty-notes">
-                            <i class="far fa-folder-open"></i> Belum ada catatan dari pembimbing
+                            <i class="far fa-folder-open"></i> 
+                            <?= !empty($filter_tanggal) ? 'Tidak ada catatan pada tanggal yang dipilih' : 'Belum ada catatan dari pembimbing' ?>
                         </div>
                     <?php endif; ?>
                 </div>
