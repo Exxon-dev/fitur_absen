@@ -24,7 +24,7 @@ if (!$dataGuru) {
 $id_sekolah = $dataGuru['id_sekolah'];
 $nama_guru = $dataGuru['nama_guru'];
 
-$tanggal = date('Y-m-d');
+$tanggal_filter = isset($_GET['tanggal']) ? $_GET['tanggal'] : null;
 
 // Ambil data siswa yang dibimbing guru ini
 $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_guru' ORDER BY id_siswa ASC") or die(mysqli_error($coneksi));
@@ -35,11 +35,27 @@ $data_jumlah_siswa = mysqli_fetch_assoc($query_jumlah_siswa);
 $jumlah_siswa = $data_jumlah_siswa['total'];
 
 // Fungsi untuk menghitung jumlah absen berdasarkan jenis
-function hitungAbsensi($coneksi, $id_siswa, $jenis)
+function hitungAbsensi($coneksi, $id_siswa, $jenis, $tanggal_filter = null)
 {
-  $query = mysqli_query($coneksi, "SELECT COUNT(*) as total FROM absen  WHERE id_siswa = '$id_siswa' AND keterangan = '$jenis'");
-  $data = mysqli_fetch_assoc($query);
-  return $data['total'];
+    if ($tanggal_filter) {
+        // Jika ada filter tanggal → ambil data hanya untuk hari itu
+        $query = mysqli_query($coneksi, 
+            "SELECT COUNT(*) as total 
+             FROM absen  
+             WHERE id_siswa = '$id_siswa' 
+             AND keterangan = '$jenis' 
+             AND tanggal = '$tanggal_filter'");
+    } else {
+        // Jika tidak ada filter tanggal → ambil total keseluruhan
+        $query = mysqli_query($coneksi, 
+            "SELECT COUNT(*) as total 
+             FROM absen  
+             WHERE id_siswa = '$id_siswa' 
+             AND keterangan = '$jenis'");
+    }
+
+    $data = mysqli_fetch_assoc($query);
+    return $data['total'];
 }
 ?>
 
@@ -206,14 +222,18 @@ function hitungAbsensi($coneksi, $id_siswa, $jenis)
         <a href="index.php?page=tambahsiswa_guru" class="btn btn-primary">
           <i class="fas fa-plus"></i> Tambah Siswa
         </a>
-
         <!-- Form Filter Tanggal -->
-        <form action="" method="  post" class="form-inline">
-          <label for="dari" class="mr-2">Dari:</label>
-          <input type="date" name="dari" class="form-control mr-3">
-
-          <label for="sampai" class="mr-2">Sampai:</label>
-          <input type="date" name="sampai" class="form-control mr-3">
+        <form id="filterForm" method="GET" class="form-inline">
+          <input type="hidden" name="page" value="absensi_siswa" />
+          <label for="filter" class="mr-2"></label>
+          <?php
+          $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+          ?>
+          <input type="date" name="tanggal"
+            class="form-control date-picker mb-2"
+            value="<?= htmlspecialchars($tanggal) ?>"
+            pattern="\d{4}-\d{2}-\d{2}"
+            onchange="document.getElementById('filterForm').submit();" />
         </form>
       </div>
 
@@ -235,10 +255,10 @@ function hitungAbsensi($coneksi, $id_siswa, $jenis)
             while ($data_siswa = mysqli_fetch_array($query_siswa)) {
               $id_siswa = $data_siswa['id_siswa'];
 
-              $hadir = hitungAbsensi($coneksi, $id_siswa, 'Hadir');
-              $sakit = hitungAbsensi($coneksi, $id_siswa, 'Sakit');
-              $izin  = hitungAbsensi($coneksi, $id_siswa, 'Izin');
-              $alpa  = hitungAbsensi($coneksi, $id_siswa, 'Alpa');
+              $hadir = hitungAbsensi($coneksi, $id_siswa, 'Hadir', $tanggal_filter);
+              $sakit = hitungAbsensi($coneksi, $id_siswa, 'Sakit', $tanggal_filter);
+              $izin  = hitungAbsensi($coneksi, $id_siswa, 'Izin', $tanggal_filter);
+              $alpa  = hitungAbsensi($coneksi, $id_siswa, 'Alpa', $tanggal_filter);
             ?>
               <tr class="text-center">
                 <td><?php echo $no++; ?></td>

@@ -343,7 +343,6 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
     </div>
   </div>
 
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       if (!localStorage.getItem('guruWelcomeShown')) {

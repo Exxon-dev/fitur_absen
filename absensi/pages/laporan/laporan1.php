@@ -228,7 +228,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4">Preview</button>
+            <button type="submit" class="btn btn-primary btn-block mt-3">Preview</button>
         </form>
 
         <!-- Choices.js -->

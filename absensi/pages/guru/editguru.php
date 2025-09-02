@@ -94,7 +94,16 @@ if (isset($_POST['submit'])) {
 
     if ($sql) {
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data guru berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editguru&id_guru=' . $id_guru . '&pesan=sukses";},1200);</script>';
+        echo '<script>
+        Swal.fire({icon:"success",
+        title:"Sukses!",
+        text:"Data guru berhasil diupdate",
+        position:"top",
+        showConfirmButton:false,
+        timer:1200,
+        toast:true}); 
+        setTimeout(function()
+        {window.location.href="index.php?page=editguru&id_guru=' . $id_guru . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
         $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
@@ -259,6 +268,9 @@ if (isset($_POST['submit'])) {
             height: calc(1.5em + .75rem + 2px);
             padding: .375rem .75rem;
         }
+        .btn-left {
+            margin-left: 600px;
+        }
     </style>
 </head>
 
@@ -302,8 +314,7 @@ if (isset($_POST['submit'])) {
 
                         <div class="form-group text-left">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                            <input type="password" class="form-control" id="password" name="password">
                         </div>
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
                         <button type="submit" name="submit" class="btn btn-primary">Update</button>
@@ -315,8 +326,6 @@ if (isset($_POST['submit'])) {
                     <br>
                     <div class="form-row">
                         <div class="form-col">
-
-
                             <div class="form-group">
                                 <label for="nama_guru">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama_guru" name="nama_guru"
@@ -336,13 +345,6 @@ if (isset($_POST['submit'])) {
                                     <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                 </select>
                             </div>
-
-                            
-                            <div class="form-group">
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
-                            </div>
                         </div>
 
                         <!-- Right Column -->
@@ -352,6 +354,12 @@ if (isset($_POST['submit'])) {
                                 <label>NIP</label>
                                 <input type="text" name="nip" class="form-control"
                                     value="<?php echo htmlspecialchars($data['nip']); ?>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                             </div>
 
                             <div class="form-group">
@@ -387,6 +395,7 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
                     </div>
+                    <button type="submit" name="submit" class="btn btn-primary btn-left">Update</button>
                 </div>
             </div>
         </form>

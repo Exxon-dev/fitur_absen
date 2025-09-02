@@ -33,7 +33,42 @@
         <!-- Ganti Notifications dengan Profile (avatar) -->
         <li class="nav-item dropdown pe-3 d-flex align-items-center">
           <a href="javascript:;" class="nav-link p-0 text-body" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="assets/img/bg-pricing.jpg" alt="Profile" class="avatar avatar-sm rounded-circle">
+            <?php
+            include('koneksi.php');
+            $profile_image = 'assets/img/bg-pricing.jpg'; // default
+
+            if (isset($_SESSION['level'])) {
+              // Query untuk mendapatkan gambar profil berdasarkan level user
+              switch ($_SESSION['level']) {
+                case 'guru':
+                  $id_guru = $_SESSION['id_guru'] ?? '';
+                  if (!empty($id_guru)) {
+                    $query = mysqli_query($coneksi, "SELECT profile FROM guru WHERE id_guru='$id_guru'");
+                    if ($query && mysqli_num_rows($query) > 0) {
+                      $data = mysqli_fetch_assoc($query);
+                      if (!empty($data['profile'])) {
+                        $profile_image = '../' . $data['profile'];
+                      }
+                    }
+                  }
+                  break;
+                case 'siswa':
+                  $id_siswa = $_SESSION['id_siswa'] ?? '';
+                  if (!empty($id_siswa)) {
+                    $query = mysqli_query($coneksi, "SELECT profile FROM siswa WHERE id_siswa='$id_siswa'");
+                    if ($query && mysqli_num_rows($query) > 0) {
+                      $data = mysqli_fetch_assoc($query);
+                      if (!empty($data['profile'])) {
+                        $profile_image = '../' . $data['profile'];
+                      }
+                    }
+                  }
+                  break;
+                  // Tambahkan case lain untuk level user lainnya
+              }
+            }
+            ?>
+            <img src="<?php echo htmlspecialchars($profile_image); ?>" alt="Profile" class="avatar avatar-sm rounded-circle" onerror="this.src='assets/img/bg-pricing.jpg'">
           </a>
           <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
             <li>
@@ -66,13 +101,13 @@
               ?>
               <!-- bagian dropdown profile -->
               <a class="dropdown-item border-radius-md" href="<?= htmlspecialchars($profile_link) ?>">
-                  <i class="fas fa-user-circle me-2"></i> Profile
+                <i class="fas fa-user-circle me-2"></i> Profile
               </a>
 
             </li>
             <li>
               <a id="logoutBtn" class="dropdown-item border-radius-md" href="./pages/sign-up_aksi.php">
-                  <i class="fas fa-sign-out-alt me-2"></i> Logout
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
               </a>
             </li>
           </ul>
@@ -80,25 +115,25 @@
       </ul>
     </div>
   </div>
-</nav> 
+</nav>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.getElementById('logoutBtn').addEventListener('click', function(event) {
+  document.getElementById('logoutBtn').addEventListener('click', function(event) {
     event.preventDefault(); // Jangan langsung logout
 
     Swal.fire({
-        title: 'Yakin mau logout?',
-        text: "Anda akan keluar dari aplikasi!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Logout',
-        cancelButtonText: 'Batal'
+      title: 'Yakin mau logout?',
+      text: "Anda akan keluar dari aplikasi!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Logout',
+      cancelButtonText: 'Batal'
     }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = './pages/sign-up_aksi.php'; // arahkan logout
-        }
+      if (result.isConfirmed) {
+        window.location.href = './pages/sign-up_aksi.php'; // arahkan logout
+      }
     });
-});
+  });
 </script>
