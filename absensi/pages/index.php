@@ -7,6 +7,7 @@
   <title>
     ABSENSI | PRAKERIN
   </title>
+  <link rel="icon" type="image/png" href="../assets/img/logos/pkl.png">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!--     Fonts and icons     -->

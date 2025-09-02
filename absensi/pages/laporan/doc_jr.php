@@ -267,6 +267,14 @@ if (empty($jurnal_data)) {
                 display: none;
             }
         }
+
+        .table-no-border td,
+        .table-no-border th {
+            border: none;
+            /* hilangkan border sel */
+            padding: 8px;
+            /* jarak antar sel */
+        }
     </style>
 </head>
 
@@ -281,7 +289,7 @@ if (empty($jurnal_data)) {
         </div>
 
         <br>
-        <table class="table border-0">
+        <table class="table-no-border">
             <tr>
                 <td style="width: 50px;">Nama</td>
                 <td>: <?= htmlspecialchars($nama_siswa) ?></td>
@@ -342,10 +350,10 @@ if (empty($jurnal_data)) {
         <!-- tanda tangan -->
         <div class="ttd">
             <div>
-                <div>.................,<?= date('Y') ?></div>
-                <div style="margin-top:20px;">PEMBIMBING DUDI</div>
+                <div>..................,<?= date('Y') ?></div>
+                <div style="margin-top: 15px;">PEMBIMBING DUDI</div>
                 <br><br><br><br><br><br>
-                <div>(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
+                <div style="margin-right: 20px;">(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
             </div>
         </div>
 
