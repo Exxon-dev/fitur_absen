@@ -7,6 +7,7 @@ if (!isset($_SESSION['id_pembimbing'])) {
   exit();
 }
 
+
 // Mendapatkan data pembimbing
 $id_pembimbing = $_SESSION['id_pembimbing'];
 $stmt = mysqli_prepare($coneksi, "SELECT p.nama_pembimbing, p.id_perusahaan, pr.nama_perusahaan 
