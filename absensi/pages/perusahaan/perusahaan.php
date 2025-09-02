@@ -157,9 +157,8 @@ include('koneksi.php');
                                 <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
                                     <td>' . $no . '</td>
                                     <td>' . $data['nama_perusahaan'] . '</td>
-                                    <td>' . $data['pimpinan'] . '</td>
                                     <td>' . $data['alamat_perusahaan'] . '</td>
-                                    <td>' . $data['no_tlp'] . '</td>
+                                    <td>' . $data['no_tel'] . '</td>
                                 </tr>';
                             $no++;
                         }

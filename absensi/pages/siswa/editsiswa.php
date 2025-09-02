@@ -459,7 +459,7 @@ function getUploadError($errorCode)
 
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
-            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
+            <input type="hidden" name="profile" value="<?php echo $data['profile']; ?>">
 
             <div class="profile-container">
                 <div class="profile-card">

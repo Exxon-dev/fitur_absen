@@ -153,7 +153,7 @@ if (!$result) {
         <script>
             $(document).ready(function() {
                 $('#siswa_search').on('input', function() {
-                    const selectedOption = $(`#siswa_list option[value="${$(this).val()}"]`);
+                    const selectedOption = $(#siswa_list option[value="${$(this).val()}"]);
                     if (selectedOption.length) {
                         $('#selected_siswa_id').val(selectedOption.data('id'));
                     }
