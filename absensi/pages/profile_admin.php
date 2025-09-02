@@ -547,7 +547,7 @@ function getUploadError($errorCode) {
 
                     Swal.fire({
                         title: 'Foto Baru Dipilih',
-                        text: `Nama: ${fileName} (${fileSize} MB)`,
+                        text: Nama: ${fileName} (${fileSize} MB),
                         position: 'top',
                         showConfirmButton: false,
                         timer: 3000,
