@@ -1,7 +1,13 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 include('koneksi.php');
+// Hapus data session setelah digunakan
+unset($_SESSION['username_error']);
+unset($_SESSION['password_error']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -64,41 +70,34 @@ include('koneksi.php');
         .btn-primary:hover {
             background-color: #0056b3;
             transform: translateY(-1px);
-            /* Sedikit efek angkat */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            /* Shadow lebih besar saat hover */
         }
 
         .hapusSiswa {
             color: white;
-            /* Text putih */
             background-color: #344767;
-            /* Warna abu-abu Bootstrap */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            /* Shadow */
             border: none;
-            /* Hilangkan border */
             padding: 8px 16px;
-            /* Padding yang sesuai */
             border-radius: 4px;
-            /* Sedikit rounded corners */
             transition: all 0.3s ease;
-            /* Efek transisi halus */
         }
 
         .hapusSiswa:hover {
             background-color: #5a6268;
-            /* Warna lebih gelap saat hover */
             color: white;
-            /* Tetap putih saat hover */
             transform: translateY(-1px);
-            /* Sedikit efek angkat */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            /* Shadow lebih besar saat hover */
         }
 
         .form-row {
             margin-bottom: 15px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 5px;
         }
 
         @media (max-width: 991px) {
@@ -130,7 +129,12 @@ include('koneksi.php');
             } else {
                 $data = mysqli_fetch_assoc($select);
             }
+        } else {
+            // Redirect jika tidak ada id_siswa
+            echo '<script>window.location.replace("index.php?page=siswa");</script>';
+            exit();
         }
+        
         // Notifikasi update dari proses_editsiswa.php
         if (isset($_GET['pesan'])) {
             echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
@@ -169,20 +173,13 @@ include('koneksi.php');
                 <div class="form-group col-md-3">
                     <label>Program Keahlian</label>
                     <select name="pro_keahlian" class="form-control" required>
-                        <option value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>">
-                            <?php echo htmlspecialchars($data['pro_keahlian']); ?></option>
-                        <option value="Multimedia">Multimedia"</option>
+                        <option value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>" selected>
+                            <?php echo htmlspecialchars($data['pro_keahlian']); ?>
+                        </option>
+                        <option value="Multimedia">Multimedia</option>
                         <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
                         <option value="Perkantoran">Perkantoran</option>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" value="<?php echo htmlspecialchars($data['TL']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Sekolah</label>
@@ -209,16 +206,6 @@ include('koneksi.php');
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="form-control"
-                        value="<?php echo htmlspecialchars($data['tanggal_mulai']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="form-control"
-                        value="<?php echo htmlspecialchars($data['tanggal_selesai']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
                     <label>Pembimbing</label>
                     <select name="id_pembimbing" class="form-control" required>
                         <?php
@@ -241,20 +228,6 @@ include('koneksi.php');
                                 <?php echo htmlspecialchars($row['nama_guru']); ?></option>
                         <?php } ?>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control"
-                        value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control"
-                        value="<?php echo htmlspecialchars($data['password']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
                 </div>
             </div>
 
@@ -302,7 +275,6 @@ include('koneksi.php');
             }
         });
     </script>
-    </div>
 
     <!-- Script lainnya tetap sama -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

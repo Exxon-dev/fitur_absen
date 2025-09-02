@@ -24,6 +24,13 @@
 			max-width: none;
 		}
 
+		.container-custom {
+			background-color: #ffffff;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		}
+
 		.form-control {
 			border: none;
 			border-bottom: 2px solid #007bff;
@@ -36,14 +43,21 @@
 			box-shadow: none;
 		}
 
-		/* Style asli */
-		.container-custom {
-			background-color: #ffffff;
-			border-radius: 10px;
-			padding: 20px;
-			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		.hapusPerusahaan {
+			color: white;
+			background-color: #344767;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+			border: none;
+			padding: 8px 16px;
+			border-radius: 4px;
+			transition: all 0.3s ease;
 		}
-
+		.hapusPerusahaan:hover {
+			background-color: #5a6268;
+			color: white;
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+		}
 		@media (max-width: 991px) {
 			body {
 				padding-left: 0;
@@ -58,10 +72,8 @@
 </head>
 
 <body>
-
+	<h2 class="text-left">Edit Perusahaan</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Edit Perusahaan</h2>
-		<hr>
 		<?php
 		if (isset($_GET['id_perusahaan'])) {
 			$id_perusahaan = $_GET['id_perusahaan'];
@@ -85,63 +97,68 @@
 			$alamat_perusahaan	 = $_POST['alamat_perusahaan'];
 			$no_tlp	 			 = $_POST['no_tlp'];
 
-
 			$sql = mysqli_query($coneksi, "UPDATE perusahaan SET 
 			nama_perusahaan			= '$nama_perusahaan',
 			pimpinan				= '$pimpinan',
-			alamat_perusahaan 		= '$alamat_perusahaan' 
+			alamat_perusahaan 		= '$alamat_perusahaan',
 			no_tlp					= '$no_tlp' 
 			WHERE id_perusahaan='$id_perusahaan'") or die(mysqli_error($coneksi));
+			
 			if ($sql) {
-				echo '<script>alert("Berhasil menambahkan data."); document.location="perusahaan.php";</script>';
+				echo '<script>alert("Berhasil mengupdate data."); document.location="perusahaan.php";</script>';
 			} else {
-				echo '<div class="alert alert-warning">Gagal melakukan proses tambah data.</div>';
+				echo '<div class="alert alert-warning">Gagal melakukan proses update data.</div>';
 			}
-		} else {
-			echo ' ';
 		}
-
 		?>
 
-		<form action="pages/perusahaan/proses_editperusahaan.php?id_perusahaan=<?php echo $id_perusahaan; ?>" method="post" enctype="multipart/form-data">
+		<form action="" method="post" enctype="multipart/form-data">
+			<input type="hidden" name="id_perusahaan" value="<?php echo $data['id_perusahaan']; ?>">
+			
 			<div class="form-group row">
-				<label class="col-sm-2 col-form-label"> Nama Perusahaan</label>
-				<div class="col-sm-15">
-					<input type="hidden" name="id_perusahaan" value=<?php echo $_GET['id_perusahaan']; ?>></<input>
-					<input type="text" name="nama_perusahaan" class="form-control" value="<?php echo $data['nama_perusahaan']; ?>" required>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Nama Perusahaan</label>
+						<input type="text" name="nama_perusahaan" class="form-control" value="<?php echo $data['nama_perusahaan']; ?>" required>
+					</div>
+					<div class="form-group">
+						<label>Direktur</label>
+						<input type="text" name="pimpinan" class="form-control" value="<?php echo $data['pimpinan']; ?>" required>
+					</div>
 				</div>
-				<label class="col-sm-2 col-form-label">Derektur</label>
-				<div class="col-sm-15">
-					<input type="text" name="pimpinan" class="form-control" value="<?php echo $data['pimpinan']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Alamat Perusahaan</label>
-				<div class="col-sm-15">
-					<input type="text" name="alamat_perusahaan" class="form-control" value="<?php echo $data['alamat_perusahaan']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">No Telepon</label>
-				<div class="col-sm-15">
-					<input type="text" name="no_tlp" class="form-control" value="<?php echo $data['no_tlp']; ?>" required>
+				
+				<!-- Dua field di kanan -->
+				<div class="col-md-6">
+					<div class="form-group">
+						<label>Alamat Perusahaan</label>
+						<input type="text" name="alamat_perusahaan" class="form-control" value="<?php echo $data['alamat_perusahaan']; ?>" required>
+					</div>
+					<div class="form-group">
+						<label>No Telepon</label>
+						<input type="text" name="no_tlp" class="form-control" value="<?php echo $data['no_tlp']; ?>" required>
+					</div>
 				</div>
 			</div>
 
 			<div class="form-group">
-  <div class="d-flex flex-wrap justify-content-between align-items-center">
-    <!-- Tombol Hapus di kiri -->
-    <button type="button" class="btn btn-danger hapusPerusahaan"
-      id="btnHapus" data-id="<?php echo $data['id_perusahaan']; ?>">
-      HAPUS
-    </button>
+				<div class="d-flex flex-wrap justify-content-between align-items-center">
+					<!-- Tombol Hapus di kiri -->
+					<button type="button" class="btn btn-danger hapusPerusahaan"
+						id="btnHapus" data-id="<?php echo $data['id_perusahaan']; ?>">
+						HAPUS
+					</button>
 
-    <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
-    <div class="d-flex flex-wrap justify-content-end gap-2">
-      <a href="index.php?page=perusahaan" class="btn btn-warning mr-2">KEMBALI</a>
-      <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
-    </div>
-  </div>
-</div>
-
+					<!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
+					<div class="d-flex flex-wrap justify-content-end gap-2">
+						<a href="index.php?page=perusahaan" class="btn btn-warning mr-2">KEMBALI</a>
+						<input type="submit" name="submit" class="btn btn-primary" value="Update">
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script>
 		// SweetAlert untuk konfirmasi hapus
 		document.addEventListener('DOMContentLoaded', function() {
@@ -169,8 +186,6 @@
 		});
 	</script>
 
-	<!-- Tambahkan ini sebelum </body> -->
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

@@ -149,10 +149,7 @@ header("Cache-Control: no-cache, must-revalidate");
         </tr>
         <tr>
             <td colspan="2" class="text-center" style="padding-top: 30mm;">
-                <img src="<?= htmlspecialchars($logoPath); ?>"
-                    alt="Logo <?= htmlspecialchars($data['nama_sekolah']); ?>"
-                    class="table-logo"
-                    onerror="this.onerror=null; this.src='<?= $defaultLogo ?>'">
+                <img src="../../../uploads/logo_mw9.png" style="display: block; margin: 0 auto; width: 150px; height: 150px; object-fit: contain;">
             </td>
         </tr>
         <tr>

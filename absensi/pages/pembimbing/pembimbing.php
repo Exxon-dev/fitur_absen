@@ -60,7 +60,6 @@ include('koneksi.php');
             vertical-align: middle;
         }
 
-
         .btn-warning {
             margin-bottom: 20px;
         }
@@ -97,7 +96,12 @@ include('koneksi.php');
                 </thead>
                 <tbody>
                     <?php
-                    $sql = mysqli_query($coneksi, "SELECT * FROM pembimbing ORDER BY id_pembimbing ASC") or die(mysqli_error($coneksi));
+                    // Mengubah query untuk JOIN dengan tabel perusahaan
+                    // Mengurutkan berdasarkan id_pembimbing DESC agar data terbaru muncul di atas
+                    $sql = mysqli_query($coneksi, "SELECT p.*, pr.nama_perusahaan, pr.alamat_perusahaan 
+                                                   FROM pembimbing p 
+                                                   LEFT JOIN perusahaan pr ON p.id_perusahaan = pr.id_perusahaan 
+                                                   ORDER BY p.id_pembimbing DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {

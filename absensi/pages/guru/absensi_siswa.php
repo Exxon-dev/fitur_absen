@@ -33,6 +33,14 @@ $query_siswa = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_guru = '$id_
 $query_jumlah_siswa = mysqli_query($coneksi, "SELECT COUNT(*) as total FROM siswa WHERE id_guru = '$id_guru'") or die(mysqli_error($coneksi));
 $data_jumlah_siswa = mysqli_fetch_assoc($query_jumlah_siswa);
 $jumlah_siswa = $data_jumlah_siswa['total'];
+
+// Fungsi untuk menghitung jumlah absen berdasarkan jenis
+function hitungAbsensi($coneksi, $id_siswa, $jenis)
+{
+  $query = mysqli_query($coneksi, "SELECT COUNT(*) as total FROM absen  WHERE id_siswa = '$id_siswa' AND keterangan = '$jenis'");
+  $data = mysqli_fetch_assoc($query);
+  return $data['total'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -43,41 +51,101 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Absensi Siswa - <?php echo htmlspecialchars($nama_guru); ?></title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
+    /* Penyesuaian posisi */
     body {
       padding-left: 270px;
-      /* tetap untuk desktop */
+      transition: padding-left 0.3s;
       background-color: #f8f9fa;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
+    }
+
+    .main-container {
+      margin-top: 20px;
+      margin-right: 20px;
+      margin-left: 0;
+      width: auto;
+      max-width: none;
     }
 
     .body-card {
       background-color: #fff;
-      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 5px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       margin-bottom: 20px;
     }
 
-    .badge-sakit {
-      background-color: #FFE0B2;
-      color: #E65100;
+    h3 {
+      color: #007bff
     }
 
-    .badge-izin {
-      background-color: #BBDEFB;
-      color: #0D47A1;
+    h2 {
+      color: #007bff
     }
 
-    .badge-alpa {
-      background-color: #FFCDD2;
-      color: #B71C1C;
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
     }
 
-    .badge-belum {
-      background-color: #E0E0E0;
-      color: #424242;
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      border-radius: 10px 10px 0 0 !important;
+      background-color: white;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .table-responsive {
+      margin-top: 20px;
+    }
+
+    .absent {
+      color: red;
+    }
+
+    .present {
+      color: green;
+    }
+
+    .readonly {
+      background-color: #f8f9fa;
+    }
+
+    .radio-label {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 15px;
+      cursor: pointer;
+    }
+
+    .radio-label.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-wa {
+      background-color: #25D366;
+      color: white;
+    }
+
+    .btn-wa:hover {
+      background-color: #128C7E;
+      color: white;
+    }
+
+    .table-light th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .tabletbody tr:hover {
+      background-color: #e9ecef;
     }
 
     .table-responsive {
@@ -94,127 +162,98 @@ $jumlah_siswa = $data_jumlah_siswa['total'];
 
     /* ===== Responsif untuk layar kecil (mobile/tablet) ===== */
     @media (max-width: 768px) {
-      body {
-        padding-left: 0;
-        /* hilangkan padding kiri agar konten muat penuh */
+
+      /* Mobile Card View */
+      .student-cards {
+        display: none;
       }
 
-      .body-card {
+      .student-card {
+        background: white;
+        border-radius: 8px;
         padding: 15px;
         margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      /* Supaya tabel bisa digulir horizontal */
-      .table-responsive {
-        overflow-x: scroll;
+      .student-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
       }
 
-      /* Ukuran font tabel bisa disesuaikan agar muat */
-      .table td,
-      .table th {
-        font-size: 14px;
-        padding: 8px;
+      .student-name {
+        font-weight: bold;
       }
 
-      /* Jika kamu ingin badge lebih kecil */
-      .badge-sakit,
-      .badge-izin,
-      .badge-alpa,
-      .badge-belum {
-        font-size: 0.8rem;
-        padding: 4px 8px;
+      @media (max-width: 991px) {
+        body {
+          padding-left: 0;
+          /* hilangkan padding kiri agar konten muat penuh */
+        }
       }
     }
   </style>
 </head>
 
-<body class="row">
-        <h2 class="text-primary">Data Jurnal dan Catatan Harian <?= date('d-m-Y') ?> </h2>
-  <div class="body">
-    <div class="body-card p-3">
-      <div class="container-fluid my-4">
-        <a href="index.php?page=tambahsiswa_guru" class="btn btn-primary"><i class="fas fa-plus"></i>tambah</a>
-        <div class="table-responsive">
-          <table class="table table-hover table-bordered">
-            <thead class="thead-primary bg-primary text-white">
-              <tr>
-                <th>No</th>
-                <th>Nama Siswa</th>
-                <th>Status</th>
-                <th>Sakit</th>
-                <th>Izin</th>
-                <th>Alpa</th>
+<body class="body">
+  <h2 class="text-primary">Data Jurnal dan Catatan Harian <?= date('d-m-Y') ?> </h2>
+  <div class="body-card">
+    <div class="container-fluid my-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <!-- Tombol Tambah Siswa -->
+        <a href="index.php?page=tambahsiswa_guru" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Tambah Siswa
+        </a>
+
+        <!-- Form Filter Tanggal -->
+        <form action="" method="  post" class="form-inline">
+          <label for="dari" class="mr-2">Dari:</label>
+          <input type="date" name="dari" class="form-control mr-3">
+
+          <label for="sampai" class="mr-2">Sampai:</label>
+          <input type="date" name="sampai" class="form-control mr-3">
+        </form>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-hover table-bordered">
+          <thead class="thead-primary bg-primary text-white">
+            <tr class="text-center">
+              <th>No</th>
+              <th>Nama Siswa</th>
+              <th>Hadir</th>
+              <th>Sakit</th>
+              <th>Izin</th>
+              <th>Alpa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php
+            $no = 1;
+            while ($data_siswa = mysqli_fetch_array($query_siswa)) {
+              $id_siswa = $data_siswa['id_siswa'];
+
+              $hadir = hitungAbsensi($coneksi, $id_siswa, 'Hadir');
+              $sakit = hitungAbsensi($coneksi, $id_siswa, 'Sakit');
+              $izin  = hitungAbsensi($coneksi, $id_siswa, 'Izin');
+              $alpa  = hitungAbsensi($coneksi, $id_siswa, 'Alpa');
+            ?>
+              <tr class="text-center">
+                <td><?php echo $no++; ?></td>
+                <td class="text-left"><?php echo htmlspecialchars($data_siswa['nama_siswa']); ?></td>
+                <td><?php echo $hadir; ?></td>
+                <td><?php echo $sakit; ?></td>
+                <td><?php echo $izin; ?></td>
+                <td><?php echo $alpa; ?></td>
               </tr>
-            </thead>
-            <tbody>
-              <?php
-              $index = 1;
-              // Reset pointer result set ke awal
-              mysqli_data_seek($query_siswa, 0);
-
-              while ($siswa = mysqli_fetch_assoc($query_siswa)) {
-                // Pastikan format tanggal sesuai database (YYYY-MM-DD)
-                $tanggal = date('Y-m-d'); // Contoh, sesuaikan dengan kebutuhan
-
-                // Query untuk mendapatkan data absen
-                $query_absen = mysqli_query(
-                  $coneksi,
-                  "SELECT keterangan FROM absen 
-             WHERE id_siswa = '" . $siswa['id_siswa'] . "' 
-             AND tanggal = '" . $tanggal . "'"
-                );
-
-                $absen = mysqli_fetch_assoc($query_absen);
-                $keterangan = isset($absen['keterangan']) ? $absen['keterangan'] : null;
-
-                // Tentukan kelas badge dan teks status
-                $badgeClass = 'badge-secondary'; // Default: Belum absen
-                $statusText = 'Belum Absen';
-
-                if ($keterangan) {
-                  switch (strtolower($keterangan)) {
-                    case 'hadir':
-                      $badgeClass = 'badge-success';
-                      $statusText = 'Hadir';
-                      break;
-                    case 'sakit':
-                      $badgeClass = 'badge-warning';
-                      $statusText = 'Sakit';
-                      break;
-                    case 'izin':
-                      $badgeClass = 'badge-info';
-                      $statusText = 'Izin';
-                      break;
-                    case 'alpa':
-                      $badgeClass = 'badge-danger';
-                      $statusText = 'Alpa';
-                      break;
-                  }
-                }
-              ?>
-                <tr>
-                  <td><?= $index; ?></td>
-                  <td><?= htmlspecialchars($siswa['nama_siswa']); ?></td>
-                  <td>
-                    <span class="badge <?= $badgeClass; ?>">
-                      <?= $statusText; ?>
-                    </span>
-                  </td>
-                  <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="sakit" <?= ($keterangan === 'sakit') ? 'checked' : ''; ?> disabled></td>
-                  <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="izin" <?= ($keterangan === 'izin') ? 'checked' : ''; ?> disabled></td>
-                  <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="alpa" <?= ($keterangan === 'alpa') ? 'checked' : ''; ?> disabled></td>
-                </tr>
-              <?php
-                $index++;
-              }
-              ?>
-            </tbody>
-          </table>
-        </div>
+            <?php } ?>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
-  </div>
+
   </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

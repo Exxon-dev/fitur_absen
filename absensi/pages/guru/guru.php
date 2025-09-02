@@ -95,7 +95,12 @@ include('koneksi.php');
                 </thead>
                 <tbody>
                     <?php
-                    $sql = mysqli_query($coneksi, "SELECT * FROM guru ORDER BY id_guru ASC") or die(mysqli_error($coneksi));
+                    // Mengubah ORDER BY dari ASC menjadi DESC agar data terbaru muncul pertama
+                    $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, p.nama_perusahaan
+                            FROM guru g 
+                                                   LEFT JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
+                                                   LEFT JOIN perusahaan p ON g.id_perusahaan = p.id_perusahaan
+                                                   ORDER BY g.id_guru DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
@@ -171,22 +176,6 @@ include('koneksi.php');
         });
     });</script>";
             unset($_SESSION['flash_error']);
-        }
-
-        // Notifikasi duplikat
-        if (isset($_SESSION['flash_duplikat'])) {
-            echo "<script>document.addEventListener('DOMContentLoaded',function(){
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan!',
-            text: 'ID guru atau Username sudah terdaftar',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });</script>";
-            unset($_SESSION['flash_duplikat']);
         }
         ?>
 

@@ -162,6 +162,54 @@ if (isset($_POST['submit'])) {
             }
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary);
+            margin: 0 auto 15px;
+            display: block;
+        }
+
         .profile-info {
             background-color: white;
             border-radius: 5px;
@@ -208,26 +256,19 @@ if (isset($_POST['submit'])) {
 
         select.form-control:disabled {
             color: #495057;
-            /* sama seperti normal */
-            background-color: #fff;
-            /* agar putih, bukan abu-abu */
             height: calc(1.5em + .75rem + 2px);
-            /* pastikan height seperti normal bootstrap */
             padding: .375rem .75rem;
-            /* padding default bootstrap */
-            -webkit-text-fill-color: #495057;
-            /* untuk Chrome agar teks terlihat jelas */
         }
     </style>
 </head>
 
 <body>
     <div>
+        <h3 class="text-primary text-center text-md-left">Profile Guru</h3>
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_guru" value="<?php echo $id_guru; ?>">
             <div class="profile-container">
                 <div class="profile-card">
-                    <h2>Profile Guru</h2>
                     <br>
                     <div class="profile-picture-container">
                         <img src="<?php echo $data['profile'] ? '../' . htmlspecialchars($data['profile']) : '../image/default.png'; ?>"
@@ -247,7 +288,7 @@ if (isset($_POST['submit'])) {
                         <p><?php echo htmlspecialchars($data['nama_sekolah']); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit data
+                            <i class="fas fa-edit"></i> Edit User
                         </button>
                     </div>
 
@@ -270,10 +311,11 @@ if (isset($_POST['submit'])) {
                 </div>
 
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Data Guru</h3>
+                    <h3 class="text-center">Data Guru</h3>
+                    <br>
                     <div class="form-row">
-                        <!-- Left Column -->
                         <div class="form-col">
+
 
                             <div class="form-group">
                                 <label for="nama_guru">Nama Lengkap</label>
@@ -294,10 +336,18 @@ if (isset($_POST['submit'])) {
                                     <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                                 </select>
                             </div>
+
+                            
+                            <div class="form-group">
+                                <label>Alamat</label>
+                                <input type="text" name="alamat" class="form-control"
+                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                            </div>
                         </div>
 
                         <!-- Right Column -->
                         <div class="form-col">
+
                             <div class="form-group">
                                 <label>NIP</label>
                                 <input type="text" name="nip" class="form-control"
@@ -321,11 +371,20 @@ if (isset($_POST['submit'])) {
                             </div>
 
                             <div class="form-group">
-                                <label>Alamat</label>
-                                <input type="text" name="alamat" class="form-control"
-                                    value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
-                            </div>
+                                <label for="">Perusahaan</label>
+                                <select class="form-control" disabled>
+                                    <?php
+                                    $perusahaan_query = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                                    while ($perusahaan = mysqli_fetch_assoc($perusahaan_query)) {
+                                        $selected = ($perusahaan['id_perusahaan'] == $data['id_perusahaan']) ? 'selected' : '';
+                                        echo '<option value="' . $perusahaan['id_perusahaan'] . '" ' . $selected . '>' . htmlspecialchars($perusahaan['nama_perusahaan']) . '</option>';
+                                    }
+                                    ?>
+                                </select>
 
+                                <!-- Hidden input agar tetap dikirim -->
+                                <input type="hidden" name="id_perusahaan" value="<?= $data['id_perusahaan'] ?>">
+                            </div>
                         </div>
                     </div>
                 </div>
