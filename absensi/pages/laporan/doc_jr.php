@@ -87,7 +87,7 @@ foreach ($jurnal_data as $row) {
             font-size: 11px;
         }
         .ttd div {
-            text-align: center;
+            text-align: right;
         }
         .page-break {
             page-break-after: always;
@@ -147,7 +147,7 @@ foreach ($jurnal_data as $row) {
     <!-- tanda tangan -->
     <div class="ttd">
         <div>
-            <div>....................., ..................... 202...</div>
+            <div>................, .............. 202...</div>
             <div style="margin-top:20px;">PEMBIMBING DUDI</div>
             <br><br><br><br><br><br>
             <div>(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
