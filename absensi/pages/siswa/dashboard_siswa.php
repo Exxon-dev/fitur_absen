@@ -14,14 +14,20 @@ if (!isset($_SESSION['id_siswa'])) {
 $id_siswa = $_SESSION['id_siswa'];
 $tanggal = date('Y-m-d');
 
-// Ambil data siswa
-$stmt = mysqli_prepare($coneksi, "SELECT nama_siswa, id_perusahaan FROM siswa WHERE id_siswa = ?");
+// Ambil data siswa termasuk status password
+$stmt = mysqli_prepare($coneksi, "SELECT nama_siswa, id_perusahaan, password, nis FROM siswa WHERE id_siswa = ?");
 mysqli_stmt_bind_param($stmt, "i", $id_siswa);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $siswa = mysqli_fetch_assoc($result);
 $nama_siswa = $siswa ? $siswa['nama_siswa'] : "Siswa";
 $id_perusahaan = $siswa['id_perusahaan'] ?? null;
+
+// Cek apakah password masih default (sama dengan NIS)
+$password_default = false;
+if ($siswa && $siswa['password'] === $siswa['nis']) {
+    $password_default = true;
+}
 
 // Cek status absensi
 $stmt = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa=? AND tanggal=?");
@@ -42,7 +48,8 @@ $_SESSION['status_absen'] = $status;
 
 // Konfigurasi pagination untuk catatan pembimbing
 $limit = 5; // Jumlah catatan per halaman
-$page = isset($_GET['page_catatan']) ? (int)$_GET['page_catatan'] : 1;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
 
 // Filter tanggal jika ada
@@ -75,41 +82,46 @@ if ($id_perusahaan) {
     ";
     
     // Tambahkan filter tanggal jika ada
-    $params = [$id_siswa];
-    $param_types = "i";
+    $params_count = [$id_siswa];
+    $params_catatan = [$id_siswa];
+    $param_types_count = "i";
+    $param_types_catatan = "i";
     
     if (!empty($filter_tanggal)) {
         $sql_count .= " AND DATE(c.tanggal) = ?";
         $sql_catatan .= " AND DATE(c.tanggal) = ?";
-        $params[] = $filter_tanggal;
-        $param_types .= "s";
+        $params_count[] = $filter_tanggal;
+        $params_catatan[] = $filter_tanggal;
+        $param_types_count .= "s";
+        $param_types_catatan .= "s";
     }
-    
-    $sql_catatan .= " ORDER BY c.tanggal DESC LIMIT ? OFFSET ?";
-    $params[] = $limit;
-    $params[] = $offset;
-    $param_types .= "ii";
     
     // Hitung total catatan
     $stmt_count = mysqli_prepare($coneksi, $sql_count);
-    if (!empty($filter_tanggal)) {
-        mysqli_stmt_bind_param($stmt_count, "is", $id_siswa, $filter_tanggal);
-    } else {
-        mysqli_stmt_bind_param($stmt_count, "i", $id_siswa);
+    if ($stmt_count) {
+        mysqli_stmt_bind_param($stmt_count, $param_types_count, ...$params_count);
+        mysqli_stmt_execute($stmt_count);
+        $result_count = mysqli_stmt_get_result($stmt_count);
+        $total_data = mysqli_fetch_assoc($result_count);
+        $total_catatan = $total_data['total'];
     }
-    mysqli_stmt_execute($stmt_count);
-    $result_count = mysqli_stmt_get_result($stmt_count);
-    $total_data = mysqli_fetch_assoc($result_count);
-    $total_catatan = $total_data['total'];
+    
+    // Query untuk data catatan dengan pagination
+    $sql_catatan .= " ORDER BY c.tanggal DESC LIMIT ? OFFSET ?";
+    $params_catatan[] = $limit;
+    $params_catatan[] = $offset;
+    $param_types_catatan .= "ii";
     
     // Ambil data catatan
     $stmt_catatan = mysqli_prepare($coneksi, $sql_catatan);
-    mysqli_stmt_bind_param($stmt_catatan, $param_types, ...$params);
-    mysqli_stmt_execute($stmt_catatan);
-    $result_catatan = mysqli_stmt_get_result($stmt_catatan);
-    
-    if ($result_catatan) {
-        $catatan_pembimbing = mysqli_fetch_all($result_catatan, MYSQLI_ASSOC);
+    if ($stmt_catatan) {
+        mysqli_stmt_bind_param($stmt_catatan, $param_types_catatan, ...$params_catatan);
+        mysqli_stmt_execute($stmt_catatan);
+        $result_catatan = mysqli_stmt_get_result($stmt_catatan);
+        
+        if ($result_catatan) {
+            $catatan_pembimbing = mysqli_fetch_all($result_catatan, MYSQLI_ASSOC);
+        }
     }
 }
 
@@ -120,7 +132,7 @@ $total_pages = ceil($total_catatan / $limit);
 function formatTanggal($dateString)
 {
     $date = new DateTime($dateString);
-    return $date->format('d-m-Y');
+    return $date->format('m-d-Y');
 }
 
 // Format tanggal untuk input date
@@ -128,6 +140,17 @@ function formatTanggalInput($dateString)
 {
     $date = new DateTime($dateString);
     return $date->format('Y-m-d');
+}
+
+// Fungsi untuk membuat parameter URL
+function buildQueryString($params = []) {
+    $currentParams = $_GET;
+    unset($currentParams['page']); // Hapus parameter page yang lama
+    
+    // Gabungkan dengan parameter baru
+    $allParams = array_merge($currentParams, $params);
+    
+    return http_build_query($allParams);
 }
 ?>
 <!DOCTYPE html>
@@ -443,6 +466,40 @@ function formatTanggalInput($dateString)
                 flex: 1;
             }
         }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+        
+        .pagination-btn {
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .pagination-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .pagination-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .pagination-btn.disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 
@@ -467,10 +524,11 @@ function formatTanggalInput($dateString)
                         </h2>
                         
                         <form method="GET" class="filter-form">
+                            <input type="hidden" name="page" value="dashboard_siswa">
                             <input type="date" name="filter_tanggal" value="<?= $filter_tanggal ?>" class="filter-input">
                             <button type="submit" class="filter-btn">Filter</button>
                             <?php if (!empty($filter_tanggal)): ?>
-                                <a href="?" class="filter-btn" style="background-color: #6c757d;">Reset</a>
+                                <a href="?page=dashboard_siswa" class="filter-btn" style="background-color: #6c757d;">Reset</a>
                             <?php endif; ?>
                         </form>
                     </div>
@@ -497,15 +555,40 @@ function formatTanggalInput($dateString)
                             </div>
                         <?php endforeach; ?>
                         
-                        <!-- Pagination -->
+                        <!-- Pagination yang Diperbaiki -->
                         <?php if ($total_pages > 1): ?>
                             <div class="pagination">
-                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                    <a href="?page_catatan=<?= $i ?><?= !empty($filter_tanggal) ? '&filter_tanggal=' . $filter_tanggal : '' ?>" 
+                                <!-- Tombol Previous -->
+                                <?php if ($page > 1): ?>
+                                    <a href="?<?= buildQueryString(['page' => $page - 1]) ?>" class="pagination-btn">
+                                        &laquo; Prev
+                                    </a>
+                                <?php else: ?>
+                                    <span class="pagination-btn disabled">&laquo; Prev</span>
+                                <?php endif; ?>
+                                
+                                <!-- Nomor Halaman -->
+                                <?php 
+                                // Tentukan rentang halaman yang akan ditampilkan
+                                $start_page = max(1, $page - 2);
+                                $end_page = min($total_pages, $start_page + 4);
+                                $start_page = max(1, $end_page - 4);
+                                
+                                for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                    <a href="?<?= buildQueryString(['page' => $i]) ?>" 
                                        class="pagination-btn <?= $i == $page ? 'active' : '' ?>">
                                         <?= $i ?>
                                     </a>
                                 <?php endfor; ?>
+                                
+                                <!-- Tombol Next -->
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?<?= buildQueryString(['page' => $page + 1]) ?>" class="pagination-btn">
+                                        Next &raquo;
+                                    </a>
+                                <?php else: ?>
+                                    <span class="pagination-btn disabled">Next &raquo;</span>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     <?php else: ?>
@@ -519,7 +602,7 @@ function formatTanggalInput($dateString)
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let statusSaatIni = "<?= $status ?>";
@@ -617,6 +700,52 @@ function formatTanggalInput($dateString)
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk menampilkan alert selamat datang
+            function showWelcomeAlert() {
+                const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
+                
+                Swal.fire({
+                    title: `Selamat datang ${namaSiswa}!`,
+                    text: "Anda berhasil login ke sistem",
+                    icon: 'success',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    toast: true,
+                    background: '#f8f9fa',
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                }).then(() => {
+                    // Setelah alert selamat datang selesai, tampilkan peringatan jika password masih default
+                    <?php if ($password_default): ?>
+                    showPasswordWarning();
+                    <?php endif; ?>
+                });
+            }
+
+            // Fungsi untuk menampilkan peringatan password default
+            function showPasswordWarning() {
+                Swal.fire({
+                    title: 'Peringatan Keamanan',
+                    html: 'Password Anda masih menggunakan password default (NIS).<br>Silakan ubah password Anda untuk keamanan akun.',
+                    icon: 'warning',
+                    confirmButtonText: 'Ubah Password Sekarang',
+                    confirmButtonColor: '#3085d6',
+                    showCancelButton: true,
+                    cancelButtonText: 'Nanti Saja',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect ke halaman ubah password
+                        window.location.href = 'index.php?page=editsiswa&id_siswa=<?php echo $id_siswa; ?>';
+                    }
+                });
+            }
+
             <?php if (isset($_GET['pesan'])): ?>
                 <?php if ($_GET['pesan'] == 'sukses'): ?>
                     Swal.fire({
@@ -651,27 +780,19 @@ function formatTanggalInput($dateString)
                 <?php endif; ?>
             <?php else: ?>
                 if (!localStorage.getItem('siswaWelcomeShown')) {
-                    const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
-
                     setTimeout(() => {
-                        Swal.fire({
-                            title: `Selamat datang ${namaSiswa}!`,
-                            text: "Anda berhasil login ke sistem",
-                            icon: 'success',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            timerProgressBar: true,
-                            toast: true,
-                            background: '#f8f9fa',
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer);
-                                toast.addEventListener('mouseleave', Swal.resumeTimer);
-                            }
-                        });
+                        showWelcomeAlert();
                     }, 300);
 
                     localStorage.setItem('siswaWelcomeShown', 'true');
+                } else {
+                    // Jika alert selamat datang sudah pernah ditampilkan,
+                    // langsung tampilkan peringatan password jika diperlukan
+                    <?php if ($password_default): ?>
+                    setTimeout(() => {
+                        showPasswordWarning();
+                    }, 500);
+                    <?php endif; ?>
                 }
             <?php endif; ?>
         });

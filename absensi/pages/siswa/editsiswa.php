@@ -12,11 +12,13 @@ if (!isset($_SESSION['id_siswa'])) {
 }
 // Inisialisasi variabel error
 $error_nisn = $_SESSION['error_nisn'] ?? '';
+$error_password = $_SESSION['error_password'] ?? '';
 $success = $_SESSION['success'] ?? '';
 $form_data = $_SESSION['form_data'] ?? array();
 
 // Hapus data session setelah digunakan
 unset($_SESSION['error_nisn']);
+unset($_SESSION['error_password']);
 unset($_SESSION['success']);
 unset($_SESSION['form_data']);
 // Get student data
@@ -32,13 +34,13 @@ if (mysqli_num_rows($select) == 0) {
 
 // Process form submission
 if (isset($_POST['submit'])) {
-    $nis = $_POST['nis'];
-    $nisn = $_POST['nisn'];
-    $nama_siswa = $_POST['nama_siswa'];
-    $no_wa = $_POST['no_wa'];
-    $pro_keahlian = $_POST['pro_keahlian'];
-    $TL = $_POST['TL'];
-    $TTGL = $_POST['TTGL'];
+    $nis = $_POST['nis'] ?? '';
+    $nisn = $_POST['nisn'] ?? '';
+    $nama_siswa = $_POST['nama_siswa'] ?? '';
+    $no_wa = $_POST['no_wa'] ?? '';
+    $pro_keahlian = $_POST['pro_keahlian'] ?? '';
+    $TL = $_POST['TL'] ?? '';
+    $TTGL = $_POST['TTGL'] ?? '';
     $id_sekolah     = $_POST['id_sekolah'] ?? 0;
     $id_perusahaan  = $_POST['id_perusahaan'] ?? 0;
     $tanggal_mulai  = $_POST['tanggal_mulai'] ?? '';
@@ -46,11 +48,17 @@ if (isset($_POST['submit'])) {
     $id_pembimbing  = $_POST['id_pembimbing'] ?? 0;
     $id_guru        = $_POST['id_guru'] ?? 0;
 
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $konfirmasi_password = $_POST['konfirmasi_password'] ?? '';
     $foto_lama = $_POST['foto_lama'] ?? 'default.png';
 
     $profile = $foto_lama;
+<<<<<<< HEAD
+=======
+    $has_error = false;
+
+>>>>>>> 36ed03f1ef217c24a539a08169928d816d49f294
     // Validasi NISN
     if (strlen($nisn) !== 10) {
         $_SESSION['error_nisn'] = 'NISN harus terdiri dari 10 karakter';
@@ -60,8 +68,14 @@ if (isset($_POST['submit'])) {
         $has_error = true;
     }
 
+    // Validasi konfirmasi password
+    if ($password !== $konfirmasi_password) {
+        $_SESSION['error_password'] = 'Konfirmasi password tidak sesuai';
+        $has_error = true;
+    }
+
     // Jika ada error, redirect kembali ke form
-    if (isset($has_error)) {
+    if ($has_error) {
         $_SESSION['form_data'] = $_POST;
         header("Location: index.php?page=editsiswa&id_siswa=" . $id_siswa);
         exit();
@@ -154,12 +168,9 @@ if (isset($_POST['submit'])) {
 
     $sql = mysqli_query($coneksi, "UPDATE siswa SET 
         profile='$profile',
-        nis='$nis',
-        nisn='$nisn',
-        no_wa='$no_wa', 
-        nama_siswa='$nama_siswa', 
         username='$username', 
         password='$password', 
+<<<<<<< HEAD
         -- id_sekolah='$id_sekolah',
         -- id_perusahaan='$id_perusahaan',
         -- tanggal_mulai='$tanggal_mulai',
@@ -168,6 +179,13 @@ if (isset($_POST['submit'])) {
         -- id_guru='$id_guru',
         -- pro_keahlian='$pro_keahlian',
         TL='$TL',
+=======
+        nis='$nis',
+        nisn='$nisn',
+        nama_siswa='$nama_siswa', 
+        no_wa='$no_wa', 
+        TL='$TL', 
+>>>>>>> 36ed03f1ef217c24a539a08169928d816d49f294
         TTGL='$TTGL'
         WHERE id_siswa='$id_siswa'");
 
@@ -176,7 +194,7 @@ if (isset($_POST['submit'])) {
         echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data siswa berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
-        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
+        $err = htmlspecialchars(mysqli_error($coneksi) ?? '', ENT_QUOTES);
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
     }
@@ -211,7 +229,7 @@ function getUploadError($errorCode)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Siswa - <?php echo htmlspecialchars($data['nama_siswa']); ?></title>
+    <title>Profil Siswa - <?php echo htmlspecialchars($data['nama_siswa'] ?? ''); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
@@ -472,6 +490,25 @@ function getUploadError($errorCode)
             width: auto !important;
             max-width: 400px !important;
         }
+<<<<<<< HEAD
+=======
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .is-invalid {
+            border-color: #e74c3c !important;
+        }
+        
+        .password-match {
+            color: #28a745;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+>>>>>>> 36ed03f1ef217c24a539a08169928d816d49f294
     </style>
 </head>
 
@@ -481,7 +518,11 @@ function getUploadError($errorCode)
 
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
+<<<<<<< HEAD
             <input type="hidden" name="profile" value="<?php echo $data['profile']; ?>">
+=======
+            <input type="hidden" name="foto_lama" value="<?php echo htmlspecialchars($data['profile'] ?? 'default.png'); ?>">
+>>>>>>> 36ed03f1ef217c24a539a08169928d816d49f294
 
             <div class="profile-container">
                 <div class="profile-card">
@@ -504,9 +545,9 @@ function getUploadError($errorCode)
                     </div>
 
                     <div id="view-mode">
-                        <h3><?php echo htmlspecialchars($data['nama_siswa']); ?></h3>
-                        <p><?php echo htmlspecialchars($data['nisn']); ?></p>
-                        <p><?php echo htmlspecialchars($data['pro_keahlian']); ?></p>
+                        <h3><?php echo htmlspecialchars($data['nama_siswa'] ?? ''); ?></h3>
+                        <p><?php echo htmlspecialchars($data['nisn'] ?? ''); ?></p>
+                        <p><?php echo htmlspecialchars($data['pro_keahlian'] ?? ''); ?></p>
 
                         <button type="button" class="btn btn-warning" onclick="enableEdit()">
                             <i class="fas fa-edit"></i> Edit Profil
@@ -517,20 +558,25 @@ function getUploadError($errorCode)
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
-                                value="<?php echo htmlspecialchars($data['username']); ?>" required>
+                                value="<?php echo htmlspecialchars($data['username'] ?? ''); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
-                                value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                                value="<?php echo htmlspecialchars($data['password'] ?? ''); ?>" required
+                                oninput="validatePassword()">
                         </div>
                         
                         <div class="form-group">
-                            <label for="konfirmasi-password">Konfirmasi Password</label>
-                            <input type="text" class="form-control" id="konfirmasi-password" name="konfirmasi-password"
-                                value="<?php echo htmlspecialchars($data['konfirmasi-password']); ?>" required>
+                            <label for="konfirmasi_password">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password"
+                                value="<?php echo htmlspecialchars($data['password'] ?? ''); ?>" required
+                                oninput="validatePassword()">
+                            <div id="passwordError" class="error-message"><?php echo $error_password; ?></div>
+                            <div id="passwordMatch" class="password-match"></div>
                         </div>
+                        
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
                         </button>
 
@@ -548,13 +594,13 @@ function getUploadError($errorCode)
                             <div class="form-group">
                                 <label for="nama_siswa">Nama Lengkap</label>
                                 <input type="text" class="form-control" id="nama_siswa" name="nama_siswa"
-                                    value="<?php echo htmlspecialchars($data['nama_siswa']); ?>" required>
+                                    value="<?php echo htmlspecialchars($data['nama_siswa'] ?? ''); ?>" required>
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">NIS</label>
                                 <div class="info-value editable">
-                                    <input type="text" name="nis" id="nis" class="form-control" value="<?php echo htmlspecialchars($data['nis']); ?>" required">
+                                    <input type="text" name="nis" id="nis" class="form-control" value="<?php echo htmlspecialchars($data['nis'] ?? ''); ?>" required">
                                 </div>
                             </div>
 
@@ -563,7 +609,7 @@ function getUploadError($errorCode)
                                 <div class="info-value editable">
 
                                     <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>"
-                                        value="<?php echo htmlspecialchars($data['nisn']); ?>"
+                                        value="<?php echo htmlspecialchars($data['nisn'] ?? ''); ?>"
                                         required minlength="10" maxlength="10" oninput="validateNISN()">
                                     <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                                 </div>
@@ -571,15 +617,20 @@ function getUploadError($errorCode)
 
                             <div class="form-group">
                                 <label for="no_wa">Nomor WhatsApp</label>
+<<<<<<< HEAD
                                 <input type="text" class="form-control" id="no_wa" name="no_wa"
                                     value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
+=======
+                                <input type="text" class="form-control" id="no_wa" name="no_wa" required 
+                                    value="<?php echo htmlspecialchars($data['no_wa'] ?? ''); ?>" placeholder="628xxxxxxx">
+>>>>>>> 36ed03f1ef217c24a539a08169928d816d49f294
                             </div>
 
                             <div class="form-group">
                                 <label class="info-label">Tempat Lahir</label>
                                 <div class="info-value editable">
                                     <input type="text" name="TL" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['TL']); ?>" required>
+                                        value="<?php echo htmlspecialchars($data['TL'] ?? ''); ?>" required>
                                 </div>
                             </div>
 
@@ -587,7 +638,7 @@ function getUploadError($errorCode)
                                 <label class="info-label">Tanggal Lahir</label>
                                 <div class="info-value editable">
                                     <input type="date" name="TTGL" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
+                                        value="<?php echo htmlspecialchars($data['TTGL'] ?? ''); ?>" required>
                                 </div>
                             </div>
 
@@ -597,9 +648,15 @@ function getUploadError($errorCode)
                                 <div class="info-value editable">
                                     <input type="text" class="form-control" readonly
                                         value="<?php
-                                                $sekolah_query = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '" . $data['id_sekolah'] . "'");
-                                                $sekolah = mysqli_fetch_assoc($sekolah_query);
-                                                echo htmlspecialchars($sekolah['nama_sekolah']);
+                                                $sekolah_name = '';
+                                                if (!empty($data['id_sekolah'])) {
+                                                    $sekolah_query = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '" . $data['id_sekolah'] . "'");
+                                                    if ($sekolah_query && mysqli_num_rows($sekolah_query) > 0) {
+                                                        $sekolah = mysqli_fetch_assoc($sekolah_query);
+                                                        $sekolah_name = $sekolah['nama_sekolah'];
+                                                    }
+                                                }
+                                                echo htmlspecialchars($sekolah_name);
                                                 ?>"
                                         style="background-color: #e9ecef;">
                                 </div>
@@ -613,9 +670,15 @@ function getUploadError($errorCode)
                                 <div class="info-value editable">
                                     <input type="text" class="form-control" readonly
                                         value="<?php
-                                                $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
-                                                $perusahaan = mysqli_fetch_assoc($perusahaan_query);
-                                                echo htmlspecialchars($perusahaan['nama_perusahaan']);
+                                                $perusahaan_name = '';
+                                                if (!empty($data['id_perusahaan'])) {
+                                                    $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
+                                                    if ($perusahaan_query && mysqli_num_rows($perusahaan_query) > 0) {
+                                                        $perusahaan = mysqli_fetch_assoc($perusahaan_query);
+                                                        $perusahaan_name = $perusahaan['nama_perusahaan'];
+                                                    }
+                                                }
+                                                echo htmlspecialchars($perusahaan_name);
                                                 ?>"
                                         style="background-color: #e9ecef;">
                                 </div>
@@ -626,9 +689,15 @@ function getUploadError($errorCode)
                                 <div class="info-value editable">
                                     <input type="text" class="form-control" readonly
                                         value="<?php
-                                                $pembimbing_query = mysqli_query($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = '" . $data['id_pembimbing'] . "'");
-                                                $pembimbing = mysqli_fetch_assoc($pembimbing_query);
-                                                echo htmlspecialchars($pembimbing['nama_pembimbing']);
+                                                $pembimbing_name = '';
+                                                if (!empty($data['id_pembimbing'])) {
+                                                    $pembimbing_query = mysqli_query($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = '" . $data['id_pembimbing'] . "'");
+                                                    if ($pembimbing_query && mysqli_num_rows($pembimbing_query) > 0) {
+                                                        $pembimbing = mysqli_fetch_assoc($pembimbing_query);
+                                                        $pembimbing_name = $pembimbing['nama_pembimbing'];
+                                                    }
+                                                }
+                                                echo htmlspecialchars($pembimbing_name);
                                                 ?>"
                                         style="background-color: #e9ecef;">
                                 </div>
@@ -639,9 +708,15 @@ function getUploadError($errorCode)
                                 <div class="info-value editable">
                                     <input type="text" class="form-control" readonly
                                         value="<?php
-                                                $guru_query = mysqli_query($coneksi, "SELECT nama_guru FROM guru WHERE id_guru = '" . $data['id_guru'] . "'");
-                                                $guru = mysqli_fetch_assoc($guru_query);
-                                                echo htmlspecialchars($guru['nama_guru']);
+                                                $guru_name = '';
+                                                if (!empty($data['id_guru'])) {
+                                                    $guru_query = mysqli_query($coneksi, "SELECT nama_guru FROM guru WHERE id_guru = '" . $data['id_guru'] . "'");
+                                                    if ($guru_query && mysqli_num_rows($guru_query) > 0) {
+                                                        $guru = mysqli_fetch_assoc($guru_query);
+                                                        $guru_name = $guru['nama_guru'];
+                                                    }
+                                                }
+                                                echo htmlspecialchars($guru_name);
                                                 ?>"
                                         style="background-color: #e9ecef;">
                                 </div>
@@ -685,7 +760,7 @@ function getUploadError($errorCode)
                                 <label class="info-label">Program Keahlian</label>
                                 <div class="info-value editable">
                                     <input type="text" name="pro_keahlian" class="form-control" readonly
-                                        value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>"
+                                        value="<?php echo htmlspecialchars($data['pro_keahlian'] ?? ''); ?>"
                                         style="background-color: #e9ecef;">
                                 </div>
                             </div>
@@ -787,19 +862,52 @@ function getUploadError($errorCode)
             }
         }
 
+        function validatePassword() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('konfirmasi_password');
+            const passwordError = document.getElementById('passwordError');
+            const passwordMatch = document.getElementById('passwordMatch');
+            
+            const passwordValue = passwordInput.value;
+            const confirmPasswordValue = confirmPasswordInput.value;
+
+            if (passwordValue !== confirmPasswordValue) {
+                passwordError.textContent = 'Konfirmasi password tidak sesuai';
+                passwordMatch.textContent = '';
+                passwordInput.classList.add('is-invalid');
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            } else if (passwordValue.length > 0 && confirmPasswordValue.length > 0) {
+                passwordError.textContent = '';
+                passwordMatch.textContent = 'Password sesuai ✓';
+                passwordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                return true;
+            } else {
+                passwordError.textContent = '';
+                passwordMatch.textContent = '';
+                passwordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                return false;
+            }
+        }
+
         function validateForm() {
             const isNISNValid = validateNISN();
+            const isPasswordValid = validatePassword();
 
-            if (!isNISNValid) {
+            if (!isNISNValid || !isPasswordValid) {
                 if (!isNISNValid) {
                     document.getElementById('nisn').focus();
+                } else if (!isPasswordValid) {
+                    document.getElementById('konfirmasi_password').focus();
                 }
 
                 // Tampilkan pesan error dengan SweetAlert2
                 Swal.fire({
                     icon: 'error',
                     title: 'Validasi Gagal',
-                    text: 'Silakan periksa kembali data NISN',
+                    text: 'Silakan periksa kembali data yang diinput',
                     position: 'top',
                     showConfirmButton: false,
                     timer: 3000,
@@ -813,10 +921,13 @@ function getUploadError($errorCode)
 
         // Validasi real-time saat pengguna mengetik
         document.getElementById('nisn').addEventListener('input', validateNISN);
+        document.getElementById('password').addEventListener('input', validatePassword);
+        document.getElementById('konfirmasi_password').addEventListener('input', validatePassword);
 
         // Jalankan validasi saat halaman dimuat untuk menampilkan error dari server
         document.addEventListener('DOMContentLoaded', function() {
             validateNISN();
+            validatePassword();
         });
     </script>
 </body>
