@@ -1,297 +1,425 @@
 <?php
-session_start();
 include('koneksi.php');
 
-// Ambil data dari session
-$level = $_SESSION['level'] ?? '';
-$id_siswa = $_SESSION['id_siswa'] ?? null;
-$id_perusahaan = $_SESSION['id_perusahaan'] ?? null;
-$id_guru = $_SESSION['id_guru'] ?? null;
-$id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
-
-// Ambil nama siswa untuk pesan alert
-$nama_siswa = '';
-if ($level === 'siswa' && $id_siswa) {
-    $query_nama = "SELECT nama_siswa FROM siswa WHERE id_siswa = '$id_siswa'";
-    $result_nama = mysqli_query($coneksi, $query_nama);
-    $data_siswa = mysqli_fetch_assoc($result_nama);
-    $nama_siswa = $data_siswa['nama_siswa'] ?? 'Siswa';
+// Cek apakah siswa sudah login
+if (!isset($_SESSION['id_siswa'])) {
+    header("Location: sign-in.php");
+    exit();
 }
 
-// Parameter dari URL - format tanggal Y-m-d
-$tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
-$limit = 10;
-$page_no = isset($_GET['page_no']) ? (int)$_GET['page_no'] : 1;
-$offset = ($page_no - 1) * $limit;
-$search = isset($_GET['search']) ? mysqli_real_escape_string($coneksi, $_GET['search']) : '';
+$id_siswa = $_SESSION['id_siswa'];
+$tanggal = date('Y-m-d');
 
-// Cek apakah tanggal yang dilihat adalah hari ini
-$is_today = ($tanggal == date('Y-m-d'));
+// Ambil data siswa termasuk status password
+$stmt = mysqli_prepare($coneksi, "SELECT nama_siswa, id_perusahaan, password, nis FROM siswa WHERE id_siswa = ?");
+mysqli_stmt_bind_param($stmt, "i", $id_siswa);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$siswa = mysqli_fetch_assoc($result);
+$nama_siswa = $siswa ? $siswa['nama_siswa'] : "Siswa";
+$id_perusahaan = $siswa['id_perusahaan'] ?? null;
 
-// Cek status absensi untuk siswa (hanya berlaku untuk hari ini)
-$allow_jurnal = false;
-$absen_status = ''; // untuk menyimpan status absensi
+// Cek apakah password masih default (sama dengan NIS)
+$password_default = false;
+if ($siswa && $siswa['password'] === $siswa['nis']) {
+    $password_default = true;
+}
 
-if ($level === 'siswa' && $id_siswa && $is_today) {
-    // Cek absensi hari ini
-    $cek_absen = "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
-    $result_absen = mysqli_query($coneksi, $cek_absen);
-    $absen_hari_ini = mysqli_fetch_assoc($result_absen);
+// Cek status absensi
+$stmt = mysqli_prepare($coneksi, "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa=? AND tanggal=?");
+mysqli_stmt_bind_param($stmt, "is", $id_siswa, $tanggal);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$absen = mysqli_fetch_assoc($result);
+
+$status = 'belum';
+if ($absen) {
+    if ($absen['jam_masuk'] && !$absen['jam_keluar']) {
+        $status = 'masuk';
+    } elseif ($absen['jam_masuk'] && $absen['jam_keluar']) {
+        $status = 'selesai';
+    }
+}
+$_SESSION['status_absen'] = $status;
+
+// Konfigurasi pagination untuk catatan pembimbing
+$limit = 5; 
+$page = isset($_GET['page_catatan']) ? (int)$_GET['page_catatan'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Filter tanggal jika ada
+$filter_tanggal = isset($_GET['filter_tanggal']) ? $_GET['filter_tanggal'] : '';
+
+// Ambil catatan pembimbing
+$catatan_pembimbing = [];
+$total_catatan = 0;
+if ($id_perusahaan) {
+    // Query untuk total catatan
+    $sql_count = "
+        SELECT COUNT(*) as total
+        FROM catatan c
+        JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+        JOIN jurnal j ON c.id_jurnal = j.id_jurnal
+        WHERE j.id_siswa = ?
+    ";
     
-    if ($absen_hari_ini) {
-        if ($absen_hari_ini['jam_masuk'] && !$absen_hari_ini['jam_keluar']) {
-            // Sudah absen masuk, belum pulang - boleh buat/update jurnal
-            $allow_jurnal = true;
-            $absen_status = 'masuk';
-        } elseif ($absen_hari_ini['jam_masuk'] && $absen_hari_ini['jam_keluar']) {
-            // Sudah absen pulang - tidak boleh buat/update jurnal
-            $allow_jurnal = false;
-            $absen_status = 'pulang';
-        }
-    } else {
-        // Belum absen masuk - tidak boleh buat jurnal
-        $allow_jurnal = false;
-        $absen_status = 'belum';
-    }
-}
-
-// Cek apakah siswa sudah memiliki jurnal untuk tanggal yang dilihat
-$jurnal_tanggal_ini = null;
-if ($level === 'siswa' && $id_siswa) {
-    $cek_jurnal = "SELECT * FROM jurnal WHERE id_siswa = '$id_siswa' AND DATE(tanggal) = '$tanggal'";
-    $result_jurnal = mysqli_query($coneksi, $cek_jurnal);
-    $jurnal_hari_ini = mysqli_fetch_assoc($result_jurnal);
-}
-
-// Validasi waktu tambah jurnal berdasarkan status absensi
-$allow_jurnal = false;
-$time_message = '';
-
-<<<<<<< HEAD
-if ($current_day == 8) { // Hari Minggu
-    $allow_jurnal = false;
-    $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
-} else {
-    if ($current_day == 6) { // Hari Sabtu
-        $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
-        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
-    } else { // Hari Senin-Jumat
-
-        $allow_jurnal = ($current_time >= '12:00' && $current_time <= '16:15');
-        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
-=======
-if ($level === 'siswa' && $id_siswa) {
-    // Cek status absensi siswa hari ini
-    $today = date('Y-m-d');
-    $absensi_query = "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$today'";
-    $absensi_result = mysqli_query($coneksi, $absensi_query);
-    $absensi = mysqli_fetch_assoc($absensi_result);
+    $sql_catatan = "
+        SELECT 
+            c.catatan,
+            c.tanggal,
+            p.nama_pembimbing,
+            j.keterangan,
+            j.tanggal as tanggal_jurnal
+        FROM catatan c
+        JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
+        JOIN jurnal j ON c.id_jurnal = j.id_jurnal
+        WHERE j.id_siswa = ?
+    ";
     
-    if ($absensi) {
-        if ($absensi['jam_masuk'] && !$absensi['jam_keluar']) {
-            // Sudah absen masuk, belum pulang - boleh tambah jurnal
-            $allow_jurnal = true;
-            $time_message = 'Anda sudah absen masuk, dapat menambahkan jurnal';
-        } elseif ($absensi['jam_masuk'] && $absensi['jam_keluar']) {
-            // Sudah absen pulang - tidak boleh tambah jurnal
-            $allow_jurnal = false;
-            $time_message = 'Anda sudah absen pulang, tidak dapat menambahkan jurnal';
-        } else {
-            // Belum absen masuk - tidak boleh tambah jurnal
-            $allow_jurnal = false;
-            $time_message = 'Anda belum absen masuk, silakan absen terlebih dahulu';
-        }
-    } else {
-        // Tidak ada record absensi - tidak boleh tambah jurnal
-        $allow_jurnal = false;
-        $time_message = 'Anda belum absen masuk, silakan absen terlebih dahulu';
+    // Tambahkan filter tanggal jika ada
+    $params_count = [$id_siswa];
+    $params_catatan = [$id_siswa];
+    $param_types_count = "i";
+    $param_types_catatan = "i";
+    
+    if (!empty($filter_tanggal)) {
+        $sql_count .= " AND DATE(c.tanggal) = ?";
+        $sql_catatan .= " AND DATE(c.tanggal) = ?";
+        $params_count[] = $filter_tanggal;
+        $params_catatan[] = $filter_tanggal;
+        $param_types_count .= "s";
+        $param_types_catatan .= "s";
     }
-} else {
-    // Untuk level selain siswa (pembimbing/guru), tetap menggunakan aturan sebelumnya
-    $current_time = date('H:i');
-    $current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
-
-    if ($current_day == 7) { // Hari Minggu
-        $allow_jurnal = false;
-        $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
-    } else {
-        if ($current_day == 6) { // Hari Sabtu
-            $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
-            $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
-        } else { // Hari Senin-Jumat
-            $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
-            $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
+    
+    // Hitung total catatan
+    $stmt_count = mysqli_prepare($coneksi, $sql_count);
+    if ($stmt_count) {
+        mysqli_stmt_bind_param($stmt_count, $param_types_count, ...$params_count);
+        mysqli_stmt_execute($stmt_count);
+        $result_count = mysqli_stmt_get_result($stmt_count);
+        $total_data = mysqli_fetch_assoc($result_count);
+        $total_catatan = $total_data['total'];
+    }
+    
+    // Query untuk data catatan dengan pagination
+    $sql_catatan .= " ORDER BY c.tanggal DESC LIMIT ? OFFSET ?";
+    $params_catatan[] = $limit;
+    $params_catatan[] = $offset;
+    $param_types_catatan .= "ii";
+    
+    // Ambil data catatan
+    $stmt_catatan = mysqli_prepare($coneksi, $sql_catatan);
+    if ($stmt_catatan) {
+        mysqli_stmt_bind_param($stmt_catatan, $param_types_catatan, ...$params_catatan);
+        mysqli_stmt_execute($stmt_catatan);
+        $result_catatan = mysqli_stmt_get_result($stmt_catatan);
+        
+        if ($result_catatan) {
+            $catatan_pembimbing = mysqli_fetch_all($result_catatan, MYSQLI_ASSOC);
         }
->>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
     }
 }
 
-// Membangun kondisi WHERE berdasarkan level pengguna
-$where_conditions = [];
+// Hitung total halaman
+$total_pages = ceil($total_catatan / $limit);
 
-if ($level === 'siswa') {
-    $where_conditions[] = "siswa.id_siswa = '$id_siswa'";
-} elseif ($level === 'pembimbing') {
-    $where_conditions[] = "siswa.id_perusahaan = '$id_perusahaan'";
-    if ($search) {
-        $where_conditions[] = "siswa.nama_siswa LIKE '%$search%'";
-    }
-} elseif ($level === 'guru') {
-    $where_conditions[] = "siswa.id_guru = '$id_guru'";
-    if ($search) {
-        $where_conditions[] = "siswa.nama_siswa LIKE '%$search%'";
-    }
+// Format tanggal function
+function formatTanggal($dateString)
+{
+    $date = new DateTime($dateString);
+    return $date->format('d-m-Y');
 }
 
-$where_clause = $where_conditions ? implode(' AND ', $where_conditions) : '1=1';
+// Format tanggal untuk input date
+function formatTanggalInput($dateString)
+{
+    $date = new DateTime($dateString);
+    return $date->format('Y-m-d');
+}
 
-// Hitung total data untuk pagination
-$count_sql = "
-    SELECT COUNT(DISTINCT siswa.id_siswa) AS total
-    FROM siswa
-    LEFT JOIN jurnal ON siswa.id_siswa = jurnal.id_siswa AND DATE(jurnal.tanggal) = '$tanggal'
-    WHERE $where_clause
-";
-$count_result = mysqli_query($coneksi, $count_sql);
-$total_rows = mysqli_fetch_assoc($count_result)['total'] ?? 0;
-$total_pages = max(1, ceil($total_rows / $limit));
-
-// Query untuk mendapatkan data
-$sql = "
-    SELECT
-        siswa.id_siswa,
-        siswa.nama_siswa,
-        jurnal.id_jurnal,
-        jurnal.keterangan AS keterangan_jurnal,
-        (
-            SELECT c.catatan
-            FROM catatan c
-            WHERE 
-                (c.id_jurnal = jurnal.id_jurnal OR c.id_siswa = siswa.id_siswa)
-                AND DATE(c.tanggal) = '$tanggal'
-                " . ($level === 'pembimbing' ? "AND c.id_pembimbing = '$id_pembimbing'" : "") . "
-            ORDER BY c.tanggal DESC
-            LIMIT 1
-        ) AS catatan
-    FROM siswa
-    LEFT JOIN jurnal ON siswa.id_siswa = jurnal.id_siswa AND DATE(jurnal.tanggal) = '$tanggal'
-    WHERE $where_clause
-    GROUP BY siswa.id_siswa, jurnal.id_jurnal
-    ORDER BY siswa.nama_siswa ASC
-    LIMIT $limit OFFSET $offset
-";
-
-$result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
+// Fungsi untuk membuat parameter URL
+function buildQueryString($params = []) {
+    $currentParams = $_GET;
+    unset($currentParams['page_catatan']); // Hapus parameter page_catatan yang lama
+    
+    // Gabungkan dengan parameter baru
+    $allParams = array_merge($currentParams, $params);
+    
+    return http_build_query($allParams);
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Data Jurnal dan Catatan Harian</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <title>Dashboard Siswa - Sistem Absensi</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
-        .clickable-row {
-            cursor: pointer;
+        :root {
+            --primary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
         }
 
-<<<<<<< HEAD
-=======
-    body {
-        padding-left: 270px;
-        background-color: #f8f9fa;
-        transition: padding-left 0.3s;
-    }
-
-    .main-container {
-        margin: 20px 20px 0 0;
-        max-width: none;
-    }
-
-    .container-custom {
-        background-color: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .table thead th {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .table tbody tr:hover {
-        background-color: #e9ecef;
-    }
-
-    .time-alert {
-        color: #dc3545;
-        font-weight: bold;
-        margin-left: 10px;
-    }
-
-    .journal-text {
-        max-width: 300px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .status-info {
-        color: #28a745;
-        font-weight: bold;
-        margin-left: 10px;
-    }
-    
-    @media (max-width: 991px) {
->>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
         body {
             padding-left: 270px;
-            background-color: #f8f9fa;
             transition: padding-left 0.3s;
+            background-color: #f8f9fa;
+            
         }
 
         .main-container {
-            margin: 20px 20px 0 0;
+            margin-top: 20px;
+            margin-right: 20px;
+            margin-left: 0;
+            width: auto;
             max-width: none;
+            zoom: 0.85;
         }
 
         .container-custom {
-            background-color: #fff;
+            background-color: #ffffff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .table thead th {
+        .dashboard-wrapper {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .content-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+        }
+
+        .attendance-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .notes-section {
+            width: 400px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+
+        .pagination-btn {
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        .pagination-btn.active {
             background-color: #007bff;
             color: white;
         }
 
-        .table tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        .table td,
-        .table th {
-            border: 1px solid #dee2e6 !important;
-            vertical-align: middle;
-        }
-
-        .journal-text {
-            max-width: 300px;
-            white-space: nowrap;
+        #btnAbsensi {
+            padding: 25px 30px;
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
             overflow: hidden;
-            text-overflow: ellipsis;
+            margin-bottom: 20px;
+            width: 40%;
+            max-width: 250px;
         }
-        
-        .btn-disabled {
-            opacity: 0.6;
+
+        #btnAbsensi.belum {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+        }
+
+        #btnAbsensi.masuk {
+            background: linear-gradient(135deg, #2ed573 0%, #7bed9f 100%);
+        }
+
+        #btnAbsensi.selesai {
+            background: linear-gradient(135deg, #2f3542 0%, #57606f 100%);
             cursor: not-allowed;
+        }
+
+        .info-status {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #007bff;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .note-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .note-header {
+            font-weight: 600;
+            color: #007bff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .note-header i {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .note-jurnal {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .note-body {
+            margin-bottom: 10px;
+            color: #333;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+
+        .note-footer {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .note-footer i {
+            margin-right: 5px;
+        }
+
+        .empty-notes {
+            color: #6c757d;
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
         }
 
         @media (max-width: 991px) {
@@ -300,362 +428,370 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             }
 
             .main-container {
-                margin: 0 15px;
+                margin: 10px;
+                height: auto;
             }
+
+            .content-container {
+                flex-direction: column;
+            }
+
+            .attendance-section {
+                margin-bottom: 20px;
+                padding: 20px;
+            }
+
+            .notes-section {
+                width: 100%;
+                height: auto;
+                max-height: 400px;
+            }
+
+            .notes-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .filter-form {
+                width: 100%;
+            }
+
+            .filter-input {
+                flex: 1;
+            }
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+        
+        .pagination-btn {
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .pagination-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .pagination-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .pagination-btn.disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+            background-color: #f8f9fa;
         }
     </style>
 </head>
 
 <body>
-    <h2 class="text-primary text-center text-md-left">Data Jurnal dan Catatan Harian</h2>
-    <div class="main-container container-custom">
-        <hr />
-        
-        <!-- Form Filter dan Pencarian -->
-        <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
-            <?php if ($level === 'siswa'): ?>
-<<<<<<< HEAD
-                <div class="form-inline">
-                    <div class="from-control mb-3">
-                        <?php if ($is_today && $allow_jurnal): ?>
-                            <!-- Hari ini dan boleh buat/update jurnal -->
-                            <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>"
-                                class="btn btn-primary">
-                                <i class="fas fa-<?= $jurnal_tanggal_ini ? 'edit' : 'plus' ?>"></i>
-                                <?= $jurnal_tanggal_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
-                            </a>
-                        <?php else: ?>
-                            <!-- Bukan hari ini atau tidak boleh buat/update jurnal -->
-                            <button class="btn btn-light btn-disabled" id="btnJurnalDisabled">
-                                <i class="fas fa-<?= $jurnal_tanggal_ini ? 'edit' : 'plus' ?>"></i>
-                                <?= $jurnal_tanggal_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
-                            </button>
-                        <?php endif; ?>
-                    </div>
-=======
-            <div class="form-inline">
-                <div class="from-control mb-3">
-                    <?php if ($allow_jurnal): ?>
-                    <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>"
-                        class="btn btn-<?= $jurnal_hari_ini ? 'primary' : 'primary' ?>">
-                        <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
-                        <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
-                    </a>
-                    <span class="status-info"><?= $time_message ?></span>
-                    <?php else: ?>
-                    <button type="button" class="btn btn-light" id="disabledJurnalButton">
-                        <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
-                        <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
+    <div class="main-container">
+        <div class="dashboard-wrapper">
+            <div class="content-container">
+                <div class="attendance-section">
+                    <button id="btnAbsensi" class="<?= $status ?>" <?= $status === 'selesai' ? 'disabled' : '' ?>
+                        onclick="prosesAbsensi()">
+                        <?= $status === 'belum' ? 'ABSEN MASUK' : ($status === 'masuk' ? 'ABSEN PULANG' : 'SUDAH ABSEN') ?>
                     </button>
-                    <span class="time-alert"><?= $time_message ?></span>
-                    <?php endif; ?>
->>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
-                </div>
-            <?php endif; ?>
-
-            <!-- Form Pencarian (hanya untuk pembimbing dan guru) -->
-            <?php if ($level === 'pembimbing' || $level === 'guru'): ?>
-                <form method="GET" class="form-iniline">
-                    <input type="hidden" name="page" value="catatan" />
-                    <input type="hidden" name="tanggal" value="<?= htmlspecialchars($tanggal) ?>" />
-                    <div class="input-group-append">
-                        <input type="text" name="search" class="form-control" placeholder="cari nama siswa..."
-                            value="<?= htmlspecialchars($search) ?>" aria-label="Cari nama siswa"
-                            aria-describedby="button-search">
-                        <button class="btn btn-primary ms-1" type="submit" id="button-search">
-                            <i class="fas fa-search"></i>
-                        </button>
+                    <div class="info-status"> Status:
+                        <?= $status === 'belum' ? 'Belum absen' : ($status === 'masuk' ? 'Sudah absen masuk' : 'Sudah absen pulang') ?>
                     </div>
-                </form>
-            <?php else: ?>
-                <div></div> <!-- Placeholder untuk menjaga layout -->
-            <?php endif; ?>
+                </div>
 
-            <!-- Form Filter Tanggal -->
-            <form method="GET" class="form-inline" id="filterForm">
-                <input type="hidden" name="page" value="catatan" />
+                <div class="notes-section">
+                    <div class="notes-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
+                        </h2>
+                        
+                        <form method="GET" class="filter-form">
+                            <input type="hidden" name="page" value="dashboard_siswa">
+                            <input type="date" name="filter_tanggal" value="<?= $filter_tanggal ?>" class="filter-input">
+                            <button type="submit" class="filter-btn">Filter</button>
+                            <?php if (!empty($filter_tanggal)): ?>
+                                <a href="?page=dashboard_siswa" class="filter-btn" style="background-color: #6c757d;">Reset</a>
+                            <?php endif; ?>
+                        </form>
+                    </div>
 
-                <?php
-                $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
-                ?>
-
-                <input type="date" name="tanggal" class="form-control date-picker mb-2"
-                    value="<?= htmlspecialchars($tanggal) ?>" pattern="\d{4}-\d{2}-\d{2}" onchange="document.getElementById('filterForm').submit();" />
-                <button class="btn btn-primary ml-2 mb-2">
-                    <i class="fa-solid fa-filter"></i>
-                </button>
-            </form>
-        </div>
-
-        <!-- Tabel Data (kolom waktu dihapus) -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-primary">
-                    <tr class="text-center">
-                        <th>No</th>
-                        <th>Nama Siswa</th>
-                        <th>Jurnal</th>
-                        <th>Catatan Pembimbing</th>
-                    <tr>
-
-                </thead>
-                <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php $no = $offset + 1; ?>
-                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                            <?php
-                            $id_jurnal = $row['id_jurnal'] ?? 0;
-                            $id_siswa_row = $row['id_siswa']; // ambil id_siswa dari row
-                            $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
-                            $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Belum ada jurnal';
-                            $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
-
-                            // Link tambah catatan (kirim id_jurnal + id_siswa)
-                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa_row&tanggal=$tanggal";
-                            ?>
-                            <tr class="clickable-row" data-href="<?= $href ?>">
-                                <td class="text-center"><?= $no ?></td>
-                                <td><?= htmlspecialchars($row['nama_siswa']) ?></td>
-                                <td class="journal-text" title="<?= htmlspecialchars($keterangan) ?>">
-                                    <?= htmlspecialchars($keterangan_short) ?>
-                                </td>
-                                <td><?= htmlspecialchars($catatan) ?></td>
-                            </tr>
-                            <?php $no++; ?>
-                        <?php endwhile; ?>
-
+                    <?php if (!empty($catatan_pembimbing)): ?>
+                        <?php foreach ($catatan_pembimbing as $catatan): ?>
+                            <div class="note-card">
+                                <div class="note-header">
+                                    <span>
+                                        <i class="fas fa-user-tie"></i>
+                                        <?= htmlspecialchars($catatan['nama_pembimbing']) ?>
+                                    </span>
+                                    <span><?= formatTanggal($catatan['tanggal']) ?></span>
+                                </div>
+                                <?php if (!empty($catatan['keterangan'])): ?>
+                                    <div class="note-jurnal">
+                                        <i class="fas fa-book"></i> Jurnal: <?= htmlspecialchars($catatan['keterangan']) ?>
+                                        (<?= formatTanggal($catatan['tanggal_jurnal']) ?>)
+                                    </div>
+                                <?php endif; ?>
+                                <div class="note-body">
+                                    <?= nl2br(htmlspecialchars($catatan['catatan'])) ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        
+                        <!-- Pagination yang Diperbaiki -->
+                        <?php if ($total_pages > 1): ?>
+                            <div class="pagination">
+                                <!-- Tombol Previous -->
+                                <?php if ($page > 1): ?>
+                                    <a href="?<?= buildQueryString(['page_catatan' => $page - 1]) ?>" class="pagination-btn">
+                                        &laquo; Prev
+                                    </a>
+                                <?php else: ?>
+                                    <span class="pagination-btn disabled">&laquo; Prev</span>
+                                <?php endif; ?>
+                                
+                                <!-- Nomor Halaman -->
+                                <?php 
+                                // Tentukan rentang halaman yang akan ditampilkan
+                                $start_page = max(1, $page - 2);
+                                $end_page = min($total_pages, $start_page + 4);
+                                $start_page = max(1, $end_page - 4);
+                                
+                                for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                    <a href="?<?= buildQueryString(['page_catatan' => $i]) ?>" 
+                                       class="pagination-btn <?= $i == $page ? 'active' : '' ?>">
+                                        <?= $i ?>
+                                    </a>
+                                <?php endfor; ?>
+                                
+                                <!-- Tombol Next -->
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?<?= buildQueryString(['page_catatan' => $page + 1]) ?>" class="pagination-btn">
+                                        Next &raquo;
+                                    </a>
+                                <?php else: ?>
+                                    <span class="pagination-btn disabled">Next &raquo;</span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="4" class="text-center">Tidak ada data siswa ditemukan untuk tanggal
-                                <?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>.</td>
-                        </tr>
+                        <div class="empty-notes">
+                            <i class="far fa-folder-open"></i> 
+                            <?= !empty($filter_tanggal) ? 'Tidak ada catatan pada tanggal yang dipilih' : 'Belum ada catatan dari pembimbing' ?>
+                        </div>
                     <?php endif; ?>
-                </tbody>
-            </table>
+                </div>
+            </div>
         </div>
-
-        <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <?php if ($page_no > 1): ?>
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $page_no - 1 ?>">
-                            &laquo; Sebelumnya
-                        </a>
-                    </li>
-                <?php endif; ?>
-
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <li class="page-item <?= ($i == $page_no) ? 'active' : '' ?>">
-                        <a class="page-link"
-                            href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $i ?>">
-                            <?= $i ?>
-                        </a>
-                    </li>
-                <?php endfor; ?>
-
-                <?php if ($page_no < $total_pages): ?>
-                    <li class="page-item">
-                        <a class="page-link"
-                            href="?page=catatan&tanggal=<?= urlencode($tanggal) ?>&search=<?= urlencode($search) ?>&page_no=<?= $page_no + 1 ?>">
-                            Selanjutnya &raquo;
-                        </a>
-                    </li>
-                <?php endif; ?>
-            </ul>
-        </nav>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function() {
-            $(".clickable-row").click(function() {
-                var href = $(this).data("href");
-                if (href && href !== "#") {
-                    window.location = href;
-                }
-            });
-            
-            // Untuk siswa, tampilkan alert jika mencoba klik tombol yang dinonaktifkan
-            <?php if ($level === 'siswa'): ?>
-            $('#btnJurnalDisabled').click(function(e) {
-                e.preventDefault();
-                <?php if (!$is_today): ?>
-                    // Jika melihat tanggal selain hari ini
+        let statusSaatIni = "<?= $status ?>";
+        let sudahAbsenPulang = <?= ($status === 'selesai') ? 'true' : 'false' ?>;
+
+        function prosesAbsensi() {
+            if (statusSaatIni === 'selesai') return;
+
+            // Efek ripple
+            const btn = document.getElementById('btnAbsensi');
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            btn.appendChild(ripple);
+            const rect = btn.getBoundingClientRect();
+            ripple.style.left = `${event.clientX - rect.left}px`;
+            ripple.style.top = `${event.clientY - rect.top}px`;
+            setTimeout(() => ripple.remove(), 600);
+
+            if (statusSaatIni === 'belum') {
+                kirimDataAbsensi('simpan_masuk');
+            } else {
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: 'Absen pulang sekarang?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        kirimDataAbsensi('simpan_keluar');
+                    }
+                });
+            }
+        }
+
+        function kirimDataAbsensi(aksi) {
+            fetch('./pages/siswa/proses_absen.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Cache-Control': 'no-cache'
+                    },
+                    body: `action=${aksi}`
+                })
+                .then(async res => {
+                    const text = await res.text();
+                    try {
+                        const data = JSON.parse(text);
+                        if (!res.ok) throw new Error(data.message || 'Error');
+                        return data;
+                    } catch {
+                        throw new Error(text || 'Invalid response');
+                    }
+                })
+                .then(data => {
                     Swal.fire({
-                        icon: 'info',
-                        title: 'Aksi Tidak Diizinkan',
-                        html: 'Hanya dapat menambah atau mengupdate jurnal untuk <strong>hari ini</strong>.',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Mengerti'
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: data.message,
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000
                     });
-                <?php elseif ($absen_status === 'belum'): ?>
-                    // Jika belum absen
+
+                    const btn = document.getElementById('btnAbsensi');
+                    if (aksi === 'simpan_masuk') {
+                        btn.className = 'masuk';
+                        btn.textContent = 'ABSEN PULANG';
+                        statusSaatIni = 'masuk';
+                        document.querySelector('.info-status').innerHTML = '<i class="fas fa-info-circle"></i> Status: Sudah absen masuk';
+                    } else {
+                        btn.className = 'selesai';
+                        btn.textContent = 'SUDAH ABSEN';
+                        btn.disabled = true;
+                        statusSaatIni = 'selesai';
+                        sudahAbsenPulang = true;
+                        document.querySelector('.info-status').innerHTML = '<i class="fas fa-info-circle"></i> Status: Sudah absen pulang';
+                    }
+                })
+                .catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: err.message,
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk menampilkan alert selamat datang
+            function showWelcomeAlert() {
+                const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
+                
+                Swal.fire({
+                    title: `Selamat datang ${namaSiswa}!`,
+                    text: "Anda berhasil login ke sistem",
+                    icon: 'success',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    toast: true,
+                    background: '#f8f9fa',
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                }).then(() => {
+                    // Setelah alert selamat datang selesai, tampilkan peringatan jika password masih default
+                    <?php if ($password_default): ?>
+                    showPasswordWarning();
+                    <?php endif; ?>
+                });
+            }
+
+            // Fungsi untuk menampilkan peringatan password default
+            function showPasswordWarning() {
+                Swal.fire({
+                    title: 'Peringatan Keamanan',
+                    html: 'Password Anda masih menggunakan password default (NIS).<br>Silakan ubah password Anda untuk keamanan akun.',
+                    icon: 'warning',
+                    confirmButtonText: 'Ubah Password Sekarang',
+                    confirmButtonColor: '#3085d6',
+                    showCancelButton: true,
+                    cancelButtonText: 'Nanti Saja',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Redirect ke halaman ubah password
+                        window.location.href = 'index.php?page=editsiswa&id_siswa=<?php echo $id_siswa; ?>';
+                    }
+                });
+            }
+
+            <?php if (isset($_GET['pesan'])): ?>
+                <?php if ($_GET['pesan'] == 'sukses'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses!',
+                        text: 'Data siswa berhasil ditambahkan',
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        toast: true
+                    });
+                <?php elseif ($_GET['pesan'] == 'gagal'): ?>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: '<?php echo isset($_GET['error']) ? htmlspecialchars(urldecode($_GET['error']), ENT_QUOTES) : 'Terjadi kesalahan'; ?>',
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        toast: true
+                    });
+                <?php elseif ($_GET['pesan'] == 'duplikat'): ?>
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Aksi Tidak Diizinkan',
-                        html: '<?php echo $nama_siswa; ?> <strong>belum absen</strong> hari ini. Silakan absen terlebih dahulu sebelum membuat jurnal.',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Mengerti'
-                    });
-                <?php elseif ($absen_status === 'pulang'): ?>
-                    // Jika sudah absen pulang
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Aksi Tidak Diizinkan',
-                        html: '<?php echo $nama_siswa; ?> <strong>sudah absen pulang</strong>. Kamu tidak bisa menambah atau update jurnal.',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Mengerti'
+                        title: 'Peringatan!',
+                        text: 'ID siswa atau Username sudah terdaftar',
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        toast: true
                     });
                 <?php endif; ?>
-            });
+            <?php else: ?>
+                if (!localStorage.getItem('siswaWelcomeShown')) {
+                    setTimeout(() => {
+                        showWelcomeAlert();
+                    }, 300);
+
+                    localStorage.setItem('siswaWelcomeShown', 'true');
+                } else {
+                    // Jika alert selamat datang sudah pernah ditampilkan,
+                    // langsung tampilkan peringatan password jika diperlukan
+                    <?php if ($password_default): ?>
+                    setTimeout(() => {
+                        showPasswordWarning();
+                    }, 500);
+                    <?php endif; ?>
+                }
             <?php endif; ?>
         });
     </script>
-
-    <!-- SweetAlert Flash Notifications untuk Jurnal -->
-    <?php
-    if (isset($_SESSION['flash_jurnal_tambah']) && $_SESSION['flash_jurnal_tambah'] == 'sukses') {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Jurnal berhasil ditambahkan',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_jurnal_tambah']);
-    }
-
-    if (isset($_SESSION['flash_jurnal_update']) && $_SESSION['flash_jurnal_update'] == 'sukses') {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Jurnal berhasil diupdate',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_jurnal_update']);
-    }
-
-    if (isset($_SESSION['flash_jurnal_error'])) {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '" . addslashes($_SESSION['flash_jurnal_error']) . "',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_jurnal_error']);
-    }
-    ?>
-
-    <!-- SweetAlert Flash Notifications -->
-    <?php
-    if (isset($_SESSION['flash_hapus']) && $_SESSION['flash_hapus'] == 'sukses') {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'info',
-            title: 'Sukses!',
-            text: 'Catatan berhasil dihapus',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_hapus']);
-    }
-
-    if (isset($_SESSION['flash_update']) && $_SESSION['flash_update'] == 'sukses') {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Catatan berhasil diupdate',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_update']);
-    }
-
-    if (isset($_SESSION['flash_tambah']) && $_SESSION['flash_tambah'] == 'sukses') {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'success',
-            title: 'Sukses!',
-            text: 'Catatan berhasil ditambahkan',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_tambah']);
-    }
-
-    if (isset($_SESSION['flash_error'])) {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: '" . addslashes($_SESSION['flash_error']) . "',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_error']);
-    }
-
-    if (isset($_SESSION['flash_duplikat'])) {
-        echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan!',
-            text: 'Anda sudah membuat catatan untuk jurnal ini',
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            toast: true
-        });
-    });
-    </script>";
-        unset($_SESSION['flash_duplikat']);
-    }
-    ?>
 </body>
 
 </html>
