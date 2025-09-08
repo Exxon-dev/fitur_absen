@@ -17,7 +17,7 @@
     <title>
       ABSENSI | PRAKERIN
     </title>
-      <link rel="icon" type="image/png" href="assets/img/logos/pkl.png">
+      <link rel="icon" type="image/png" href="assets/img/logos/prakerin.png">
     <!-- Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
 
