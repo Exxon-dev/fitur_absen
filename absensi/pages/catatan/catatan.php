@@ -23,23 +23,52 @@ if ($level === 'siswa' && $id_siswa) {
     $jurnal_hari_ini = mysqli_fetch_assoc($result_jurnal);
 }
 
-// Validasi waktu tambah jurnal
-$current_time = date('H:i');
-$current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
-
+// Validasi waktu tambah jurnal berdasarkan status absensi
 $allow_jurnal = false;
 $time_message = '';
 
-if ($current_day == 7) { // Hari Minggu
-    $allow_jurnal = false;
-    $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
+if ($level === 'siswa' && $id_siswa) {
+    // Cek status absensi siswa hari ini
+    $today = date('Y-m-d');
+    $absensi_query = "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$today'";
+    $absensi_result = mysqli_query($coneksi, $absensi_query);
+    $absensi = mysqli_fetch_assoc($absensi_result);
+    
+    if ($absensi) {
+        if ($absensi['jam_masuk'] && !$absensi['jam_keluar']) {
+            // Sudah absen masuk, belum pulang - boleh tambah jurnal
+            $allow_jurnal = true;
+            $time_message = 'Anda sudah absen masuk, dapat menambahkan jurnal';
+        } elseif ($absensi['jam_masuk'] && $absensi['jam_keluar']) {
+            // Sudah absen pulang - tidak boleh tambah jurnal
+            $allow_jurnal = false;
+            $time_message = 'Anda sudah absen pulang, tidak dapat menambahkan jurnal';
+        } else {
+            // Belum absen masuk - tidak boleh tambah jurnal
+            $allow_jurnal = false;
+            $time_message = 'Anda belum absen masuk, silakan absen terlebih dahulu';
+        }
+    } else {
+        // Tidak ada record absensi - tidak boleh tambah jurnal
+        $allow_jurnal = false;
+        $time_message = 'Anda belum absen masuk, silakan absen terlebih dahulu';
+    }
 } else {
-    if ($current_day == 6) { // Hari Sabtu
-        $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
-        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
-    } else { // Hari Senin-Jumat
-        $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
-        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
+    // Untuk level selain siswa (pembimbing/guru), tetap menggunakan aturan sebelumnya
+    $current_time = date('H:i');
+    $current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
+
+    if ($current_day == 7) { // Hari Minggu
+        $allow_jurnal = false;
+        $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
+    } else {
+        if ($current_day == 6) { // Hari Sabtu
+            $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
+            $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
+        } else { // Hari Senin-Jumat
+            $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
+            $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
+        }
     }
 }
 
@@ -152,6 +181,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         overflow: hidden;
         text-overflow: ellipsis;
     }
+    
+    .status-info {
+        color: #28a745;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
     @media (max-width: 991px) {
         body {
             padding-left: 0;
@@ -179,12 +215,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                         <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
                         <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
                     </a>
+                    <span class="status-info"><?= $time_message ?></span>
                     <?php else: ?>
                     <button type="button" class="btn btn-light" id="disabledJurnalButton">
                         <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
                         <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
-                        <span class="time-alert"></span>
                     </button>
+                    <span class="time-alert"><?= $time_message ?></span>
                     <?php endif; ?>
                 </div>
             </div>
