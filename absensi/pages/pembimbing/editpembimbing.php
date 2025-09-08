@@ -138,6 +138,7 @@ if (isset($_POST['submit'])) {
         or die(mysqli_error($coneksi));
 
     if ($sql) {
+        $_SESSION['profile'] = $profile;
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data pembimbing berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editpembimbing&id_pembimbing=' . $id_pembimbing . '&pesan=sukses";},1200);</script>';
         exit();

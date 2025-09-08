@@ -145,7 +145,7 @@ if (isset($_POST['submit'])) {
         }
         ?>
 
-        <form action="editpembimbing1.php" method="post" enctype="multipart/form-data">
+        <form action="pages/pembimbing/proses_editpembimbing.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
             <div class="row">
                 <div class="form-group col-md-6">

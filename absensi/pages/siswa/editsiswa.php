@@ -150,6 +150,7 @@ if (isset($_POST['submit'])) {
         WHERE id_siswa='$id_siswa'");
 
     if ($sql) {
+        $_SESSION['profile'] = $profile;
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data siswa berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
         exit();
@@ -459,7 +460,6 @@ function getUploadError($errorCode)
 
         <form action="" method="post" enctype="multipart/form-data" id="profile-form">
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
-            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
 
             <div class="profile-container">
                 <div class="profile-card">
