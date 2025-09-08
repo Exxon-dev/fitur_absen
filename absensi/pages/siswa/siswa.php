@@ -89,8 +89,6 @@ include('koneksi.php');
                     <th class="text-center">Nama</th>
                     <th class="text-center">Sekolah</th>
                     <th class="text-center">Tempat Prakerin</th>
-                    <th class="text-center">Tanggal Mulai</th>
-                    <th class="text-center">Tanggal Selesai</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -99,7 +97,6 @@ include('koneksi.php');
                     $sql = mysqli_query($coneksi, "
                     SELECT 
                         s.id_siswa, s.nis, s.nisn, s.nama_siswa,
-                        s.tanggal_mulai, s.tanggal_selesai,
                         sk.nama_sekolah, 
                         p.nama_perusahaan
                     FROM siswa s
@@ -118,8 +115,6 @@ include('koneksi.php');
                             <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
-                            <td>' . htmlspecialchars($data['tanggal_mulai']) . '</td>
-                            <td>' . htmlspecialchars($data['tanggal_selesai']) . '</td>
                         </tr>';
                         }
                     } else {

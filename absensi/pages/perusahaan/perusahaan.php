@@ -144,7 +144,7 @@ include('koneksi.php');
                 </thead>
                 <tbody>
                     <?php
-                    $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan ASC") or die(mysqli_error($coneksi));
+                    $sql = mysqli_query($coneksi, "SELECT * FROM perusahaan ORDER BY id_perusahaan DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {

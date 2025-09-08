@@ -5,8 +5,6 @@ if (isset($_POST['submit'])) {
 	$nama_sekolah   = $_POST['nama_sekolah'];
 	$alamat_sekolah = $_POST['alamat_sekolah'];
 	$kepala_sekolah = $_POST['kepala_sekolah'];
-    $username       = $_POST['username'];
-    $password       = $_POST['password'];
     $logo_sekolah   = $_FILES['logo_sekolah']['name'];
 
 	$cek = mysqli_query($coneksi, "SELECT * FROM sekolah WHERE nama_sekolah='$nama_sekolah'") or die(mysqli_error($coneksi));
@@ -16,15 +14,11 @@ if (isset($_POST['submit'])) {
         nama_sekolah, 
         alamat_sekolah, 
         kepala_sekolah, 
-        username, 
-        password, 
         logo_sekolah ) 
         VALUES 
         ('$nama_sekolah', 
         '$alamat_sekolah',
         '$kepala_sekolah', 
-        '$username', 
-        '$password', 
         '$logo_sekolah')")
         or die(mysqli_error($coneksi));
     

@@ -84,22 +84,22 @@
     <div class="main-container container-custom">
         <form action="pages/pembimbing/proses_tambahpembimbing.php" method="post" enctype="multipart/form-data">
             <div class="form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Nama Pembimbing</label>
                     <input type="text" name="nama_pembimbing" class="form-control" required>
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>No. Telepon/HP</label>
                     <input type="text" name="no_tlp" class="form-control" required>
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Alamat</label>
                     <input type="text" name="alamat" class="form-control" required>
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Perusahaan</label>
                     <select name="id_perusahaan" class="form-control" required>
                         <option value="">Perusahaan</option>
@@ -113,7 +113,7 @@
                     </select>
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
                         <option value="">Jenis Kelamin</option>
@@ -122,12 +122,12 @@
                     </select>
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-2">
                     <label>Username</label>
                     <input type="text" name="username" class="form-control" required>
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-2">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>

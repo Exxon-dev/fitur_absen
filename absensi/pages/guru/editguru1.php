@@ -240,11 +240,11 @@ if (isset($_GET['id_guru'])) {
                         <label>Alamat</label>
                         <input type="text" name="alamat" class="form-control" value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>No. Telepon / HP</label>
                         <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Nama Sekolah</label>
                         <select name="id_sekolah" class="form-control" required>
                             <?php
@@ -256,23 +256,27 @@ if (isset($_GET['id_guru'])) {
                             ?>
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label>Username</label>
-                        <input type="text" name="username" class="form-control" value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Password</label>
-                        <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                    <div class="form-group col-md-4">
+                        <label>Nama Perusahaan</label>
+                        <select name="id_perusahaan" class="form-control" required>
+                            <?php
+                            $queryperusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                            while ($perusahaan = mysqli_fetch_assoc($queryperusahaan)) {
+                                $selected = ($data['id_perusahaan'] == $perusahaan['id_perusahaan']) ? 'selected' : '';
+                                echo "<option value='{$perusahaan['id_perusahaan']}' $selected>{$perusahaan['nama_perusahaan']}</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col text-left">
-                        <button type="button" class="btn btn-danger" id="btnHapus"
+                        <button type="button" class="btn btn-secondary" id="hapusGuru"
                             data-id="<?php echo $data['id_guru']; ?>">Hapus</button>
                     </div>
                     <div class="col text-right">
                         <a href="index.php?page=guru" class="btn btn-warning">KEMBALI</a>
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        <input type="submit" name="submit" class="btn btn-primary" value="UPDATE">
                     </div>
                 </div>
             </form>
@@ -282,7 +286,7 @@ if (isset($_GET['id_guru'])) {
         <script>
             // SweetAlert untuk konfirmasi hapus
             document.addEventListener('DOMContentLoaded', function() {
-                const deleteBtn = document.getElementById('btnHapus');
+                const deleteBtn = document.getElementById('hapusGuru');
                 if (deleteBtn) {
                     deleteBtn.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -292,7 +296,7 @@ if (isset($_GET['id_guru'])) {
                             text: "Data yang dihapus tidak dapat dikembalikan!",
                             icon: "warning",
                             showCancelButton: true,
-                            confirmButtonColor: "#d33",
+                            confirmButtonColor: "#6c757d",
                             cancelButtonColor: "#3085d6",
                             confirmButtonText: "Ya, hapus!",
                             cancelButtonText: "Batal"

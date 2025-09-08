@@ -94,11 +94,11 @@ include('koneksi.php');
                 </thead>
                 <tbody>
                     <?php
-                    // Mengubah query untuk JOIN dengan tabel perusahaan
+                    // Mengubah query untuk JOIN dengan tabel perusahaan dan mengurutkan DESC agar data baru muncul di atas
                     $sql = mysqli_query($coneksi, "SELECT p.*, pr.nama_perusahaan, pr.alamat_perusahaan 
                                                    FROM pembimbing p 
                                                    LEFT JOIN perusahaan pr ON p.id_perusahaan = pr.id_perusahaan 
-                                                   ORDER BY p.id_pembimbing ASC") or die(mysqli_error($coneksi));
+                                                   ORDER BY p.id_pembimbing DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {

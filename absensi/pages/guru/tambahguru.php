@@ -92,15 +92,15 @@
     <div class="main-container container-custom">
         <form action="pages/guru/proses_tambahguru.php" method="post">
             <div class="form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Nama Guru</label>
                     <input type="text" name="nama_guru" class="form-control" required>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Nip</label>
                     <input type="text" name="nip" class="form-control" required>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-control">
                         <option value="">Jenis Kelamin</option>
@@ -108,15 +108,15 @@
                         <option value="Perempuan" <?php if (($data['jenis_kelamin'] ?? '') == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
                     </select>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Alamat</label>
                     <input type="text" name="alamat" class="form-control" value="<?php echo htmlspecialchars($data['alamat'] ?? ''); ?>">
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>No. Telepon / HP</label>
                     <input type="text" name="no_tlp" class="form-control" value="<?php echo htmlspecialchars($data['no_tlp'] ?? ''); ?>">
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
                         <option value="">Pilih Sekolah</option>
@@ -129,11 +129,24 @@
                         ?>
                     </select>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
+                    <label>Perusahaan</label>
+                    <select name="id_perusahaan" class="form-control" required>
+                        <option value="">Pilih Perusahaan</option>
+                        <?php
+                        $queryperusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                        while ($perusahaan = mysqli_fetch_assoc($queryperusahaan)) {
+                            $selected = ($data['id_perusahaan'] == $perusahaan['id_perusahaan']) ? 'selected' : '';
+                            echo "<option value='{$perusahaan['id_perusahaan']}' $selected>{$perusahaan['nama_perusahaan']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
                     <label>Username</label>
                     <input type="text" name="username" class="form-control" required>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>

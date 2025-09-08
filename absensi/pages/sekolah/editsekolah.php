@@ -46,7 +46,39 @@
 			padding: 20px;
 			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 		}
+		.hapusSekolah {
+            color: white;
+            /* Text putih */
+            background-color: #344767;
+            /* Warna abu-abu Bootstrap */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            border: none;
+            /* Hilangkan border */
+            padding: 8px 16px;
+            /* Padding yang sesuai */
+            border-radius: 4px;
+            /* Sedikit rounded corners */
+            transition: all 0.3s ease;
+            /* Efek transisi halus */
+        }
 
+        .hapusSekolah:hover {
+            background-color: #5a6268;
+            /* Warna lebih gelap saat hover */
+            color: white;
+            /* Tetap putih saat hover */
+            transform: translateY(-1px);
+            /* Sedikit efek angkat */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            /* Shadow lebih besar saat hover */
+        }
+		
+		.file-info {
+			font-size: 0.875rem;
+			color: #6c757d;
+			margin-top: 5px;
+		}
 		@media (max-width: 991px) {
 			body {
 				padding-left: 0;
@@ -61,8 +93,12 @@
 </head>
 
 <body>
-<h2 class="text-left">Edit Sekolah</h2>
+
 	<div class="main-container container-custom" style="margin-top:20px">
+		<h2 class="text-center">Edit Sekolah</h2>
+
+		<hr>
+
 		<?php
 		if (isset($_GET['id_sekolah'])) {
 			$id_sekolah = $_GET['id_sekolah'];
@@ -76,9 +112,6 @@
 				$data = mysqli_fetch_assoc($select);
 			}
 		}
-		?>
-
-		<?php
 		if (isset($_POST['submit'])) {
 			$id_sekolah		 = $_POST['id_sekolah'];
 			$nama_sekolah	 = $_POST['nama_sekolah'];
@@ -108,46 +141,44 @@
 		}
 
 		?>
-
 		<form action="pages/sekolah/proses_editsekolah.php?id_sekolah=<?php echo $id_sekolah; ?>" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="id_sekolah" value="<?php echo $data['id_sekolah']; ?>">
+			
 			<div class="form-group row">
-				<label class="col-sm-2 col-form-label"> Nama Sekolah</label>
-				<div class="col-sm-15">
-					<input type="text" name="nama_sekolah" class="form-control" value="<?php echo $data['nama_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Alamat Sekolah</label>
-				<div class="col-sm-15">
-					<input type="text" name="alamat_sekolah" class="form-control" value="<?php echo $data['alamat_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Kepala Sekolah</label>
-				<div class="col-sm-15">
-					<input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Username</label>
-				<div class="col-sm-15">
-					<input type="text" name="username" class="form-control" value="<?php echo $data['username']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Password</label>
-				<div class="col-sm-15">
-					<input type="password" name="password" class="form-control" value="<?php echo $data['password']; ?>" required>
-				</div>
-				<label class="col-sm-2 col-form-label">Logo Sekolah</label>
-				<div class="col-sm-15">
-					<?php if (!empty($data['logo_sekolah'])): ?>
-						<img src="<?php echo $data['logo_sekolah']; ?>" alt="Logo Sekolah" style="max-height: 80px; display: block; margin-bottom: 10px;">
-					<?php endif; ?>
-					<input type="file" name="logo_sekolah" class="form-control-file" accept="image/*">
-				</div>
-			</div><br>
+                <div class="col-sm-6">
+                    <label>Nama Sekolah</label>
+                    <input type="text" name="nama_sekolah" class="form-control" value="<?php echo $data['nama_sekolah']; ?>" required>
+                </div>
+                <div class="col-sm-6">
+                    <label>Kepala Sekolah</label>
+                    <input type="text" name="alamat_sekolah" class="form-control" value="<?php echo $data['alamat_sekolah']; ?>" required>
+                </div>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-sm-6">
+                    <label>Alamat Sekolah</label>
+                    <input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
+                </div>
+
+                <div class="col-sm-6">
+                    <label>Logo Sekolah</label>
+                    <input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" >
+                    <div class="file-info">Maksimal ukuran file: 2MB. Format yang diterima: JPG, PNG, GIF.</div>
+                    <div id="preview" class="mt-2" style="display:none;">
+                        <img id="preview-image" src="#" alt="Preview Logo" style="max-width: 200px; max-height: 200px;">
+                    </div>
+                    <div id="error-message" class="text-danger mt-2" style="display:none;"></div>
+                </div>
+            </div>
 			<div class="form-row">
 				<div class="col text-left">
-					<button type="button" class="btn btn-danger" id="btnHapus"
+					<button type="button" class="btn btn-secondary" id="btnHapus"
 						data-id="<?php echo $data['id_sekolah']; ?>">Hapus</button>
 				</div>
 				<div class="col text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+					<input type="submit" name="submit" class="btn btn-primary" value="UPDATE">
 				</div>
 			</div>
 		</form>
@@ -167,7 +198,7 @@
 						text: "Data yang dihapus tidak dapat dikembalikan!",
 						icon: "warning",
 						showCancelButton: true,
-						confirmButtonColor: "#d33",
+						confirmButtonColor: "#6c757d",
 						cancelButtonColor: "#3085d6",
 						confirmButtonText: "Ya, hapus!",
 						cancelButtonText: "Batal"
@@ -179,8 +210,27 @@
 				});
 			}
 		});
+		
+		// Preview image sebelum upload
+		document.getElementById('logo_sekolah').addEventListener('change', function(e) {
+			const preview = document.getElementById('preview');
+			const previewImage = document.getElementById('preview-image');
+			
+			if (this.files && this.files[0]) {
+				const reader = new FileReader();
+				
+				reader.onload = function(e) {
+					previewImage.src = e.target.result;
+					preview.style.display = 'block';
+				}
+				
+				reader.readAsDataURL(this.files[0]);
+			} else {
+				preview.style.display = 'none';
+			}
+		});
 	</script>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

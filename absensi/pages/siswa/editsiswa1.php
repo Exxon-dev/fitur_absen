@@ -175,14 +175,6 @@ include('koneksi.php');
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" value="<?php echo htmlspecialchars($data['TL']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
                         <?php
@@ -205,16 +197,6 @@ include('koneksi.php');
                                 <?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
                         <?php } ?>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="form-control"
-                        value="<?php echo htmlspecialchars($data['tanggal_mulai']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="form-control"
-                        value="<?php echo htmlspecialchars($data['tanggal_selesai']); ?>" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Pembimbing</label>
@@ -240,26 +222,12 @@ include('koneksi.php');
                         <?php } ?>
                     </select>
                 </div>
-                <div class="form-group col-md-3">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control"
-                        value="<?php echo htmlspecialchars($data['username']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control"
-                        value="<?php echo htmlspecialchars($data['password']); ?>" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
-                </div>
             </div>
 
             <div class="form-group">
                 <div class="d-flex flex-wrap justify-content-between align-items-center">
                     <!-- Tombol Hapus di kiri -->
-                    <button type="button" class="btn btn-danger hapusSiswa"
+                    <button type="button" class="btn btn-secondary"
                         id="btnHapus" data-id="<?php echo $data['id_siswa']; ?>">
                         HAPUS
                     </button>
@@ -267,7 +235,7 @@ include('koneksi.php');
                     <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
                     <div class="d-flex flex-wrap justify-content-end gap-2">
                         <a href="index.php?page=siswa" class="btn btn-warning mr-2">KEMBALI</a>
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        <input type="submit" name="submit" class="btn btn-primary" value="UPDATE">
                     </div>
                 </div>
             </div>
@@ -287,7 +255,7 @@ include('koneksi.php');
                         text: "Data yang dihapus tidak dapat dikembalikan!",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonColor: "#d33",
+                        confirmButtonColor: "#6c757d",
                         cancelButtonColor: "#3085d6",
                         confirmButtonText: "Ya, hapus!",
                         cancelButtonText: "Batal"
