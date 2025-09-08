@@ -1,17 +1,16 @@
 <?php
+include('../../koneksi.php');
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
-include('../../koneksi.php');
-session_start(); // Pastikan session_start() ada
-
 if (isset($_POST['submit'])) {
-    $id_sekolah     = $_POST['id_sekolah'];
-    $nama_sekolah   = $_POST['nama_sekolah'];
-    $alamat_sekolah = $_POST['alamat_sekolah'];
-    $kepala_sekolah = $_POST['kepala_sekolah'];
-    $foto_lama = $_POST['foto_lama'] ?? 'default.png';
+	$id_sekolah     = $_POST['id_sekolah'];
+	$nama_sekolah   = $_POST['nama_sekolah'];
+	$alamat_sekolah = $_POST['alamat_sekolah'];
+	$kepala_sekolah = $_POST['kepala_sekolah'];
+    $logo_sekolah   = $_FILES['logo_sekolah']['name'];
 
     $logo_sekolah = 'default.png'; 
 

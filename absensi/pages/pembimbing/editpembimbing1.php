@@ -186,7 +186,7 @@ if (isset($_POST['submit'])) {
                 <div class="form-group">
                     <div class="d-flex flex-wrap justify-content-between align-items-center">
                         <!-- Tombol Hapus di kiri -->
-                        <button type="button" class="btn btn-danger hapusPembimbing"
+                        <button type="button" class="btn btn-secondary"
                             id="btnHapus" data-id="<?php echo $data['id_pembimbing']; ?>">
                             HAPUS
                         </button>
@@ -194,7 +194,7 @@ if (isset($_POST['submit'])) {
                         <!-- Tombol Kembali dan Simpan di kanan -->
                         <div class="d-flex flex-wrap justify-content-end gap-2">
                             <a href="index.php?page=pembimbing" class="btn btn-warning mr-2">KEMBALI</a>
-                            <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                            <input type="submit" name="submit" class="btn btn-primary" value="UPDATE">
                         </div>
                     </div>
                 </div>
@@ -214,7 +214,7 @@ if (isset($_POST['submit'])) {
                             text: "Data yang dihapus tidak dapat dikembalikan!",
                             icon: "warning",
                             showCancelButton: true,
-                            confirmButtonColor: "#d33",
+                            confirmButtonColor: "#6c757d",
                             cancelButtonColor: "#3085d6",
                             confirmButtonText: "Ya, hapus!",
                             cancelButtonText: "Batal"

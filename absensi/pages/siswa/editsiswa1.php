@@ -234,7 +234,7 @@ unset($_SESSION['form_data']);
             <div class="form-group">
                 <div class="d-flex flex-wrap justify-content-between align-items-center">
                     <!-- Tombol Hapus di kiri -->
-                    <button type="button" class="btn btn-danger hapusSiswa"
+                    <button type="button" class="btn btn-secondary"
                         id="btnHapus" data-id="<?php echo $data['id_siswa']; ?>">
                         HAPUS
                     </button>
@@ -242,7 +242,7 @@ unset($_SESSION['form_data']);
                     <!-- Tombol Kembali dan Simpan di kanan (tapi berdampingan) -->
                     <div class="d-flex flex-wrap justify-content-end gap-2">
                         <a href="index.php?page=siswa" class="btn btn-warning mr-2">KEMBALI</a>
-                        <input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+                        <input type="submit" name="submit" class="btn btn-primary" value="UPDATE">
                     </div>
                 </div>
             </div>
@@ -262,7 +262,7 @@ unset($_SESSION['form_data']);
                         text: "Data yang dihapus tidak dapat dikembalikan!",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonColor: "#d33",
+                        confirmButtonColor: "#6c757d",
                         cancelButtonColor: "#3085d6",
                         confirmButtonText: "Ya, hapus!",
                         cancelButtonText: "Batal"

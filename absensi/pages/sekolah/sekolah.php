@@ -158,7 +158,6 @@ include('koneksi.php');
                 <tbody>
                     <?php
                     // Mengubah query untuk mengurutkan berdasarkan id_sekolah DESC
-                    // agar data terbaru (dengan ID tertinggi) muncul di paling atas
                     $sql = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;

@@ -96,8 +96,6 @@ include('koneksi.php');
                 </thead>
                 <tbody>
                     <?php
-                    // Mengubah query untuk JOIN dengan tabel perusahaan
-                    // Mengurutkan berdasarkan id_pembimbing DESC agar data terbaru muncul di atas
                     $sql = mysqli_query($coneksi, "SELECT p.*, pr.nama_perusahaan, pr.alamat_perusahaan 
                                                    FROM pembimbing p 
                                                    LEFT JOIN perusahaan pr ON p.id_perusahaan = pr.id_perusahaan 

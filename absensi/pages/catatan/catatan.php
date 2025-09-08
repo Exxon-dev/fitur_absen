@@ -63,13 +63,11 @@ if ($level === 'siswa' && $id_siswa) {
     $jurnal_hari_ini = mysqli_fetch_assoc($result_jurnal);
 }
 
-// Validasi waktu tambah jurnal
-$current_time = date('H:i');
-$current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
-
+// Validasi waktu tambah jurnal berdasarkan status absensi
 $allow_jurnal = false;
 $time_message = '';
 
+<<<<<<< HEAD
 if ($current_day == 8) { // Hari Minggu
     $allow_jurnal = false;
     $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
@@ -81,6 +79,50 @@ if ($current_day == 8) { // Hari Minggu
 
         $allow_jurnal = ($current_time >= '12:00' && $current_time <= '16:15');
         $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
+=======
+if ($level === 'siswa' && $id_siswa) {
+    // Cek status absensi siswa hari ini
+    $today = date('Y-m-d');
+    $absensi_query = "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$today'";
+    $absensi_result = mysqli_query($coneksi, $absensi_query);
+    $absensi = mysqli_fetch_assoc($absensi_result);
+    
+    if ($absensi) {
+        if ($absensi['jam_masuk'] && !$absensi['jam_keluar']) {
+            // Sudah absen masuk, belum pulang - boleh tambah jurnal
+            $allow_jurnal = true;
+            $time_message = 'Anda sudah absen masuk, dapat menambahkan jurnal';
+        } elseif ($absensi['jam_masuk'] && $absensi['jam_keluar']) {
+            // Sudah absen pulang - tidak boleh tambah jurnal
+            $allow_jurnal = false;
+            $time_message = 'Anda sudah absen pulang, tidak dapat menambahkan jurnal';
+        } else {
+            // Belum absen masuk - tidak boleh tambah jurnal
+            $allow_jurnal = false;
+            $time_message = 'Anda belum absen masuk, silakan absen terlebih dahulu';
+        }
+    } else {
+        // Tidak ada record absensi - tidak boleh tambah jurnal
+        $allow_jurnal = false;
+        $time_message = 'Anda belum absen masuk, silakan absen terlebih dahulu';
+    }
+} else {
+    // Untuk level selain siswa (pembimbing/guru), tetap menggunakan aturan sebelumnya
+    $current_time = date('H:i');
+    $current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
+
+    if ($current_day == 7) { // Hari Minggu
+        $allow_jurnal = false;
+        $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
+    } else {
+        if ($current_day == 6) { // Hari Sabtu
+            $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
+            $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
+        } else { // Hari Senin-Jumat
+            $allow_jurnal = ($current_time >= '15:00' && $current_time <= '16:15');
+            $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
+        }
+>>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
     }
 }
 
@@ -157,6 +199,56 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             cursor: pointer;
         }
 
+<<<<<<< HEAD
+=======
+    body {
+        padding-left: 270px;
+        background-color: #f8f9fa;
+        transition: padding-left 0.3s;
+    }
+
+    .main-container {
+        margin: 20px 20px 0 0;
+        max-width: none;
+    }
+
+    .container-custom {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .table thead th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    .time-alert {
+        color: #dc3545;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
+    .journal-text {
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .status-info {
+        color: #28a745;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    @media (max-width: 991px) {
+>>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
         body {
             padding-left: 270px;
             background-color: #f8f9fa;
@@ -222,6 +314,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
         <!-- Form Filter dan Pencarian -->
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <?php if ($level === 'siswa'): ?>
+<<<<<<< HEAD
                 <div class="form-inline">
                     <div class="from-control mb-3">
                         <?php if ($is_today && $allow_jurnal): ?>
@@ -239,6 +332,24 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                             </button>
                         <?php endif; ?>
                     </div>
+=======
+            <div class="form-inline">
+                <div class="from-control mb-3">
+                    <?php if ($allow_jurnal): ?>
+                    <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>"
+                        class="btn btn-<?= $jurnal_hari_ini ? 'primary' : 'primary' ?>">
+                        <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
+                        <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
+                    </a>
+                    <span class="status-info"><?= $time_message ?></span>
+                    <?php else: ?>
+                    <button type="button" class="btn btn-light" id="disabledJurnalButton">
+                        <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
+                        <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
+                    </button>
+                    <span class="time-alert"><?= $time_message ?></span>
+                    <?php endif; ?>
+>>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
                 </div>
             <?php endif; ?>
 

@@ -86,20 +86,19 @@ include('koneksi.php');
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
-                    <th>No</th>
-                    <th>NISN</th>
-                    <th>Nama</th>
-                    <th>Sekolah</th>
-                    <th>Tempat Prakerin</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Selesai</th>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">NISN</th>
+                        <th class="text-center">Nama</th>
+                        <th class="text-center">Sekolah</th>
+                        <th class="text-center">Tempat Prakerin</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $sql = mysqli_query($coneksi, "
                     SELECT 
-                        s.id_siswa, s.nama_siswa,
+                        s.id_siswa, s.nis, s.nisn, s.nama_siswa,
                         sk.nama_sekolah, 
                         p.nama_perusahaan
                     FROM siswa s
@@ -114,7 +113,7 @@ include('koneksi.php');
                             // Format tanggal dari Y-m-d ke m-d-Y
                             $tanggal_mulai = !empty($data['tanggal_mulai']) ? date('m-d-Y', strtotime($data['tanggal_mulai'])) : '';
                             $tanggal_selesai = !empty($data['tanggal_selesai']) ? date('m-d-Y', strtotime($data['tanggal_selesai'])) : '';
-                            
+
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td class="text-center">' . $no++ . '</td>

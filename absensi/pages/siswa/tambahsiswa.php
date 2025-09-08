@@ -88,6 +88,19 @@ unset($_SESSION['form_data']);
             margin-top: 5px;
         }
 
+        .success-message {
+            color: green;
+            font-size: 1em;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #d4edda;
+            border-radius: 5px;
+        }
+
+        .is-invalid {
+            border-color: red !important;
+        }
+
         @media (max-width: 991px) {
             body {
                 padding-left: 0;
@@ -105,6 +118,9 @@ unset($_SESSION['form_data']);
     <div class="main-container container-custom">
         <h2 class="text-center">Tambah Siswa</h2>
         <hr>
+        <?php if (!empty($success)): ?>
+            <div class="success-message"><?php echo $success; ?></div>
+        <?php endif; ?>
         <form action="pages/siswa/proses_tambahsiswa.php" method="POST" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-4">
@@ -115,12 +131,15 @@ unset($_SESSION['form_data']);
                 </div>
                 <div class="form-group col-md-4">
                     <label>NISN</label>
-                    <input type="text" name="nisn" id="nisn" class="form-control" required maxlength="10" minlength="10" oninput="validateNISN()">
-                    <div id="nisnError" class="error-message"></div>
+                    <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>" 
+                           value="<?php echo isset($form_data['nisn']) ? $form_data['nisn'] : ''; ?>" 
+                           required maxlength="10" minlength="10" oninput="validateNISN()">
+                    <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
                 </div>
                 <div class="form-group col-md-4">
                     <label>Nama Siswa</label>
-                    <input type="text" name="nama_siswa" class="form-control" required>
+                    <input type="text" name="nama_siswa" class="form-control" 
+                           value="<?php echo isset($form_data['nama_siswa']) ? $form_data['nama_siswa'] : ''; ?>" required>
                 </div>
                 <!-- <div class="form-group col-md-3">
                     <label>Kelas</label>
@@ -155,8 +174,11 @@ unset($_SESSION['form_data']);
                         <?php
                         $data_sekolah = mysqli_query($coneksi, "SELECT * FROM sekolah");
                         while ($row = mysqli_fetch_array($data_sekolah)) {
+                            $selected = (isset($form_data['id_sekolah']) && $form_data['id_sekolah'] == $row['id_sekolah']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>"><?php echo htmlspecialchars($row['nama_sekolah']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_sekolah']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_sekolah']); ?>
+                            </option>
                         <?php } ?>
                     </select>
                 </div>
@@ -172,18 +194,13 @@ unset($_SESSION['form_data']);
                         <?php
                         $data_perusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
                         while ($row = mysqli_fetch_array($data_perusahaan)) {
+                            $selected = (isset($form_data['id_perusahaan']) && $form_data['id_perusahaan'] == $row['id_perusahaan']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>"><?php echo htmlspecialchars($row['nama_perusahaan']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_perusahaan']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_perusahaan']); ?>
+                            </option>
                         <?php } ?>
                     </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="form-control" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Pembimbing</label>
@@ -192,8 +209,11 @@ unset($_SESSION['form_data']);
                         <?php
                         $data_pembimbing = mysqli_query($coneksi, "SELECT * FROM pembimbing");
                         while ($row = mysqli_fetch_array($data_pembimbing)) {
+                            $selected = (isset($form_data['id_pembimbing']) && $form_data['id_pembimbing'] == $row['id_pembimbing']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>"><?php echo htmlspecialchars($row['nama_pembimbing']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_pembimbing']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_pembimbing']); ?>
+                            </option>
                         <?php } ?>
                     </select>
                 </div>
@@ -204,8 +224,11 @@ unset($_SESSION['form_data']);
                         <?php
                         $data_guru = mysqli_query($coneksi, "SELECT * FROM guru");
                         while ($row = mysqli_fetch_array($data_guru)) {
+                            $selected = (isset($form_data['id_guru']) && $form_data['id_guru'] == $row['id_guru']) ? 'selected' : '';
                         ?>
-                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>"><?php echo htmlspecialchars($row['nama_guru']); ?></option>
+                            <option value="<?php echo htmlspecialchars($row['id_guru']); ?>" <?php echo $selected; ?>>
+                                <?php echo htmlspecialchars($row['nama_guru']); ?>
+                            </option>
                         <?php } ?>
                     </select>
                 </div>
@@ -272,6 +295,39 @@ unset($_SESSION['form_data']);
                 return false;
             } else {
                 nisnError.textContent = '';
+                nisnInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validateUsername() {
+            const usernameInput = document.getElementById('username');
+            const usernameError = document.getElementById('usernameError');
+            const usernameValue = usernameInput.value.trim();
+
+            if (usernameValue === '') {
+                usernameError.textContent = 'USERNAME harus diisi';
+                usernameInput.classList.add('is-invalid');
+                return false;
+            } else {
+                usernameError.textContent = '';
+                usernameInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validatePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordError = document.getElementById('passwordError');
+            const passwordValue = passwordInput.value.trim();
+
+            if (passwordValue === '') {
+                passwordError.textContent = 'PASSWORD harus diisi';
+                passwordInput.classList.add('is-invalid');
+                return false;
+            } else {
+                passwordError.textContent = '';
+                passwordInput.classList.remove('is-invalid');
                 return true;
             }
         }
@@ -312,7 +368,6 @@ unset($_SESSION['form_data']);
             const isNISNValid = validateNISN();
             const isUsernameValid = validateUsername();
             const isPasswordValid = validatePassword();
-
             if (!isNISNValid || !isUsernameValid || !isPasswordValid) {
                 if (!isNISNValid) {
                     document.getElementById('nisn').focus();

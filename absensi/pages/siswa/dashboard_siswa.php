@@ -47,9 +47,8 @@ if ($absen) {
 $_SESSION['status_absen'] = $status;
 
 // Konfigurasi pagination untuk catatan pembimbing
-$limit = 5; // Jumlah catatan per halaman
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) $page = 1;
+$limit = 5; 
+$page = isset($_GET['page_catatan']) ? (int)$_GET['page_catatan'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Filter tanggal jika ada
@@ -132,7 +131,7 @@ $total_pages = ceil($total_catatan / $limit);
 function formatTanggal($dateString)
 {
     $date = new DateTime($dateString);
-    return $date->format('m-d-Y');
+    return $date->format('d-m-Y');
 }
 
 // Format tanggal untuk input date
@@ -145,7 +144,7 @@ function formatTanggalInput($dateString)
 // Fungsi untuk membuat parameter URL
 function buildQueryString($params = []) {
     $currentParams = $_GET;
-    unset($currentParams['page']); // Hapus parameter page yang lama
+    unset($currentParams['page_catatan']); // Hapus parameter page_catatan yang lama
     
     // Gabungkan dengan parameter baru
     $allParams = array_merge($currentParams, $params);
@@ -560,7 +559,7 @@ function buildQueryString($params = []) {
                             <div class="pagination">
                                 <!-- Tombol Previous -->
                                 <?php if ($page > 1): ?>
-                                    <a href="?<?= buildQueryString(['page' => $page - 1]) ?>" class="pagination-btn">
+                                    <a href="?<?= buildQueryString(['page_catatan' => $page - 1]) ?>" class="pagination-btn">
                                         &laquo; Prev
                                     </a>
                                 <?php else: ?>
@@ -575,7 +574,7 @@ function buildQueryString($params = []) {
                                 $start_page = max(1, $end_page - 4);
                                 
                                 for ($i = $start_page; $i <= $end_page; $i++): ?>
-                                    <a href="?<?= buildQueryString(['page' => $i]) ?>" 
+                                    <a href="?<?= buildQueryString(['page_catatan' => $i]) ?>" 
                                        class="pagination-btn <?= $i == $page ? 'active' : '' ?>">
                                         <?= $i ?>
                                     </a>
@@ -583,7 +582,7 @@ function buildQueryString($params = []) {
                                 
                                 <!-- Tombol Next -->
                                 <?php if ($page < $total_pages): ?>
-                                    <a href="?<?= buildQueryString(['page' => $page + 1]) ?>" class="pagination-btn">
+                                    <a href="?<?= buildQueryString(['page_catatan' => $page + 1]) ?>" class="pagination-btn">
                                         Next &raquo;
                                     </a>
                                 <?php else: ?>
