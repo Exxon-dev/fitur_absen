@@ -8,6 +8,15 @@ $id_perusahaan = $_SESSION['id_perusahaan'] ?? null;
 $id_guru = $_SESSION['id_guru'] ?? null;
 $id_pembimbing = $_SESSION['id_pembimbing'] ?? null;
 
+// Ambil nama siswa untuk pesan alert
+$nama_siswa = '';
+if ($level === 'siswa' && $id_siswa) {
+    $query_nama = "SELECT nama_siswa FROM siswa WHERE id_siswa = '$id_siswa'";
+    $result_nama = mysqli_query($coneksi, $query_nama);
+    $data_siswa = mysqli_fetch_assoc($result_nama);
+    $nama_siswa = $data_siswa['nama_siswa'] ?? 'Siswa';
+}
+
 // Parameter dari URL - format tanggal Y-m-d
 $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
 $limit = 10;
@@ -15,33 +24,42 @@ $page_no = isset($_GET['page_no']) ? (int)$_GET['page_no'] : 1;
 $offset = ($page_no - 1) * $limit;
 $search = isset($_GET['search']) ? mysqli_real_escape_string($coneksi, $_GET['search']) : '';
 
-// Cek apakah siswa sudah memiliki jurnal hari ini
-$jurnal_hari_ini = null;
+// Cek apakah tanggal yang dilihat adalah hari ini
+$is_today = ($tanggal == date('Y-m-d'));
+
+// Cek status absensi untuk siswa (hanya berlaku untuk hari ini)
+$allow_jurnal = false;
+$absen_status = ''; // untuk menyimpan status absensi
+
+if ($level === 'siswa' && $id_siswa && $is_today) {
+    // Cek absensi hari ini
+    $cek_absen = "SELECT jam_masuk, jam_keluar FROM absen WHERE id_siswa = '$id_siswa' AND tanggal = '$tanggal'";
+    $result_absen = mysqli_query($coneksi, $cek_absen);
+    $absen_hari_ini = mysqli_fetch_assoc($result_absen);
+    
+    if ($absen_hari_ini) {
+        if ($absen_hari_ini['jam_masuk'] && !$absen_hari_ini['jam_keluar']) {
+            // Sudah absen masuk, belum pulang - boleh buat/update jurnal
+            $allow_jurnal = true;
+            $absen_status = 'masuk';
+        } elseif ($absen_hari_ini['jam_masuk'] && $absen_hari_ini['jam_keluar']) {
+            // Sudah absen pulang - tidak boleh buat/update jurnal
+            $allow_jurnal = false;
+            $absen_status = 'pulang';
+        }
+    } else {
+        // Belum absen masuk - tidak boleh buat jurnal
+        $allow_jurnal = false;
+        $absen_status = 'belum';
+    }
+}
+
+// Cek apakah siswa sudah memiliki jurnal untuk tanggal yang dilihat
+$jurnal_tanggal_ini = null;
 if ($level === 'siswa' && $id_siswa) {
     $cek_jurnal = "SELECT * FROM jurnal WHERE id_siswa = '$id_siswa' AND DATE(tanggal) = '$tanggal'";
     $result_jurnal = mysqli_query($coneksi, $cek_jurnal);
-    $jurnal_hari_ini = mysqli_fetch_assoc($result_jurnal);
-}
-
-// Validasi waktu tambah jurnal
-$current_time = date('H:i');
-$current_day = date('N'); // 1 (Senin) sampai 7 (Minggu)
-
-$allow_jurnal = false;
-$time_message = '';
-
-if ($current_day == 8) { // Hari Minggu
-    $allow_jurnal = false;
-    $time_message = 'Hari Minggu tidak bisa menambahkan jurnal';
-} else {
-    if ($current_day == 6) { // Hari Sabtu
-        $allow_jurnal = ($current_time >= '11:00' && $current_time <= '12:15');
-        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 11.00 - 12.15 pada hari Sabtu';
-    } else { // Hari Senin-Jumat
-
-        $allow_jurnal = ($current_time >= '12:00' && $current_time <= '16:15');
-        $time_message = 'Jurnal hanya bisa ditambahkan/diupdate antara jam 15.00 - 16.15 pada hari Senin-Jumat';
-    }
+    $jurnal_tanggal_ini = mysqli_fetch_assoc($result_jurnal);
 }
 
 // Membangun kondisi WHERE berdasarkan level pengguna
@@ -74,8 +92,7 @@ $count_result = mysqli_query($coneksi, $count_sql);
 $total_rows = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = max(1, ceil($total_rows / $limit));
 
-// Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
-// Query untuk mendapatkan data (dimodifikasi dengan menghilangkan waktu_catatan)
+// Query untuk mendapatkan data
 $sql = "
     SELECT
         siswa.id_siswa,
@@ -112,6 +129,7 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
     <title>Data Jurnal dan Catatan Harian</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .clickable-row {
             cursor: pointer;
@@ -150,17 +168,16 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
             vertical-align: middle;
         }
 
-        .time-alert {
-            color: #dc3545;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
         .journal-text {
             max-width: 300px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        
+        .btn-disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         @media (max-width: 991px) {
@@ -179,22 +196,24 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
     <h2 class="text-primary text-center text-md-left">Data Jurnal dan Catatan Harian</h2>
     <div class="main-container container-custom">
         <hr />
+        
         <!-- Form Filter dan Pencarian -->
         <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
             <?php if ($level === 'siswa'): ?>
                 <div class="form-inline">
                     <div class="from-control mb-3">
-                        <?php if ($allow_jurnal): ?>
+                        <?php if ($is_today && $allow_jurnal): ?>
+                            <!-- Hari ini dan boleh buat/update jurnal -->
                             <a href="index.php?page=tambahjurnal&id_siswa=<?= $id_siswa ?>"
-                                class="btn btn-<?= $jurnal_hari_ini ? 'primary' : 'primary' ?>">
-                                <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
-                                <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
+                                class="btn btn-primary">
+                                <i class="fas fa-<?= $jurnal_tanggal_ini ? 'edit' : 'plus' ?>"></i>
+                                <?= $jurnal_tanggal_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
                             </a>
                         <?php else: ?>
-                            <button type="button" class="btn btn-light" id="disabledJurnalButton">
-                                <i class="fas fa-<?= $jurnal_hari_ini ? 'edit' : 'plus' ?>"></i>
-                                <?= $jurnal_hari_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
-                                <span class="time-alert"></span>
+                            <!-- Bukan hari ini atau tidak boleh buat/update jurnal -->
+                            <button class="btn btn-light btn-disabled" id="btnJurnalDisabled">
+                                <i class="fas fa-<?= $jurnal_tanggal_ini ? 'edit' : 'plus' ?>"></i>
+                                <?= $jurnal_tanggal_ini ? 'Update Jurnal' : 'Tambah Jurnal' ?>
                             </button>
                         <?php endif; ?>
                     </div>
@@ -253,13 +272,13 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                         <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <?php
                             $id_jurnal = $row['id_jurnal'] ?? 0;
-                            $id_siswa = $row['id_siswa']; // ambil id_siswa
+                            $id_siswa_row = $row['id_siswa']; // ambil id_siswa dari row
                             $catatan = !empty($row['catatan']) ? $row['catatan'] : '-';
                             $keterangan = !empty($row['keterangan_jurnal']) ? $row['keterangan_jurnal'] : 'Belum ada jurnal';
                             $keterangan_short = (strlen($keterangan) > 100) ? substr($keterangan, 0, 100) . '...' : $keterangan;
 
                             // Link tambah catatan (kirim id_jurnal + id_siswa)
-                          $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa&tanggal=$tanggal";
+                            $href = "index.php?page=tambahcatatan&id_jurnal=$id_jurnal&id_siswa=$id_siswa_row&tanggal=$tanggal";
                             ?>
                             <tr class="clickable-row" data-href="<?= $href ?>">
                                 <td class="text-center"><?= $no ?></td>
@@ -274,9 +293,8 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
 
                     <?php else: ?>
                         <tr>
-
-                            <td colspan="5" class="text-center">Tidak ada data siswa ditemukan untuk tanggal
-                                <?= htmlspecialchars(date('m-d-Y', strtotime($tanggal))) ?>.</td>
+                            <td colspan="4" class="text-center">Tidak ada data siswa ditemukan untuk tanggal
+                                <?= htmlspecialchars(date('d-m-Y', strtotime($tanggal))) ?>.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -326,16 +344,41 @@ $result = mysqli_query($coneksi, $sql) or die(mysqli_error($coneksi));
                     window.location = href;
                 }
             });
-
-            // Handle click on disabled button
-            $('#disabledJurnalButton').click(function() {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Perhatian',
-                    text: '<?= $time_message ?>',
-                    confirmButtonText: 'OK'
-                });
+            
+            // Untuk siswa, tampilkan alert jika mencoba klik tombol yang dinonaktifkan
+            <?php if ($level === 'siswa'): ?>
+            $('#btnJurnalDisabled').click(function(e) {
+                e.preventDefault();
+                <?php if (!$is_today): ?>
+                    // Jika melihat tanggal selain hari ini
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Aksi Tidak Diizinkan',
+                        html: 'Hanya dapat menambah atau mengupdate jurnal untuk <strong>hari ini</strong>.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Mengerti'
+                    });
+                <?php elseif ($absen_status === 'belum'): ?>
+                    // Jika belum absen
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Aksi Tidak Diizinkan',
+                        html: '<?php echo $nama_siswa; ?> <strong>belum absen</strong> hari ini. Silakan absen terlebih dahulu sebelum membuat jurnal.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Mengerti'
+                    });
+                <?php elseif ($absen_status === 'pulang'): ?>
+                    // Jika sudah absen pulang
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Aksi Tidak Diizinkan',
+                        html: '<?php echo $nama_siswa; ?> <strong>sudah absen pulang</strong>. Kamu tidak bisa menambah atau update jurnal.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Mengerti'
+                    });
+                <?php endif; ?>
             });
+            <?php endif; ?>
         });
     </script>
 
