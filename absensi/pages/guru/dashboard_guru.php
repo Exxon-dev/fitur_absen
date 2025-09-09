@@ -216,6 +216,40 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
       border: 1px solid #dee2e6 !important;
       vertical-align: middle;
     }
+
+    .status-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px; /* bikin oval/pill */
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.status-hadir {
+  background-color: #d4edda; /* hijau muda */
+  color: #155724;           /* hijau tua */
+}
+
+.status-sakit {
+  background-color: #fff3cd; /* kuning muda */
+  color: #856404;            /* kuning tua */
+}
+
+.status-izin {
+  background-color: #d1ecf1; /* biru muda */
+  color: #0c5460;            /* biru tua */
+}
+
+.status-alpa {
+  background-color: #f8d7da; /* merah muda */
+  color: #721c24;            /* merah tua */
+}
+
+.status-default {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
   </style>
 </head>
 
@@ -302,7 +336,7 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
                   );
                   $absen = mysqli_fetch_assoc($query_absen);
                   $keterangan = $absen['keterangan'] ?? null;
-
+                  
                   $badgeClass = 'badge-secondary';
                   $statusText = 'Belum Absen';
                   if ($keterangan) {
@@ -325,11 +359,11 @@ $jumlah_jurnal = $jurnalData['jumlah'] ?? 0;
                         break;
                     }
                   }
-                ?>
+                  ?>
                   <tr>
                     <td><?= $index++; ?></td>
                     <td><?= htmlspecialchars($siswa['nama_siswa']); ?></td>
-                    <td><span class="badge <?= $badgeClass; ?>"><?= $statusText; ?></span></td>
+                    <td><span class="status-badge <?= $badgeClass ?>"><?= $statusText ?></span></td>  
                     <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="sakit" <?= ($keterangan === 'sakit') ? 'checked' : ''; ?> disabled></td>
                     <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="izin" <?= ($keterangan === 'izin') ? 'checked' : ''; ?> disabled></td>
                     <td><input type="radio" name="absen_<?= $siswa['id_siswa']; ?>" value="alpa" <?= ($keterangan === 'alpa') ? 'checked' : ''; ?> disabled></td>
