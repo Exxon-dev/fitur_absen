@@ -141,32 +141,6 @@ unset($_SESSION['form_data']);
                     <input type="text" name="nama_siswa" class="form-control" 
                            value="<?php echo isset($form_data['nama_siswa']) ? $form_data['nama_siswa'] : ''; ?>" required>
                 </div>
-                <!-- <div class="form-group col-md-3">
-                    <label>Kelas</label>
-                    <select name="kelas" class="form-control" required>
-                        <option value="">Pilih Kelas</option>
-                        <option value="12 MM">12 MM</option>
-                        <option value="12 RPL">12 RPL</option>
-                        <option value="12 MPLB">12 MPLB</option>
-                    </select>
-                </div> -->
-                <div class="form-group col-md-3">
-                    <label>Program Keahlian</label>
-                    <select name="pro_keahlian" class="form-control" required>
-                        <option value="">Pilih Program Keahlian</option>
-                        <option value="Multimedia">Multimedia</option>
-                        <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
-                        <option value="Perkantoran">Perkantoran</option>
-                    </select>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tempat Lahir</label>
-                    <input type="text" name="TL" class="form-control" required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Tanggal Lahir</label>
-                    <input type="date" name="TTGL" class="form-control" required>
-                </div>
                 <div class="form-group col-md-4">
                     <label>Sekolah</label>
                     <select name="id_sekolah" class="form-control" required>
@@ -244,10 +218,6 @@ unset($_SESSION['form_data']);
                            value="<?php echo isset($form_data['password']) ? $form_data['password'] : ''; ?>" required readonly>
                     <div id="passwordError" class="error-message"><?php echo $error_password; ?></div>
                 </div>
-                <div class="form-group col-md-3">
-                    <label>Nomor WhatsApp:</label>
-                    <input type="text" name="no_wa" class="form-control" placeholder="628xxx" required>
-                </div>
             </div>
 
             <div class="form-row">
@@ -296,38 +266,6 @@ unset($_SESSION['form_data']);
             } else {
                 nisnError.textContent = '';
                 nisnInput.classList.remove('is-invalid');
-                return true;
-            }
-        }
-
-        function validateUsername() {
-            const usernameInput = document.getElementById('username');
-            const usernameError = document.getElementById('usernameError');
-            const usernameValue = usernameInput.value.trim();
-
-            if (usernameValue === '') {
-                usernameError.textContent = 'USERNAME harus diisi';
-                usernameInput.classList.add('is-invalid');
-                return false;
-            } else {
-                usernameError.textContent = '';
-                usernameInput.classList.remove('is-invalid');
-                return true;
-            }
-        }
-
-        function validatePassword() {
-            const passwordInput = document.getElementById('password');
-            const passwordError = document.getElementById('passwordError');
-            const passwordValue = passwordInput.value.trim();
-
-            if (passwordValue === '') {
-                passwordError.textContent = 'PASSWORD harus diisi';
-                passwordInput.classList.add('is-invalid');
-                return false;
-            } else {
-                passwordError.textContent = '';
-                passwordInput.classList.remove('is-invalid');
                 return true;
             }
         }
