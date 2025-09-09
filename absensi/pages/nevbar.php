@@ -58,32 +58,24 @@
                     $query = mysqli_query($coneksi, "SELECT profile FROM siswa WHERE id_siswa='$id_siswa'");
                     if ($query && mysqli_num_rows($query) > 0) {
                       $data = mysqli_fetch_assoc($query);
-                      if (isset($_SESSION['profile']) && !empty($_SESSION['profile'])) {
-                        $profile_image = './pages/image/' . $_SESSION['profile'];
-                      } else {
-                        $profile_image = 'assets/img/bg-pricing.jpg';
+                      if (!empty($data['profile'])) {
+                        $profile_image = './pages/image/' . $data['profile'];
                       }
                     }
                   }
                   break;
-case 'pembimbing':
-  $id_pembimbing  = $_SESSION['id_pembimbing'] ?? '';
-  if (!empty($id_pembimbing)) {
-    if (isset($_SESSION['profile']) && !empty($_SESSION['profile'])) {
-      $profile_image = './pages/image/' . $_SESSION['profile'];
-    } else {
-      $query = mysqli_query($coneksi, "SELECT profile FROM pembimbing WHERE id_pembimbing='$id_pembimbing'");
-      if ($query && mysqli_num_rows($query) > 0) {
-        $data = mysqli_fetch_assoc($query);
-        if (!empty($data['profile']) && $data['profile'] !== 'default.png') {
-          $profile_image = './pages/image/' . $data['profile'];
-        } else {
-          $profile_image = 'assets/img/bg-pricing.jpg';
-        }
-      }
-    }
-  }
-  break;
+                case 'pembimbing':
+                  $id_pembimbing = $_SESSION['id_pembimbing'] ?? '';
+                  if (!empty($id_pembimbing)) {
+                    $query = mysqli_query($coneksi, "SELECT profile FROM pembimbing WHERE id_pembimbing='$id_pembimbing'");
+                    if ($query && mysqli_num_rows($query) > 0) {
+                      $data = mysqli_fetch_assoc($query);
+                      if (!empty($data['profile'])) {
+                        $profile_image = './pages/image/' . $data['profile'];
+                      }
+                    }
+                  }
+                  break;
               }
             }
             ?>
