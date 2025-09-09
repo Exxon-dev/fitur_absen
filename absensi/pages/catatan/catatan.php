@@ -43,7 +43,7 @@ if ($absen) {
 $_SESSION['status_absen'] = $status;
 
 // Konfigurasi pagination untuk catatan pembimbing
-$limit = 5; 
+$limit = 5;
 $page = isset($_GET['page_catatan']) ? (int)$_GET['page_catatan'] : 1;
 $offset = ($page - 1) * $limit;
 
@@ -62,7 +62,7 @@ if ($id_perusahaan) {
         JOIN jurnal j ON c.id_jurnal = j.id_jurnal
         WHERE j.id_siswa = ?
     ";
-    
+
     $sql_catatan = "
         SELECT 
             c.catatan,
@@ -75,13 +75,13 @@ if ($id_perusahaan) {
         JOIN jurnal j ON c.id_jurnal = j.id_jurnal
         WHERE j.id_siswa = ?
     ";
-    
+
     // Tambahkan filter tanggal jika ada
     $params_count = [$id_siswa];
     $params_catatan = [$id_siswa];
     $param_types_count = "i";
     $param_types_catatan = "i";
-    
+
     if (!empty($filter_tanggal)) {
         $sql_count .= " AND DATE(c.tanggal) = ?";
         $sql_catatan .= " AND DATE(c.tanggal) = ?";
@@ -90,7 +90,7 @@ if ($id_perusahaan) {
         $param_types_count .= "s";
         $param_types_catatan .= "s";
     }
-    
+
     // Hitung total catatan
     $stmt_count = mysqli_prepare($coneksi, $sql_count);
     if ($stmt_count) {
@@ -100,20 +100,20 @@ if ($id_perusahaan) {
         $total_data = mysqli_fetch_assoc($result_count);
         $total_catatan = $total_data['total'];
     }
-    
+
     // Query untuk data catatan dengan pagination
     $sql_catatan .= " ORDER BY c.tanggal DESC LIMIT ? OFFSET ?";
     $params_catatan[] = $limit;
     $params_catatan[] = $offset;
     $param_types_catatan .= "ii";
-    
+
     // Ambil data catatan
     $stmt_catatan = mysqli_prepare($coneksi, $sql_catatan);
     if ($stmt_catatan) {
         mysqli_stmt_bind_param($stmt_catatan, $param_types_catatan, ...$params_catatan);
         mysqli_stmt_execute($stmt_catatan);
         $result_catatan = mysqli_stmt_get_result($stmt_catatan);
-        
+
         if ($result_catatan) {
             $catatan_pembimbing = mysqli_fetch_all($result_catatan, MYSQLI_ASSOC);
         }
@@ -138,13 +138,14 @@ function formatTanggalInput($dateString)
 }
 
 // Fungsi untuk membuat parameter URL
-function buildQueryString($params = []) {
+function buildQueryString($params = [])
+{
     $currentParams = $_GET;
     unset($currentParams['page_catatan']); // Hapus parameter page_catatan yang lama
-    
+
     // Gabungkan dengan parameter baru
     $allParams = array_merge($currentParams, $params);
-    
+
     return http_build_query($allParams);
 }
 ?>
@@ -175,7 +176,7 @@ function buildQueryString($params = []) {
             padding-left: 270px;
             transition: padding-left 0.3s;
             background-color: #f8f9fa;
-            
+
         }
 
         .main-container {
@@ -461,14 +462,14 @@ function buildQueryString($params = []) {
                 flex: 1;
             }
         }
-        
+
         .pagination {
             display: flex;
             justify-content: center;
             margin-top: 15px;
             gap: 5px;
         }
-        
+
         .pagination-btn {
             padding: 5px 10px;
             background-color: #f8f9fa;
@@ -479,17 +480,17 @@ function buildQueryString($params = []) {
             text-decoration: none;
             display: inline-block;
         }
-        
+
         .pagination-btn:hover {
             background-color: #e9ecef;
         }
-        
+
         .pagination-btn.active {
             background-color: #007bff;
             color: white;
             border-color: #007bff;
         }
-        
+
         .pagination-btn.disabled {
             color: #6c757d;
             cursor: not-allowed;
@@ -517,7 +518,7 @@ function buildQueryString($params = []) {
                         <h2 class="section-title">
                             <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
                         </h2>
-                        
+
                         <form method="GET" class="filter-form">
                             <input type="hidden" name="page" value="dashboard_siswa">
                             <input type="date" name="filter_tanggal" value="<?= $filter_tanggal ?>" class="filter-input">
@@ -549,7 +550,7 @@ function buildQueryString($params = []) {
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                        
+
                         <!-- Pagination yang Diperbaiki -->
                         <?php if ($total_pages > 1): ?>
                             <div class="pagination">
@@ -561,21 +562,21 @@ function buildQueryString($params = []) {
                                 <?php else: ?>
                                     <span class="pagination-btn disabled">&laquo; Prev</span>
                                 <?php endif; ?>
-                                
+
                                 <!-- Nomor Halaman -->
-                                <?php 
+                                <?php
                                 // Tentukan rentang halaman yang akan ditampilkan
                                 $start_page = max(1, $page - 2);
                                 $end_page = min($total_pages, $start_page + 4);
                                 $start_page = max(1, $end_page - 4);
-                                
+
                                 for ($i = $start_page; $i <= $end_page; $i++): ?>
-                                    <a href="?<?= buildQueryString(['page_catatan' => $i]) ?>" 
-                                       class="pagination-btn <?= $i == $page ? 'active' : '' ?>">
+                                    <a href="?<?= buildQueryString(['page_catatan' => $i]) ?>"
+                                        class="pagination-btn <?= $i == $page ? 'active' : '' ?>">
                                         <?= $i ?>
                                     </a>
                                 <?php endfor; ?>
-                                
+
                                 <!-- Tombol Next -->
                                 <?php if ($page < $total_pages): ?>
                                     <a href="?<?= buildQueryString(['page_catatan' => $page + 1]) ?>" class="pagination-btn">
@@ -588,7 +589,7 @@ function buildQueryString($params = []) {
                         <?php endif; ?>
                     <?php else: ?>
                         <div class="empty-notes">
-                            <i class="far fa-folder-open"></i> 
+                            <i class="far fa-folder-open"></i>
                             <?= !empty($filter_tanggal) ? 'Tidak ada catatan pada tanggal yang dipilih' : 'Belum ada catatan dari pembimbing' ?>
                         </div>
                     <?php endif; ?>
@@ -597,7 +598,7 @@ function buildQueryString($params = []) {
         </div>
     </div>
 
-   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let statusSaatIni = "<?= $status ?>";
@@ -698,7 +699,7 @@ function buildQueryString($params = []) {
             // Fungsi untuk menampilkan alert selamat datang
             function showWelcomeAlert() {
                 const namaSiswa = "<?php echo !empty($nama_siswa) ? htmlspecialchars($nama_siswa, ENT_QUOTES) : 'Siswa'; ?>";
-                
+
                 Swal.fire({
                     title: `Selamat datang ${namaSiswa}!`,
                     text: "Anda berhasil login ke sistem",
@@ -716,7 +717,7 @@ function buildQueryString($params = []) {
                 }).then(() => {
                     // Setelah alert selamat datang selesai, tampilkan peringatan jika password masih default
                     <?php if ($password_default): ?>
-                    showPasswordWarning();
+                        showPasswordWarning();
                     <?php endif; ?>
                 });
             }
@@ -784,9 +785,9 @@ function buildQueryString($params = []) {
                     // Jika alert selamat datang sudah pernah ditampilkan,
                     // langsung tampilkan peringatan password jika diperlukan
                     <?php if ($password_default): ?>
-                    setTimeout(() => {
-                        showPasswordWarning();
-                    }, 500);
+                        setTimeout(() => {
+                            showPasswordWarning();
+                        }, 500);
                     <?php endif; ?>
                 }
             <?php endif; ?>
