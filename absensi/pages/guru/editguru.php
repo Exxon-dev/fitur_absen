@@ -21,8 +21,55 @@ if (mysqli_num_rows($select) == 0) {
     $data = mysqli_fetch_assoc($select);
 }
 
-// Handle form submission
-if (isset($_POST['submit'])) {
+if (isset($_POST['update_user'])) {
+    $id_guru = $_GET['id_guru'];
+    $username = $_POST['username'];
+    $password = $_POST['password'] ? $_POST['password'] : $data['password']; // kalau kosong pakai lama
+    $profile  = $data['profile'];
+
+    // Upload foto jika ada
+    if ($_FILES['profile']['name']) {
+        $target_dir = "../uploads/profiles/";
+        if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+
+        $imageFileType = strtolower(pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION));
+        $new_filename  = "guru_" . $id_guru . "_" . time() . "." . $imageFileType;
+        $target_file   = $target_dir . $new_filename;
+
+        if (move_uploaded_file($_FILES['profile']['tmp_name'], $target_file)) {
+            if ($data['profile'] && file_exists("../" . $data['profile'])) {
+                unlink("../" . $data['profile']); // hapus lama
+            }
+            $profile = "uploads/profiles/" . $new_filename;
+        }
+    }
+
+    $sql = mysqli_query($coneksi, "UPDATE guru SET 
+        username='$username',
+        password='$password',
+        profile='$profile'
+        WHERE id_guru='$id_guru'");
+    if ($sql) {
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>
+            Swal.fire({
+                icon: "success",
+                title: "Sukses!",
+                text: "User berhasil diupdate",
+                position: "top",
+                showConfirmButton: false,
+                timer: 1500,
+                toast: true
+            }).then(() => {
+                window.location.href = "index.php?page=editguru&id_guru=' . $id_guru . '";
+            });
+        </script>';
+        exit();
+    }
+}
+
+// Handle update DATA GURU
+if (isset($_POST['update_guru'])) {
     $id_guru = $_GET['id_guru'];
     $nama_guru = $_POST['nama_guru'];
     $nip = $_POST['nip'];
@@ -30,85 +77,32 @@ if (isset($_POST['submit'])) {
     $alamat = $_POST['alamat'];
     $no_tlp = $_POST['no_tlp'];
     $id_sekolah = $_POST['id_sekolah'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // Handle file upload
-    $profile = $data['profile']; // Default to existing profile picture
-
-    if ($_FILES['profile']['name']) {
-        $target_dir = "../uploads/profiles/";
-        if (!file_exists($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
-
-        $file_name = basename($_FILES['profile']['name']);
-        $target_file = $target_dir . $file_name;
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        // Check if image file is a actual image
-        $check = getimagesize($_FILES['profile']['tmp_name']);
-        if ($check === false) {
-            echo '<script>alert("File yang diupload bukan gambar.");</script>';
-        } else {
-            // Generate unique filename
-            $new_filename = "guru_" . $id_guru . "_" . time() . "." . $imageFileType;
-            $target_file = $target_dir . $new_filename;
-
-            // Check file size (max 2MB)
-            if ($_FILES['profile']['size'] > 9000000) {
-                echo '<script>alert("Ukuran file terlalu besar. Maksimal 2MB.");</script>';
-            } else {
-                // Allow certain file formats
-                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                    echo '<script>alert("Hanya file JPG, JPEG, PNG & GIF yang diizinkan.");</script>';
-                } else {
-                    // Delete old file if exists
-                    if ($data['profile'] && file_exists("../" . $data['profile'])) {
-                        unlink("../" . $data['profile']);
-                    }
-
-                    // Try to upload file
-                    if (move_uploaded_file($_FILES['profile']['tmp_name'], $target_file)) {
-                        $profile = "uploads/profiles/" . $new_filename;
-                    } else {
-                        echo '<script>alert("Terjadi kesalahan saat mengupload file.");</script>';
-                    }
-                }
-            }
-        }
-    }
+    $id_perusahaan = $_POST['id_perusahaan'];
 
     $sql = mysqli_query($coneksi, "UPDATE guru SET 
-        nama_guru='$nama_guru', 
-        nip='$nip', 
-        jenis_kelamin='$jenis_kelamin', 
-        alamat='$alamat', 
-        no_tlp='$no_tlp', 
-        id_sekolah='$id_sekolah', 
-        username='$username', 
-        password='$password',
-        profile='$profile'
-        WHERE id_guru='$id_guru'")
-        or die(mysqli_error($coneksi));
+        nama_guru='$nama_guru',
+        nip='$nip',
+        jenis_kelamin='$jenis_kelamin',
+        alamat='$alamat',
+        no_tlp='$no_tlp',
+        id_sekolah='$id_sekolah',
+        id_perusahaan='$id_perusahaan'
+        WHERE id_guru='$id_guru'");
 
-    if ($sql) {
+    if (isset($_SESSION['pesan'])) {
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>
-        Swal.fire({icon:"success",
-        title:"Sukses!",
-        text:"Data guru berhasil diupdate",
-        position:"top",
-        showConfirmButton:false,
-        timer:1200,
-        toast:true}); 
-        setTimeout(function()
-        {window.location.href="index.php?page=editguru&id_guru=' . $id_guru . '&pesan=sukses";},1200);</script>';
-        exit();
-    } else {
-        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
+            Swal.fire({
+                icon:"success",
+                title:"Sukses!",
+                text:"' . $_SESSION['pesan'] . '",
+                position:"top",
+                showConfirmButton:false,
+                timer:1500,
+                toast:true
+            });
+        </script>';
+        unset($_SESSION['pesan']); // supaya tidak muncul lagi saat reload
     }
 }
 ?>
@@ -268,6 +262,7 @@ if (isset($_POST['submit'])) {
             height: calc(1.5em + .75rem + 2px);
             padding: .375rem .75rem;
         }
+
         .btn-left {
             margin-left: 600px;
         }
@@ -314,10 +309,10 @@ if (isset($_POST['submit'])) {
 
                         <div class="form-group text-left">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password">
+                            <input type="password" class="form-control" id="password" name="password" value="<?php echo htmlspecialchars($data['password']); ?>">
                         </div>
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
-                        <button type="submit" name="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" name="update_user" class="btn btn-primary">Update</button>
                     </div>
                 </div>
 
@@ -395,7 +390,7 @@ if (isset($_POST['submit'])) {
                             </div>
                         </div>
                     </div>
-                    <button type="submit" name="submit" class="btn btn-primary btn-left">Update</button>
+                    <button type="submit" name="update_guru" class="btn btn-primary btn-left">Update</button>
                 </div>
             </div>
         </form>

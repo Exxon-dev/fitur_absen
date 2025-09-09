@@ -76,6 +76,17 @@
                     }
                   }
                   break;
+                case 'admin':
+                  $id_admin = $_SESSION['id_admin'] ?? '';
+                  if (!empty($id_admin)) {
+                    $query = mysqli_query($coneksi, "SELECT profile FROM users WHERE id_admin='$id_admin'");
+                    if ($query && mysqli_num_rows($query) > 0) {
+                      $data = mysqli_fetch_assoc($query);
+                      if (!empty($data['profile'])) {
+                        $profile_image = './pages/image/' . $data['profile'];
+                      }
+                    }
+                  }
               }
             }
             ?>
