@@ -128,21 +128,18 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Perusahaan</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Perusahaan</h2>
-        <hr>
         <a href="index.php?page=tambahperusahaan" class="btn btn-primary">Tambah Perusahaan</a>
 
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Derektur</th>
-                        <th>Alamat</th>
-                        <th>No Telepon</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama Perusahaan</th>
+                        <th class="text-center">Direktur</th>
+                        <th class="text-center">No Telephon</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,11 +151,11 @@ include('koneksi.php');
                             $editUrl = "index.php?page=editperusahaan&id_perusahaan=" . $data['id_perusahaan'];
                             $deleteUrl = "index.php?page=hapusperusahaan&id_perusahaan=" . $data['id_perusahaan'];
                             echo '
-                                <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
-                                    <td>' . $no . '</td>
+                                <tr style="cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                                    <td class="text-center">' . $no . '</td>
                                     <td>' . $data['nama_perusahaan'] . '</td>
-                                    <td>' . $data['alamat_perusahaan'] . '</td>
-                                    <td>' . $data['no_tel'] . '</td>
+                                    <td>' . $data['pimpinan'] . '</td>
+                                    <td class="text-center">' . $data['no_tlp'] . '</td>
                                 </tr>';
                             $no++;
                         }

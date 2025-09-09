@@ -115,9 +115,8 @@ unset($_SESSION['form_data']);
 </head>
 
 <body>
+<h2 class="text-left">Tambah Siswa</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Tambah Siswa</h2>
-        <hr>
         <?php if (!empty($success)): ?>
             <div class="success-message"><?php echo $success; ?></div>
         <?php endif; ?>

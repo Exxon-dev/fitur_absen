@@ -100,9 +100,8 @@ unset($_SESSION['form_data']);
 </head>
 
 <body>
+<h2 class="text-left">Tambah Pembimbing</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Tambah Pembimbing</h2>
-        <hr>
         <form action="pages/pembimbing/proses_tambahpembimbing.php" method="post" enctype="multipart/form-data">
             <div class="form-row">
                 <div class="form-group col-md-4">

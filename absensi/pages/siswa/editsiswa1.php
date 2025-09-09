@@ -114,10 +114,8 @@ unset($_SESSION['form_data']);
 </head>
 
 <body>
+<h2 class="text-left">Data Siswa</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Siswa</h2>
-        <hr>
-
         <?php
         if (isset($_GET['id_siswa'])) {
             $id_siswa = $_GET['id_siswa'];

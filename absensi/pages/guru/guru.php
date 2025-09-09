@@ -59,7 +59,6 @@ include('koneksi.php');
             vertical-align: middle;
         }
 
-
         .btn-warning {
             margin-bottom: 20px;
         }
@@ -78,38 +77,37 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Guru</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data GURU</h2>
-        <hr>
         <a href="index.php?page=tambahguru" class="btn btn-primary">Tambah Guru</a>
         <div class="table-responsive">
             <table class="table table-hover table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Username</th>
-                        <th>Password</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama</th>
+                        <th class="text-center">Perusahaan</th>
+                        <th class="text-center">Alamat Perusahaan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // Mengubah ORDER BY dari ASC menjadi DESC agar data terbaru muncul pertama
-                    $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, p.nama_perusahaan
+                    // Mengubah query untuk mengambil alamat_perusahaan dari tabel perusahaan
+                    $sql = mysqli_query($coneksi, "SELECT g.*, s.nama_sekolah, p.nama_perusahaan, p.alamat_perusahaan
                             FROM guru g 
-                                                   LEFT JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
-                                                   LEFT JOIN perusahaan p ON g.id_perusahaan = p.id_perusahaan
-                                                   ORDER BY g.id_guru DESC") or die(mysqli_error($coneksi));
+                            LEFT JOIN sekolah s ON g.id_sekolah = s.id_sekolah 
+                            LEFT JOIN perusahaan p ON g.id_perusahaan = p.id_perusahaan
+                            ORDER BY g.id_guru DESC") or die(mysqli_error($coneksi));
+                    
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
                             echo '
-                    <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editguru1&id_guru=' . $data['id_guru'] . '\'">
-                        <td>' . $no . '</td>
-                        <td>' . $data['nama_guru'] . '</td>
-                        <td>' . $data['username'] . '</td>
-                        <td>' . $data['password'] . '</td>
+                    <tr style="text-align:; cursor:pointer;" onclick="window.location=\'index.php?page=editguru1&id_guru=' . $data['id_guru'] . '\'">
+                        <td class="text-center">' . $no . '</td>
+                        <td>' . htmlspecialchars($data['nama_guru']) . '</td>
+                        <td>' . htmlspecialchars($data['nama_perusahaan'] ?? '-') . '</td>
+                        <td>' . htmlspecialchars($data['alamat_perusahaan'] ?? '-') . '</td>
                     </tr>
                     ';
                             $no++;

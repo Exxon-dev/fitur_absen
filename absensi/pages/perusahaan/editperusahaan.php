@@ -114,11 +114,8 @@
 		}
 		?>
 
-		<<<<<<< HEAD
 			<form action="" method="post" enctype="multipart/form-data">
-			=======
 			<form action="pages/perusahaan/proses_editperusahaan.php" method="post" enctype="multipart/form-data">
-				>>>>>>> d35abad95bfd744be50d4b8fb504e5d4ba5adaad
 				<input type="hidden" name="id_perusahaan" value="<?php echo $data['id_perusahaan']; ?>">
 
 				<div class="form-group row">
