@@ -93,12 +93,8 @@
 </head>
 
 <body>
-
+<h2 class="text-left">Edit Sekolah</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Edit Sekolah</h2>
-
-		<hr>
-
 		<?php
 		if (isset($_GET['id_sekolah'])) {
 			$id_sekolah = $_GET['id_sekolah'];

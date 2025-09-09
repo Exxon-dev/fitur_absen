@@ -77,10 +77,8 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Siswa</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Siswa</h2>
-        <hr>
         <a href="index.php?page=tambahsiswa" class="btn btn-primary mb-3">Tambah Siswa</a>
 
         <div class="table-responsive">
@@ -96,6 +94,7 @@ include('koneksi.php');
                 </thead>
                 <tbody>
                     <?php
+                    // Mengubah query untuk mengurutkan berdasarkan id_siswa DESC agar data baru muncul di atas
                     $sql = mysqli_query($coneksi, "
                     SELECT 
                         s.id_siswa, s.nis, s.nisn, s.nama_siswa,
@@ -104,16 +103,12 @@ include('koneksi.php');
                     FROM siswa s
                     LEFT JOIN sekolah sk ON s.id_sekolah = sk.id_sekolah
                     LEFT JOIN perusahaan p ON s.id_perusahaan = p.id_perusahaan
-                    ORDER BY sk.nama_sekolah ASC, p.nama_perusahaan ASC
+                    ORDER BY s.id_siswa DESC, sk.nama_sekolah ASC, p.nama_perusahaan ASC
                 ") or die(mysqli_error($coneksi));
 
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
                         while ($data = mysqli_fetch_assoc($sql)) {
-                            // Format tanggal dari Y-m-d ke m-d-Y
-                            $tanggal_mulai = !empty($data['tanggal_mulai']) ? date('m-d-Y', strtotime($data['tanggal_mulai'])) : '';
-                            $tanggal_selesai = !empty($data['tanggal_selesai']) ? date('m-d-Y', strtotime($data['tanggal_selesai'])) : '';
-
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td class="text-center">' . $no++ . '</td>
