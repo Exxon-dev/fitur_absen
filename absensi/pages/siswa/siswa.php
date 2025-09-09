@@ -117,6 +117,7 @@ include('koneksi.php');
                             echo '
                         <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'index.php?page=editsiswa1&id_siswa=' . $data['id_siswa'] . '\'">
                             <td class="text-center">' . $no++ . '</td>
+                            <td class="text-center">' . htmlspecialchars($data['nisn']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_siswa']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_sekolah']) . '</td>
                             <td class="text-left">' . htmlspecialchars($data['nama_perusahaan'] ?? '') . '</td>
