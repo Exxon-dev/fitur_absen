@@ -54,20 +54,21 @@ $offset = ($page - 1) * $limit;
 // Filter tanggal jika ada
 $filter_tanggal = isset($_GET['filter_tanggal']) ? $_GET['filter_tanggal'] : '';
 
-// Ambil catatan pembimbing - DIMODIFIKASI
+// Ambil catatan pembimbing - DIPERBAIKI
 $catatan_pembimbing = [];
 $total_catatan = 0;
 if ($id_perusahaan) {
-    // Query untuk total catatan - DIMODIFIKASI
+    // Query untuk total catatan - DIPERBAIKI
     $sql_count = "
         SELECT COUNT(*) as total
         FROM catatan c
         JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
         LEFT JOIN jurnal j ON c.id_jurnal = j.id_jurnal
-        WHERE p.id_perusahaan = ? OR j.id_siswa = ?
+        LEFT JOIN siswa s ON j.id_siswa = s.id_siswa
+        WHERE (p.id_perusahaan = ? OR s.id_perusahaan = ?)
     ";
     
-    // Query untuk data catatan - DIMODIFIKASI
+    // Query untuk data catatan - DIPERBAIKI
     $sql_catatan = "
         SELECT 
             c.catatan,
@@ -82,12 +83,13 @@ if ($id_perusahaan) {
         FROM catatan c
         JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
         LEFT JOIN jurnal j ON c.id_jurnal = j.id_jurnal
-        WHERE p.id_perusahaan = ? OR j.id_siswa = ?
+        LEFT JOIN siswa s ON j.id_siswa = s.id_siswa
+        WHERE (p.id_perusahaan = ? OR s.id_perusahaan = ?)
     ";
     
     // Tambahkan filter tanggal jika ada
-    $params_count = [$id_perusahaan, $id_siswa];
-    $params_catatan = [$id_perusahaan, $id_siswa];
+    $params_count = [$id_perusahaan, $id_perusahaan];
+    $params_catatan = [$id_perusahaan, $id_perusahaan];
     $param_types_count = "ii";
     $param_types_catatan = "ii";
     
@@ -146,13 +148,18 @@ function formatTanggalInput($dateString)
     return $date->format('Y-m-d');
 }
 
-// Fungsi untuk membuat parameter URL
+// Fungsi untuk membuat parameter URL - DIPERBAIKI
 function buildQueryString($params = []) {
     $currentParams = $_GET;
     unset($currentParams['page_catatan']); // Hapus parameter page_catatan yang lama
     
     // Gabungkan dengan parameter baru
     $allParams = array_merge($currentParams, $params);
+    
+    // Pastikan parameter filter tanggal tetap ada
+    if (isset($_GET['filter_tanggal']) && !isset($allParams['filter_tanggal'])) {
+        $allParams['filter_tanggal'] = $_GET['filter_tanggal'];
+    }
     
     return http_build_query($allParams);
 }
@@ -171,6 +178,7 @@ function buildQueryString($params = []) {
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <style>
+        /* CSS tetap sama seperti sebelumnya */
         :root {
             --primary: #3498db;
             --success: #2ecc71;
@@ -545,9 +553,10 @@ function buildQueryString($params = []) {
                             <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
                         </h2>
                         
+                        <!-- FORM FILTER YANG DIPERBAIKI -->
                         <form method="GET" class="filter-form">
                             <input type="hidden" name="page" value="dashboard_siswa">
-                            <input type="date" name="filter_tanggal" value="<?= $filter_tanggal ?>" class="filter-input">
+                            <input type="date" name="filter_tanggal" value="<?= htmlspecialchars($filter_tanggal) ?>" class="filter-input">
                             <button type="submit" class="filter-btn">Filter</button>
                             <?php if (!empty($filter_tanggal)): ?>
                                 <a href="?page=dashboard_siswa" class="filter-btn" style="background-color: #6c757d;">Reset</a>
@@ -562,7 +571,6 @@ function buildQueryString($params = []) {
                                     <span>
                                         <i class="fas fa-user-tie"></i>
                                         <?= htmlspecialchars($catatan['nama_pembimbing']) ?>
-                                       
                                     </span>
                                     <span><?= formatTanggal($catatan['tanggal']) ?></span>
                                 </div>
