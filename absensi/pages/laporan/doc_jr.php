@@ -267,6 +267,7 @@ if (empty($jurnal_data)) {
                 display: none;
             }
         }
+
         .table-no-border {
             border-collapse: collapse;
             /* hilangkan jarak antar sel */
@@ -292,7 +293,7 @@ if (empty($jurnal_data)) {
         </div>
 
         <br>
-        <table class="table border-0">
+        <table class="table-no-border">
             <tr>
                 <td style="width: 50px;">Nama</td>
                 <td>: <?= htmlspecialchars($nama_siswa) ?></td>
