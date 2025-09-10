@@ -38,6 +38,16 @@ if ($result_siswa->num_rows > 0) {
     exit();
 }
 
+$query_pembimbing = "SELECT nama_pembimbing FROM pembimbing LIMIT 1";
+$result_pembimbing = $coneksi->query($query_pembimbing);
+
+if ($result_pembimbing && $result_pembimbing->num_rows > 0) {
+    $data_pembimbing = $result_pembimbing->fetch_assoc();
+    $nama_pembimbing = $data_pembimbing['nama_pembimbing'];
+} else {
+    $nama_pembimbing = '-'; 
+}
+
 // Query absen dengan filter
 $query_absen = "
     SELECT 
@@ -227,9 +237,9 @@ if (count($kehadiran) === 0) {
 
         .align-justify {
             text-align: justify;
-        }a
+        }
 
-        .align-center {
+        a .align-center {
             text-align: center;
         }
 
@@ -287,10 +297,10 @@ if (count($kehadiran) === 0) {
                 <?= $judul_periode ?>
             </div>
         </div>
-            <div class="style9 mb-4 ml-7">
-                <p>NAMA: <?php echo $nama_siswa; ?></p>
-                <p>NISN: <?php echo $nisn; ?></p>
-            </div>
+        <div class="style9 mb-4 ml-7">
+            <p>NAMA: <?php echo $nama_siswa; ?></p>
+            <p>NISN: <?php echo $nisn; ?></p>
+        </div>
 
         <table width="96%" border="1" align="center" cellpadding="3" cellspacing="0" class="style9">
             <thead>
@@ -336,7 +346,7 @@ if (count($kehadiran) === 0) {
                 <div class="style9">.......... , ............... <?= date('Y') ?></div>
                 <div class="style9">PEMBIMBING DUDI</div>
                 <br><br><br>
-                <div class="style9">(.............................................)</div>
+                <div class="style9"><?= htmlspecialchars($nama_pembimbing) ?></div>
             </div>
         </div>
     </div>

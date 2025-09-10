@@ -267,6 +267,17 @@ if (empty($jurnal_data)) {
                 display: none;
             }
         }
+        .table-no-border {
+            border-collapse: collapse;
+            /* hilangkan jarak antar sel */
+        }
+
+        .table-no-border td {
+            border: none;
+            /* hilangkan border tiap sel */
+            padding: 2px 5px;
+            /* optional supaya teks tidak terlalu menempel */
+        }
     </style>
 </head>
 
