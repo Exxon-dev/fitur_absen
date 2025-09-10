@@ -353,7 +353,7 @@ if (empty($jurnal_data)) {
                 <div>..................,<?= date('Y') ?></div>
                 <div style="margin-top: 15px;">PEMBIMBING DUDI</div>
                 <br><br><br><br><br><br>
-                <div style="margin-right: 20px;">(<?= htmlspecialchars($nama_pembimbing) ?>)</div>
+                <div style="margin-right: 28px;"><?= htmlspecialchars($nama_pembimbing) ?></div>
             </div>
         </div>
 
