@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 include '../koneksi.php';
@@ -78,4 +78,3 @@ $stmt_siswa->close();
 $stmt_guru->close();
 $stmt_pembimbing->close();
 $coneksi->close();
-?>
