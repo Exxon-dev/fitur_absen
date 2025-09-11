@@ -373,4 +373,4 @@ if (empty($jurnal_data)) {
 
 </body>
 
-</html>
+</html> 
