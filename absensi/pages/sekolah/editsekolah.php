@@ -93,12 +93,8 @@
 </head>
 
 <body>
-
+<h2 class="text-left">Edit Sekolah</h2>
 	<div class="main-container container-custom" style="margin-top:20px">
-		<h2 class="text-center">Edit Sekolah</h2>
-
-		<hr>
-
 		<?php
 		if (isset($_GET['id_sekolah'])) {
 			$id_sekolah = $_GET['id_sekolah'];
@@ -156,16 +152,14 @@
             </div>
             
             <div class="form-group row">
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <label>Alamat Sekolah</label>
                     <input type="text" name="kepala_sekolah" class="form-control" value="<?php echo $data['kepala_sekolah']; ?>" required>
                 </div>
-            </div>
-            
-            <div class="form-group row">
-                <div class="col-sm-12">
+
+                <div class="col-sm-6">
                     <label>Logo Sekolah</label>
-                    <input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" required>
+                    <input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" >
                     <div class="file-info">Maksimal ukuran file: 2MB. Format yang diterima: JPG, PNG, GIF.</div>
                     <div id="preview" class="mt-2" style="display:none;">
                         <img id="preview-image" src="#" alt="Preview Logo" style="max-width: 200px; max-height: 200px;">
@@ -175,12 +169,12 @@
             </div>
 			<div class="form-row">
 				<div class="col text-left">
-					<button type="button" class="btn btn-danger" id="btnHapus"
+					<button type="button" class="btn btn-secondary" id="btnHapus"
 						data-id="<?php echo $data['id_sekolah']; ?>">Hapus</button>
 				</div>
 				<div class="col text-right">
 					<a href="index.php?page=sekolah" class="btn btn-warning">KEMBALI</a>
-					<input type="submit" name="submit" class="btn btn-primary" value="SIMPAN">
+					<input type="submit" name="submit" class="btn btn-primary" value="UPDATE">
 				</div>
 			</div>
 		</form>
@@ -200,7 +194,7 @@
 						text: "Data yang dihapus tidak dapat dikembalikan!",
 						icon: "warning",
 						showCancelButton: true,
-						confirmButtonColor: "#d33",
+						confirmButtonColor: "#6c757d",
 						cancelButtonColor: "#3085d6",
 						confirmButtonText: "Ya, hapus!",
 						cancelButtonText: "Batal"

@@ -123,8 +123,8 @@ unset($_SESSION['form_data']);
 </head>
 
 <body>
+ <h2 class="text-left">Tambah Guru</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Tambah Guru</h2>
         <form action="pages/guru/proses_tambahguru.php" method="post" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-4">
@@ -176,9 +176,9 @@ unset($_SESSION['form_data']);
                     <select name="id_perusahaan" class="form-control" required>
                         <option value="">Pilih Perusahaan</option>
                         <?php
-                        $queryPerusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
-                        while ($perusahaan = mysqli_fetch_assoc($queryPerusahaan)) {
-                            $selected = (isset($form_data['id_perusahaan']) && $form_data['id_perusahaan'] == $perusahaan['id_perusahaan']) ? 'selected' : '';
+                        $queryperusahaan = mysqli_query($coneksi, "SELECT * FROM perusahaan");
+                        while ($perusahaan = mysqli_fetch_assoc($queryperusahaan)) {
+                            $selected = ($data['id_perusahaan'] == $perusahaan['id_perusahaan']) ? 'selected' : '';
                             echo "<option value='{$perusahaan['id_perusahaan']}' $selected>{$perusahaan['nama_perusahaan']}</option>";
                         }
                         ?>

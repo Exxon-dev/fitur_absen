@@ -46,15 +46,6 @@ include('koneksi.php');
             background-color: #e9ecef;
         }
 
-        .table tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        .table td,
-        .table th {
-            text-align: left !important;
-        }
-
         .table-responsive {
             border: none !important;
             overflow-x: auto;
@@ -66,8 +57,6 @@ include('koneksi.php');
             border: 1px solid #dee2e6 !important;
             vertical-align: middle;
         }
-
-
         .editSekolah {
             color: white;
             /* Text putih */
@@ -139,26 +128,23 @@ include('koneksi.php');
 </head>
 
 <body>
-
+<h2 class="text-left">Data Sekolah</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Data Sekolah</h2>
-        <hr>
         <a href="index.php?page=tambahsekolah" class="btn btn-primary">Tambah Sekolah</a>
 
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="table-light">
                     <tr>
-                        <th>No</th>
-                        <th>Nama Sekolah</th>
-                        <th>Alamat</th>
-                        <th>Kepala Sekolah</th>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Nama Sekolah</th>
+                        <th class="text-center">Alamat</th>
+                        <th class="text-center">Kepala Sekolah</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     // Mengubah query untuk mengurutkan berdasarkan id_sekolah DESC
-                    // agar data terbaru (dengan ID tertinggi) muncul di paling atas
                     $sql = mysqli_query($coneksi, "SELECT * FROM sekolah ORDER BY id_sekolah DESC") or die(mysqli_error($coneksi));
                     if (mysqli_num_rows($sql) > 0) {
                         $no = 1;
@@ -166,8 +152,8 @@ include('koneksi.php');
                             $editUrl = "index.php?page=editsekolah&id_sekolah=" . $data['id_sekolah'];
                             $deleteUrl = "index.php?page=hapussekolah&id_sekolah=" . $data['id_sekolah'];
                             echo '
-                            <tr style="text-align:center; cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
-                                <td>' . $no . '</td>
+                            <tr style="cursor:pointer;" onclick="window.location=\'' . $editUrl . '\'">
+                                <td class="text-center">' . $no . '</td>
                                 <td>' . $data['nama_sekolah'] . '</td>
                                 <td>' . $data['alamat_sekolah'] . '</td>
                                 <td>' . $data['kepala_sekolah'] . '</td>

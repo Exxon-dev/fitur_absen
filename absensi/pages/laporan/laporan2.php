@@ -1,22 +1,16 @@
 <?php
 include('koneksi.php');
 
-// Inisialisasi session jika belum ada
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+$id_perusahaan = $_SESSION['id_perusahaan'];
 
 // Cek kalau BELUM login
-if (!isset($_SESSION['id_pembimbing'])) {
+if (!isset($_SESSION['level'])) {
     header("Location: sign-in.php");
     exit();
 }
-
-// Ambil id_pembimbing dari session
-$id_pembimbing = $_SESSION['id_pembimbing'];
-
-// Query untuk mengambil daftar siswa berdasarkan ID pembimbing
-$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_pembimbing = '$id_pembimbing' ORDER BY nama_siswa";
+    
+// Query untuk mengambil daftar siswa berdasarkan ID perusahaan
+$query = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_perusahaan = '$id_perusahaan'";
 $result = mysqli_query($coneksi, $query);
 
 // Cek jika query berhasil
@@ -38,7 +32,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buka Laporan Siswa</title>
+    <title>Laporan Siswa</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
     body {
@@ -121,8 +115,8 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
 </head>
 
 <body>
+    <h2>Laporan Siswa</h2>
     <div class="main-container container-custom">
-        <h2 class="text-center">Laporan Siswa</h2>
         <hr>
 
         <form id="myForm" action="pages/laporan/preview.php" method="GET" target="_blank">
@@ -133,12 +127,8 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                     <select id="siswaSelect" name="id_siswa" class="form-control" required>
                         <option value="">Cari Siswa...</option>
                         <?php
-                        // Reset pointer hasil query ke awal
                         mysqli_data_seek($result, 0);
-                        
-                        // Loop melalui hasil query
-                        while ($row = mysqli_fetch_assoc($result)): 
-                        ?>
+                        while ($row = mysqli_fetch_assoc($result)): ?>
                         <option value="<?= $row['id_siswa'] ?>">
                             <?= htmlspecialchars($row['nama_siswa']) ?>
                         </option>
@@ -238,7 +228,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block mt-4">Preview</button>
+            <button type="submit" class="btn btn-primary btn-block mt-3">Preview</button>
         </form>
 
         <!-- Choices.js -->
@@ -248,7 +238,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Choices.js for selects
-            const siswaSelect = new Choices('#siswaSelect', {
+            new Choices('#siswaSelect', {
                 searchEnabled: true,
                 searchPlaceholderValue: 'Ketik nama siswa...',
                 itemSelectText: 'Pilih',
@@ -256,7 +246,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                 noChoicesText: 'Tidak ada data siswa'
             });
 
-            const reportSelect = new Choices('#reportSelect', {
+            new Choices('#reportSelect', {
                 searchEnabled: true,
                 searchPlaceholderValue: 'Cari laporan...',
                 shouldSort: false,

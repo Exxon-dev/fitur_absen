@@ -102,27 +102,13 @@
             </div>
 
             <div class="form-group row">
-                <div class="col-sm-12">
+				<div class="col-sm-6">
                     <label>Alamat Sekolah</label>
                     <input type="text" name="alamat_sekolah" class="form-control" required>
                 </div>
-            </div>
-
-            <div class="form-group row">
                 <div class="col-sm-6">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control" required>
-                </div>
-                <div class="col-sm-6">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-12">
                     <label>Logo Sekolah</label>
-                    <input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" required>
+                    <input type="file" name="logo_sekolah" id="logo_sekolah" class="form-control-file" accept="image/*" >
                     <div class="file-info">Maksimal ukuran file: 2MB. Format yang diterima: JPG, PNG, GIF.</div>
                     <div id="preview" class="mt-2" style="display:none;">
                         <img id="preview-image" src="#" alt="Preview Logo" style="max-width: 200px; max-height: 200px;">
@@ -149,7 +135,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
-
     <script>
         // Preview image sebelum upload
         document.getElementById('logo_sekolah').addEventListener('change', function(e) {

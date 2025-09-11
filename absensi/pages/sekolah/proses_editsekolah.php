@@ -77,12 +77,14 @@ if (isset($_POST['submit'])) {
     WHERE 
     id_sekolah='$id_sekolah'")
         or die(mysqli_error($coneksi));
-
-    if ($sql) {
-        $_SESSION['flash_edit'] = 'sukses';
-    } else {
-        $_SESSION['flash_error'] = mysqli_error($coneksi);
-    }
+	$sql = mysqli_query($coneksi, "UPDATE sekolah SET 
+	nama_sekolah='$nama_sekolah',
+	alamat_sekolah='$alamat_sekolah', 
+	kepala_sekolah='$kepala_sekolah', 
+	logo_sekolah='$logo_sekolah'
+	WHERE 
+	id_sekolah='$id_sekolah'")
+		or die(mysqli_error($coneksi));
 
     header("Location: ../../index.php?page=sekolah");
     exit();

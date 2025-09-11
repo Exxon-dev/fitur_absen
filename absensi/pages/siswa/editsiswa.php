@@ -11,6 +11,18 @@ if (!isset($_SESSION['id_siswa'])) {
     exit();
 }
 
+// Inisialisasi variabel error
+$error_nisn = $_SESSION['error_nisn'] ?? '';
+$error_password = $_SESSION['error_password'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
+
+// Hapus data session setelah digunakan
+unset($_SESSION['error_nisn']);
+unset($_SESSION['error_password']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
+
 // Get student data
 $id_siswa = $_SESSION['id_siswa'];
 $select = mysqli_query($coneksi, "SELECT * FROM siswa WHERE id_siswa='$id_siswa'") or die(mysqli_error($coneksi));
@@ -22,27 +34,28 @@ if (mysqli_num_rows($select) == 0) {
     $data = mysqli_fetch_assoc($select);
 }
 
-// Process form submission
-if (isset($_POST['submit'])) {
-    $nis = $_POST['nis'];
-    $nisn = $_POST['nisn'];
-    $nama_siswa = $_POST['nama_siswa'];
-    $no_wa = $_POST['no_wa'];
-    $pro_keahlian = $_POST['pro_keahlian'];
-    $TL = $_POST['TL'];
-    $TTGL = $_POST['TTGL'];
-    $id_sekolah     = $_POST['id_sekolah'] ?? 0;
-    $id_perusahaan  = $_POST['id_perusahaan'] ?? 0;
-    $tanggal_mulai  = $_POST['tanggal_mulai'] ?? '';
-    $tanggal_selesai = $_POST['tanggal_selesai'] ?? '';
-    $id_pembimbing  = $_POST['id_pembimbing'] ?? 0;
-    $id_guru        = $_POST['id_guru'] ?? 0;
-
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+// Process form submission for account update
+if (isset($_POST['submit_akun'])) {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $konfirmasi_password = $_POST['konfirmasi_password'] ?? '';
     $foto_lama = $_POST['foto_lama'] ?? 'default.png';
 
     $profile = $foto_lama;
+    $has_error = false;
+
+    // Validasi konfirmasi password
+    if ($password !== $konfirmasi_password) {
+        $_SESSION['error_password'] = 'Konfirmasi password tidak sesuai';
+        $has_error = true;
+    }
+
+    // Jika ada error, redirect kembali ke form
+    if ($has_error) {
+        $_SESSION['form_data'] = $_POST;
+        header("Location: index.php?page=editsiswa&id_siswa=" . $id_siswa);
+        exit();
+    }
 
     // Handle file upload
     if (!empty($_FILES['foto']['name'])) {
@@ -132,30 +145,65 @@ if (isset($_POST['submit'])) {
 
     $sql = mysqli_query($coneksi, "UPDATE siswa SET 
         profile='$profile',
-        nis='$nis',
-        nisn='$nisn',
-        no_wa='$no_wa', 
-        nama_siswa='$nama_siswa', 
         username='$username', 
-        password='$password', 
-        -- id_sekolah='$id_sekolah',
-        -- id_perusahaan='$id_perusahaan',
-        -- tanggal_mulai='$tanggal_mulai',
-        -- tanggal_selesai='$tanggal_selesai',
-        -- id_pembimbing='$id_pembimbing',
-        -- id_guru='$id_guru',
-        -- pro_keahlian='$pro_keahlian',
-        TL='$TL',
-        TTGL='$TTGL'
+        password='$password'
         WHERE id_siswa='$id_siswa'");
 
     if ($sql) {
-        $_SESSION['profile'] = $profile;
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data siswa berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data akun berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
-        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
+        $err = htmlspecialchars(mysqli_error($coneksi) ?? '', ENT_QUOTES);
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
+    }
+}
+
+// Process form submission for student info update
+if (isset($_POST['submit_info'])) {
+    $nis = $_POST['nis'] ?? '';
+    $nisn = $_POST['nisn'] ?? '';
+    $nama_siswa = $_POST['nama_siswa'] ?? '';
+    $no_wa = $_POST['no_wa'] ?? '';
+    $pro_keahlian = $_POST['pro_keahlian'] ?? '';
+    $TL = $_POST['TL'] ?? '';
+    $TTGL = $_POST['TTGL'] ?? '';
+
+    $has_error = false;
+
+    // Validasi NISN
+    if (strlen($nisn) !== 10) {
+        $_SESSION['error_nisn'] = 'NISN harus terdiri dari 10 karakter';
+        $has_error = true;
+    } elseif (!is_numeric($nisn)) {
+        $_SESSION['error_nisn'] = 'NISN harus berupa angka';
+        $has_error = true;
+    }
+
+    // Jika ada error, redirect kembali ke form
+    if ($has_error) {
+        $_SESSION['form_data'] = $_POST;
+        header("Location: index.php?page=editsiswa&id_siswa=" . $id_siswa);
+        exit();
+    }
+
+    $sql = mysqli_query($coneksi, "UPDATE siswa SET 
+        nis='$nis',
+        nisn='$nisn',
+        nama_siswa='$nama_siswa', 
+        no_wa='$no_wa', 
+        TL='$TL', 
+        TTGL='$TTGL',
+        pro_keahlian='$pro_keahlian'
+        WHERE id_siswa='$id_siswa'");
+
+    if ($sql) {
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Informasi siswa berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editsiswa&id_siswa=' . $id_siswa . '&pesan=sukses";},1200);</script>';
+        exit();
+    } else {
+        $err = htmlspecialchars(mysqli_error($coneksi) ?? '', ENT_QUOTES);
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
         echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
     }
@@ -190,7 +238,7 @@ function getUploadError($errorCode)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Siswa - <?php echo htmlspecialchars($data['nama_siswa']); ?></title>
+    <title>Profil Siswa - <?php echo htmlspecialchars($data['nama_siswa'] ?? ''); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
@@ -357,6 +405,15 @@ function getUploadError($errorCode)
             background-color: #c0392b;
         }
 
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
         .alert {
             padding: 15px;
             border-radius: 4px;
@@ -451,6 +508,35 @@ function getUploadError($errorCode)
             width: auto !important;
             max-width: 400px !important;
         }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .is-invalid {
+            border-color: #e74c3c !important;
+        }
+
+        .password-match {
+            color: #28a745;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .button-group-info {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: right;
+        }
     </style>
 </head>
 
@@ -458,8 +544,10 @@ function getUploadError($errorCode)
     <div class="main-content">
         <h2>Profil Siswa</h2>
 
-        <form action="" method="post" enctype="multipart/form-data" id="profile-form">
+        <!-- Form for Account Update -->
+        <form action="" method="post" enctype="multipart/form-data" id="account-form" onsubmit="return validateAccountForm()">
             <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
+            <input type="hidden" name="foto_lama" value="<?php echo htmlspecialchars($data['profile'] ?? 'default.png'); ?>">
 
             <div class="profile-container">
                 <div class="profile-card">
@@ -482,186 +570,239 @@ function getUploadError($errorCode)
                     </div>
 
                     <div id="view-mode">
-                        <h3><?php echo htmlspecialchars($data['nama_siswa']); ?></h3>
-                        <p><?php echo htmlspecialchars($data['nisn']); ?></p>
-                        <p><?php echo htmlspecialchars($data['pro_keahlian']); ?></p>
+                        <h3><?php echo htmlspecialchars($data['nama_siswa'] ?? ''); ?></h3>
+                        <p><?php echo htmlspecialchars($data['nisn'] ?? ''); ?></p>
+                        <p><?php echo htmlspecialchars($data['pro_keahlian'] ?? ''); ?></p>
 
-                        <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Profil
-                        </button>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-warning" onclick="enableEdit()">
+                                <i class="fas fa-edit"></i> Edit Akun
+                            </button>
+                        </div>
                     </div>
 
                     <div id="edit-mode" class="edit-mode">
                         <div class="form-group">
-                            <label for="nama_siswa">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="nama_siswa" name="nama_siswa"
-                                value="<?php echo htmlspecialchars($data['nama_siswa']); ?>" required>
-                        </div>
-
-                        <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
-                                value="<?php echo htmlspecialchars($data['username']); ?>" required>
+                                value="<?php echo htmlspecialchars($data['username'] ?? ''); ?>" required>
                         </div>
 
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
-                                value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                                value="<?php echo htmlspecialchars($data['password'] ?? ''); ?>" required
+                                oninput="validatePassword()">
                         </div>
 
-                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
-                        </button>
+                        <div class="form-group">
+                            <label for="konfirmasi_password">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password"
+                                value="<?php echo htmlspecialchars($data['password'] ?? ''); ?>" required
+                                oninput="validatePassword()">
+                            <div id="passwordError" class="error-message"><?php echo $error_password; ?></div>
+                            <div id="passwordMatch" class="password-match"></div>
+                        </div>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Simpan
-                        </button>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
+                            <button type="submit" name="submit_akun" class="btn btn-primary">Update Akun</button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Form for Student Info Update -->
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Informasi Siswa</h3>
+                    <form action="" method="post" id="info-form" onsubmit="return validateInfoForm()">
+                        <input type="hidden" name="id_siswa" value="<?php echo $id_siswa; ?>">
 
-                    <div class="form-row">
-                        <!-- Left Column -->
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="info-label">NIS</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="nis" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nis']); ?>" required>
+                        <h3><i class="fas fa-info-circle"></i> Informasi Siswa</h3>
+
+                        <div class="form-row">
+                            <!-- Left Column -->
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="nama_siswa">Nama Lengkap</label>
+                                    <input type="text" class="form-control" id="nama_siswa" name="nama_siswa"
+                                        value="<?php echo htmlspecialchars($data['nama_siswa'] ?? ''); ?>" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">NIS</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="nis" id="nis" class="form-control" value="<?php echo htmlspecialchars($data['nis'] ?? ''); ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">NISN</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="nisn" id="nisn" class="form-control <?php echo !empty($error_nisn) ? 'is-invalid' : ''; ?>"
+                                            value="<?php echo htmlspecialchars($data['nisn'] ?? ''); ?>"
+                                            required minlength="10" maxlength="10" oninput="validateNISN()">
+                                        <div id="nisnError" class="error-message"><?php echo $error_nisn; ?></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="no_wa">Nomor WhatsApp</label>
+                                    <input type="text" class="form-control" id="no_wa" name="no_wa" required
+                                        value="<?php echo htmlspecialchars($data['no_wa'] ?? ''); ?>" placeholder="628xxxxxxx">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">Tempat Lahir</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="TL" class="form-control"
+                                            value="<?php echo htmlspecialchars($data['TL'] ?? ''); ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">Tanggal Lahir</label>
+                                    <div class="info-value editable">
+                                        <input type="date" name="TTGL" class="form-control"
+                                            value="<?php echo htmlspecialchars($data['TTGL'] ?? ''); ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">Program Keahlian</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="pro_keahlian" class="form-control" readonly
+                                            value="<?php echo htmlspecialchars($data['pro_keahlian'] ?? ''); ?>"
+                                             style="background-color: #e9ecef;">
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="info-label">NISN</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="nisn" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['nisn']); ?>" required>
+                            <!-- Right Column -->
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="info-label">Sekolah</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    $sekolah_name = '';
+                                                    if (!empty($data['id_sekolah'])) {
+                                                        $sekolah_query = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '" . $data['id_sekolah'] . "'");
+                                                        if ($sekolah_query && mysqli_num_rows($sekolah_query) > 0) {
+                                                            $sekolah = mysqli_fetch_assoc($sekolah_query);
+                                                            $sekolah_name = $sekolah['nama_sekolah'];
+                                                        }
+                                                    }
+                                                    echo htmlspecialchars($sekolah_name);
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="no_wa">Nomor WhatsApp</label>
-                                <input type="text" class="form-control" id="no_wa" name="no_wa"
-                                    value="<?php echo htmlspecialchars($data['no_wa']); ?>" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Tempat Lahir</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="TL" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['TL']); ?>" required>
+                                <div class="form-group">
+                                    <label class="info-label">Perusahaan</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    $perusahaan_name = '';
+                                                    if (!empty($data['id_perusahaan'])) {
+                                                        $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
+                                                        if ($perusahaan_query && mysqli_num_rows($perusahaan_query) > 0) {
+                                                            $perusahaan = mysqli_fetch_assoc($perusahaan_query);
+                                                            $perusahaan_name = $perusahaan['nama_perusahaan'];
+                                                        }
+                                                    }
+                                                    echo htmlspecialchars($perusahaan_name);
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="info-label">Tanggal Lahir</label>
-                                <div class="info-value editable">
-                                    <input type="date" name="TTGL" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['TTGL']); ?>" required>
+                                <div class="form-group">
+                                    <label class="info-label">Pembimbing</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    $pembimbing_name = '';
+                                                    if (!empty($data['id_pembimbing'])) {
+                                                        $pembimbing_query = mysqli_query($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = '" . $data['id_pembimbing'] . "'");
+                                                        if ($pembimbing_query && mysqli_num_rows($pembimbing_query) > 0) {
+                                                            $pembimbing = mysqli_fetch_assoc($pembimbing_query);
+                                                            $pembimbing_name = $pembimbing['nama_pembimbing'];
+                                                        }
+                                                    }
+                                                    echo htmlspecialchars($pembimbing_name);
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
                                 </div>
-                            </div>
 
+                                <div class="form-group">
+                                    <label class="info-label">Guru</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    $guru_name = '';
+                                                    if (!empty($data['id_guru'])) {
+                                                        $guru_query = mysqli_query($coneksi, "SELECT nama_guru FROM guru WHERE id_guru = '" . $data['id_guru'] . "'");
+                                                        if ($guru_query && mysqli_num_rows($guru_query) > 0) {
+                                                            $guru = mysqli_fetch_assoc($guru_query);
+                                                            $guru_name = $guru['nama_guru'];
+                                                        }
+                                                    }
+                                                    echo htmlspecialchars($guru_name);
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label class="info-label">Sekolah</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                $sekolah_query = mysqli_query($coneksi, "SELECT nama_sekolah FROM sekolah WHERE id_sekolah = '" . $data['id_sekolah'] . "'");
-                                                $sekolah = mysqli_fetch_assoc($sekolah_query);
-                                                echo htmlspecialchars($sekolah['nama_sekolah']);
-                                                ?>"
-                                        style="background-color: #e9ecef;">
+                                <div class="form-group">
+                                    <label class="info-label">Tanggal Mulai</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    // Format tanggal dari Y-m-d (database) ke d-m-Y
+                                                    if (!empty($data['tanggal_mulai'])) {
+                                                        $date = DateTime::createFromFormat('Y-m-d', $data['tanggal_mulai']);
+                                                        echo $date ? htmlspecialchars($date->format('d-m-Y')) : htmlspecialchars($data['tanggal_mulai']);
+                                                    } else {
+                                                        echo '-';
+                                                    }
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">Tanggal Selesai</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    // Format tanggal dari Y-m-d (database) ke d-m-Y
+                                                    if (!empty($data['tanggal_selesai'])) {
+                                                        $date = DateTime::createFromFormat('Y-m-d', $data['tanggal_selesai']);
+                                                        echo $date ? htmlspecialchars($date->format('d-m-Y')) : htmlspecialchars($data['tanggal_selesai']);
+                                                    } else {
+                                                        echo '-';
+                                                    }
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
+                                </div>
+
+                                <!-- Tombol Update Informasi Siswa -->
+                                <div class="button-group-info" style="margin-top: 30px;">
+                                    <button type="button" class="btn btn-info" onclick="enableInfoEdit()">
+                                        <i class="fas fa-edit"></i> Edit Informasi Siswa
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="cancel-info-btn" style="display: none;" onclick="disableInfoEdit()">
+                                        Batal
+                                    </button>
+                                    <button type="submit" name="submit_info" class="btn btn-primary" id="update-info-btn" style="display: none;">
+                                        Update Informasi
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Right Column -->
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="info-label">Perusahaan</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
-                                                $perusahaan = mysqli_fetch_assoc($perusahaan_query);
-                                                echo htmlspecialchars($perusahaan['nama_perusahaan']);
-                                                ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Pembimbing</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                $pembimbing_query = mysqli_query($coneksi, "SELECT nama_pembimbing FROM pembimbing WHERE id_pembimbing = '" . $data['id_pembimbing'] . "'");
-                                                $pembimbing = mysqli_fetch_assoc($pembimbing_query);
-                                                echo htmlspecialchars($pembimbing['nama_pembimbing']);
-                                                ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Guru</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                $guru_query = mysqli_query($coneksi, "SELECT nama_guru FROM guru WHERE id_guru = '" . $data['id_guru'] . "'");
-                                                $guru = mysqli_fetch_assoc($guru_query);
-                                                echo htmlspecialchars($guru['nama_guru']);
-                                                ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Tanggal Mulai</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                // Format tanggal dari Y-m-d (database) ke m-d-Y
-                                                if (!empty($data['tanggal_mulai'])) {
-                                                    $date = DateTime::createFromFormat('Y-m-d', $data['tanggal_mulai']);
-                                                    echo $date ? htmlspecialchars($date->format('m-d-Y')) : htmlspecialchars($data['tanggal_mulai']);
-                                                } else {
-                                                    echo '-';
-                                                }
-                                                ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Tanggal Selesai</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                // Format tanggal dari Y-m-d (database) ke m-d-Y
-                                                if (!empty($data['tanggal_selesai'])) {
-                                                    $date = DateTime::createFromFormat('Y-m-d', $data['tanggal_selesai']);
-                                                    echo $date ? htmlspecialchars($date->format('m-d-Y')) : htmlspecialchars($data['tanggal_selesai']);
-                                                } else {
-                                                    echo '-';
-                                                }
-                                                ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Program Keahlian</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="pro_keahlian" class="form-control" readonly
-                                        value="<?php echo htmlspecialchars($data['pro_keahlian']); ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </form>
@@ -701,22 +842,54 @@ function getUploadError($errorCode)
             }
         }
 
-        // Fungsi untuk mengaktifkan mode edit
+        // Fungsi untuk mengaktifkan mode edit akun
         function enableEdit() {
             document.getElementById('view-mode').style.display = 'none';
             document.getElementById('edit-mode').style.display = 'block';
-
-            // Ubah semua info-value menjadi editable
-            const infoValues = document.querySelectorAll('.info-value');
-            infoValues.forEach(el => {
-                el.classList.add('editable');
-            });
         }
 
-        // Fungsi untuk menonaktifkan mode edit
+        // Fungsi untuk menonaktifkan mode edit akun
         function disableEdit() {
             document.getElementById('view-mode').style.display = 'block';
             document.getElementById('edit-mode').style.display = 'none';
+        }
+
+        // Fungsi untuk mengaktifkan mode edit informasi siswa
+        function enableInfoEdit() {
+            // Aktifkan input fields untuk informasi siswa
+            const infoInputs = document.querySelectorAll('.profile-info input[type="text"], .profile-info input[type="date"]');
+            infoInputs.forEach(input => {
+                if (!input.readOnly && input.name !== 'pro_keahlian') {
+                    input.style.backgroundColor = 'white';
+                    input.style.border = '1px solid #ddd';
+                }
+            });
+
+            // Tampilkan tombol update dan batal
+            document.getElementById('update-info-btn').style.display = 'inline-block';
+            document.getElementById('cancel-info-btn').style.display = 'inline-block';
+
+            // Sembunyikan tombol edit informasi
+            document.querySelector('.btn-info').style.display = 'none';
+        }
+
+        // Fungsi untuk menonaktifkan mode edit informasi siswa
+        function disableInfoEdit() {
+            // Nonaktifkan input fields untuk informasi siswa
+            const infoInputs = document.querySelectorAll('.profile-info input[type="text"], .profile-info input[type="date"]');
+            infoInputs.forEach(input => {
+                if (!input.readOnly && input.name !== 'pro_keahlian') {
+                    input.style.backgroundColor = '#e9ecef';
+                    input.style.border = '1px solid #ced4da';
+                }
+            });
+
+            // Sembunyikan tombol update dan batal
+            document.getElementById('update-info-btn').style.display = 'none';
+            document.getElementById('cancel-info-btn').style.display = 'none';
+
+            // Tampilkan tombol edit informasi
+            document.querySelector('.btn-info').style.display = 'inline-block';
         }
 
         // Preview gambar saat memilih file
@@ -736,6 +909,111 @@ function getUploadError($errorCode)
         setTimeout(function() {
             $('.alert').alert('close');
         }, 5000);
+
+        function validateNISN() {
+            const nisnInput = document.getElementById('nisn');
+            const nisnError = document.getElementById('nisnError');
+            const nisnValue = nisnInput.value.trim();
+
+            if (nisnValue.length !== 10) {
+                nisnError.textContent = 'NISN harus terdiri dari 10 karakter';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else if (!/^\d+$/.test(nisnValue)) {
+                nisnError.textContent = 'NISN harus berupa angka';
+                nisnInput.classList.add('is-invalid');
+                return false;
+            } else {
+                nisnError.textContent = '';
+                nisnInput.classList.remove('is-invalid');
+                return true;
+            }
+        }
+
+        function validatePassword() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('konfirmasi_password');
+            const passwordError = document.getElementById('passwordError');
+            const passwordMatch = document.getElementById('passwordMatch');
+
+            const passwordValue = passwordInput.value;
+            const confirmPasswordValue = confirmPasswordInput.value;
+
+            if (passwordValue !== confirmPasswordValue) {
+                passwordError.textContent = 'Konfirmasi password tidak sesuai';
+                passwordMatch.textContent = '';
+                passwordInput.classList.add('is-invalid');
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            } else if (passwordValue.length > 0 && confirmPasswordValue.length > 0) {
+                passwordError.textContent = '';
+                passwordMatch.textContent = 'Password sesuai ✓';
+                passwordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                return true;
+            } else {
+                passwordError.textContent = '';
+                passwordMatch.textContent = '';
+                passwordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                return false;
+            }
+        }
+
+        function validateAccountForm() {
+            const isPasswordValid = validatePassword();
+
+            if (!isPasswordValid) {
+                document.getElementById('konfirmasi_password').focus();
+
+                // Tampilkan pesan error dengan SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'Konfirmasi password tidak sesuai',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+
+                return false;
+            }
+            return true;
+        }
+
+        function validateInfoForm() {
+            const isNISNValid = validateNISN();
+
+            if (!isNISNValid) {
+                document.getElementById('nisn').focus();
+
+                // Tampilkan pesan error dengan SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'NISN harus 10 digit angka',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+
+                return false;
+            }
+            return true;
+        }
+
+        // Validasi real-time saat pengguna mengetik
+        document.getElementById('nisn').addEventListener('input', validateNISN);
+        document.getElementById('password').addEventListener('input', validatePassword);
+        document.getElementById('konfirmasi_password').addEventListener('input', validatePassword);
+
+        // Jalankan validasi saat halaman dimuat untuk menampilkan error dari server
+        document.addEventListener('DOMContentLoaded', function() {
+            validateNISN();
+            validatePassword();
+        });
     </script>
 </body>
 
