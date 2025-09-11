@@ -54,37 +54,44 @@ $offset = ($page - 1) * $limit;
 // Filter tanggal jika ada
 $filter_tanggal = isset($_GET['filter_tanggal']) ? $_GET['filter_tanggal'] : '';
 
-// Ambil catatan pembimbing
+// Ambil catatan pembimbing - DIPERBAIKI
 $catatan_pembimbing = [];
 $total_catatan = 0;
 if ($id_perusahaan) {
-    // Query untuk total catatan
+    // Query untuk total catatan - DIPERBAIKI
     $sql_count = "
         SELECT COUNT(*) as total
         FROM catatan c
         JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
-        JOIN jurnal j ON c.id_jurnal = j.id_jurnal
-        WHERE j.id_siswa = ?
+        LEFT JOIN jurnal j ON c.id_jurnal = j.id_jurnal
+        LEFT JOIN siswa s ON j.id_siswa = s.id_siswa
+        WHERE (p.id_perusahaan = ? OR s.id_perusahaan = ?)
     ";
     
+    // Query untuk data catatan - DIPERBAIKI
     $sql_catatan = "
         SELECT 
             c.catatan,
             c.tanggal,
             p.nama_pembimbing,
             j.keterangan,
-            j.tanggal as tanggal_jurnal
+            j.tanggal as tanggal_jurnal,
+            CASE 
+                WHEN j.id_jurnal IS NOT NULL THEN 'Jurnal'
+                ELSE 'Catatan Umum'
+            END as tipe_catatan
         FROM catatan c
         JOIN pembimbing p ON c.id_pembimbing = p.id_pembimbing
-        JOIN jurnal j ON c.id_jurnal = j.id_jurnal
-        WHERE j.id_siswa = ?
+        LEFT JOIN jurnal j ON c.id_jurnal = j.id_jurnal
+        LEFT JOIN siswa s ON j.id_siswa = s.id_siswa
+        WHERE (p.id_perusahaan = ? OR s.id_perusahaan = ?)
     ";
     
     // Tambahkan filter tanggal jika ada
-    $params_count = [$id_siswa];
-    $params_catatan = [$id_siswa];
-    $param_types_count = "i";
-    $param_types_catatan = "i";
+    $params_count = [$id_perusahaan, $id_perusahaan];
+    $params_catatan = [$id_perusahaan, $id_perusahaan];
+    $param_types_count = "ii";
+    $param_types_catatan = "ii";
     
     if (!empty($filter_tanggal)) {
         $sql_count .= " AND DATE(c.tanggal) = ?";
@@ -131,7 +138,7 @@ $total_pages = ceil($total_catatan / $limit);
 function formatTanggal($dateString)
 {
     $date = new DateTime($dateString);
-    return $date->format('d-m-Y');
+    return $date->format('m-d-Y');
 }
 
 // Format tanggal untuk input date
@@ -141,13 +148,18 @@ function formatTanggalInput($dateString)
     return $date->format('Y-m-d');
 }
 
-// Fungsi untuk membuat parameter URL
+// Fungsi untuk membuat parameter URL - DIPERBAIKI
 function buildQueryString($params = []) {
     $currentParams = $_GET;
     unset($currentParams['page_catatan']); // Hapus parameter page_catatan yang lama
     
     // Gabungkan dengan parameter baru
     $allParams = array_merge($currentParams, $params);
+    
+    // Pastikan parameter filter tanggal tetap ada
+    if (isset($_GET['filter_tanggal']) && !isset($allParams['filter_tanggal'])) {
+        $allParams['filter_tanggal'] = $_GET['filter_tanggal'];
+    }
     
     return http_build_query($allParams);
 }
@@ -166,6 +178,7 @@ function buildQueryString($params = []) {
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <style>
+        /* CSS tetap sama seperti sebelumnya */
         :root {
             --primary: #3498db;
             --success: #2ecc71;
@@ -499,6 +512,24 @@ function buildQueryString($params = []) {
             cursor: not-allowed;
             background-color: #f8f9fa;
         }
+        
+        .badge-jurnal {
+            background-color: #28a745;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .badge-catatan {
+            background-color: #17a2b8;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -522,9 +553,10 @@ function buildQueryString($params = []) {
                             <i class="fas fa-clipboard-list"></i> Catatan Pembimbing
                         </h2>
                         
+                        <!-- FORM FILTER YANG DIPERBAIKI -->
                         <form method="GET" class="filter-form">
                             <input type="hidden" name="page" value="dashboard_siswa">
-                            <input type="date" name="filter_tanggal" value="<?= $filter_tanggal ?>" class="filter-input">
+                            <input type="date" name="filter_tanggal" value="<?= htmlspecialchars($filter_tanggal) ?>" class="filter-input">
                             <button type="submit" class="filter-btn">Filter</button>
                             <?php if (!empty($filter_tanggal)): ?>
                                 <a href="?page=dashboard_siswa" class="filter-btn" style="background-color: #6c757d;">Reset</a>

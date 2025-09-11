@@ -198,7 +198,7 @@ $teks_tombol = ($level === 'pembimbing') ? (($mode === 'update') ? 'UPDATE' : 'S
                         <strong><?= htmlspecialchars($row['nama_pembimbing'] ?? 'Tidak diketahui') ?>:</strong>
                         <?= nl2br(htmlspecialchars($row['catatan'] ?? '')) ?>
                         <br>
-                        <small><em><?= htmlspecialchars(date('d-m-Y H:i', strtotime($row['tanggal_catatan'] ?? ''))) ?></em></small>
+                        <small><em><?= htmlspecialchars(date('m-d-Y', strtotime($row['tanggal_catatan'] ?? ''))) ?></em></small>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
