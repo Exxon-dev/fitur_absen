@@ -11,6 +11,16 @@ if (!isset($_GET['id_pembimbing'])) {
     exit();
 }
 
+// Inisialisasi variabel error
+$error_password = $_SESSION['error_password'] ?? '';
+$success = $_SESSION['success'] ?? '';
+$form_data = $_SESSION['form_data'] ?? array();
+
+// Hapus data session setelah digunakan
+unset($_SESSION['error_password']);
+unset($_SESSION['success']);
+unset($_SESSION['form_data']);
+
 // Get pembimbing data dengan JOIN ke tabel perusahaan
 $id_pembimbing = $_GET['id_pembimbing'];
 $select = mysqli_query($coneksi, "SELECT pembimbing.*, perusahaan.nama_perusahaan 
@@ -26,19 +36,28 @@ if (mysqli_num_rows($select) == 0) {
     $data = mysqli_fetch_assoc($select);
 }
 
-// Process form submission
-if (isset($_POST['submit'])) {
-    $id_pembimbing    = $_POST['id_pembimbing'];
-    // $id_perusahaan    = $_POST['id_perusahaan'];
-    $nama_pembimbing  = $_POST['nama_pembimbing'];
-    $no_tlp           = $_POST['no_tlp'];
-    $alamat           = $_POST['alamat'];
-    $jenis_kelamin    = $_POST['jenis_kelamin'];
-    $username         = $_POST['username'];
-    $password         = $_POST['password'];
-    $foto_lama        = $_POST['foto_lama'] ?? 'default.png';
+// Process form submission for account update
+if (isset($_POST['submit_akun'])) {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $konfirmasi_password = $_POST['konfirmasi_password'] ?? '';
+    $foto_lama = $_POST['foto_lama'] ?? 'default.png';
 
     $profile = $foto_lama;
+    $has_error = false;
+
+    // Validasi konfirmasi password
+    if ($password !== $konfirmasi_password) {
+        $_SESSION['error_password'] = 'Konfirmasi password tidak sesuai';
+        $has_error = true;
+    }
+
+    // Jika ada error, redirect kembali ke form
+    if ($has_error) {
+        $_SESSION['form_data'] = $_POST;
+        header("Location: index.php?page=editpembimbing&id_pembimbing=" . $id_pembimbing);
+        exit();
+    }
 
     // Handle file upload
     if (!empty($_FILES['foto']['name'])) {
@@ -127,20 +146,42 @@ if (isset($_POST['submit'])) {
     }
 
     $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
-        nama_pembimbing = '$nama_pembimbing',
-        no_tlp          = '$no_tlp',
-        alamat          = '$alamat', 
-        jenis_kelamin   = '$jenis_kelamin',
-        username        = '$username', 
-        profile         = '$profile', 
-        password        = '$password'
+        username = '$username', 
+        profile = '$profile', 
+        password = '$password'
         WHERE id_pembimbing = '$id_pembimbing'")
         or die(mysqli_error($coneksi));
 
     if ($sql) {
         $_SESSION['profile'] = $profile;
         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data pembimbing berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editpembimbing&id_pembimbing=' . $id_pembimbing . '&pesan=sukses";},1200);</script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Data akun berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editpembimbing&id_pembimbing=' . $id_pembimbing . '&pesan=sukses";},1200);</script>';
+        exit();
+    } else {
+        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
+    }
+}
+
+// Process form submission for pembimbing info update
+if (isset($_POST['submit_info'])) {
+    $nama_pembimbing  = $_POST['nama_pembimbing'];
+    $no_tlp           = $_POST['no_tlp'];
+    $alamat           = $_POST['alamat'];
+    $jenis_kelamin    = $_POST['jenis_kelamin'];
+
+    $sql = mysqli_query($coneksi, "UPDATE pembimbing SET 
+        nama_pembimbing = '$nama_pembimbing',
+        no_tlp          = '$no_tlp',
+        alamat          = '$alamat', 
+        jenis_kelamin   = '$jenis_kelamin'
+        WHERE id_pembimbing = '$id_pembimbing'")
+        or die(mysqli_error($coneksi));
+
+    if ($sql) {
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
+        echo '<script>Swal.fire({icon:"success",title:"Sukses!",text:"Informasi pembimbing berhasil diupdate",position:"top",showConfirmButton:false,timer:1200,toast:true}); setTimeout(function(){window.location.href="index.php?page=editpembimbing&id_pembimbing=' . $id_pembimbing . '&pesan=sukses";},1200);</script>';
         exit();
     } else {
         $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
@@ -354,6 +395,15 @@ function getUploadError($errorCode)
             background-color: #c0392b;
         }
 
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
         .alert {
             padding: 15px;
             border-radius: 4px;
@@ -448,6 +498,35 @@ function getUploadError($errorCode)
             width: auto !important;
             max-width: 400px !important;
         }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .is-invalid {
+            border-color: #e74c3c !important;
+        }
+
+        .password-match {
+            color: #28a745;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .button-group-info {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: right;
+        }
     </style>
 </head>
 
@@ -455,9 +534,10 @@ function getUploadError($errorCode)
     <div class="main-content">
         <h2>Profil Pembimbing</h2>
 
-        <form action="" method="post" enctype="multipart/form-data" id="profile-form">
+        <!-- Form for Account Update -->
+        <form action="" method="post" enctype="multipart/form-data" id="account-form" onsubmit="return validateAccountForm()">
             <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
-            <input type="hidden" name="foto_lama" value="<?php echo $data['profile']; ?>">
+            <input type="hidden" name="foto_lama" value="<?php echo htmlspecialchars($data['profile'] ?? 'default.png'); ?>">
 
             <div class="profile-container">
                 <div class="profile-card">
@@ -496,18 +576,14 @@ function getUploadError($errorCode)
                             ?>
                         </p>
 
-                        <button type="button" class="btn btn-warning" onclick="enableEdit()">
-                            <i class="fas fa-edit"></i> Edit Data
-                        </button>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-warning" onclick="enableEdit()">
+                                <i class="fas fa-edit"></i> Edit Akun
+                            </button>
+                        </div>
                     </div>
 
                     <div id="edit-mode" class="edit-mode">
-                        <div class="form-group">
-                            <label for="nama_pembimbing">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="nama_pembimbing" name="nama_pembimbing"
-                                value="<?php echo htmlspecialchars($data['nama_pembimbing']); ?>" required>
-                        </div>
-
                         <div class="form-group">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
@@ -517,66 +593,95 @@ function getUploadError($errorCode)
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password"
-                                value="<?php echo htmlspecialchars($data['password']); ?>" required>
+                                value="<?php echo htmlspecialchars($data['password']); ?>" required
+                                oninput="validatePassword()">
                         </div>
 
-                        <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal
-                        </button>
+                        <div class="form-group">
+                            <label for="konfirmasi_password">Konfirmasi Password</label>
+                            <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password"
+                                value="<?php echo htmlspecialchars($data['password']); ?>" required
+                                oninput="validatePassword()">
+                            <div id="passwordError" class="error-message"><?php echo $error_password; ?></div>
+                            <div id="passwordMatch" class="password-match"></div>
+                        </div>
 
-                        <button type="submit" name="submit" class="btn btn-primary">Update
-                        </button>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
+                            <button type="submit" name="submit_akun" class="btn btn-primary">Update Akun</button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Form for Pembimbing Info Update -->
                 <div class="profile-info">
-                    <h3><i class="fas fa-info-circle"></i> Informasi Pembimbing</h3>
+                    <form action="" method="post" id="info-form">
+                        <input type="hidden" name="id_pembimbing" value="<?php echo $id_pembimbing; ?>">
 
-                    <div class="form-row">
-                        <!-- Left Column -->
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="info-label">No. Telepon</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="no_tlp" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
+                        <h3><i class="fas fa-info-circle"></i> Informasi Pembimbing</h3>
+
+                        <div class="form-row">
+                            <!-- Left Column -->
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="info-label">Nama Lengkap</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="nama_pembimbing" class="form-control"
+                                            value="<?php echo htmlspecialchars($data['nama_pembimbing']); ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">No. Telepon</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="no_tlp" class="form-control"
+                                            value="<?php echo htmlspecialchars($data['no_tlp']); ?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">Alamat</label>
+                                    <div class="info-value editable">
+                                        <input type="text" name="alamat" class="form-control"
+                                            value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="info-label">Alamat</label>
-                                <div class="info-value editable">
-                                    <input type="text" name="alamat" class="form-control"
-                                        value="<?php echo htmlspecialchars($data['alamat']); ?>" required>
+                            <!-- Right Column -->
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label class="info-label">Jenis Kelamin</label>
+                                    <div class="info-value editable">
+                                        <select name="jenis_kelamin" class="form-control select-fixed" required>
+                                            <option value="Laki-laki" <?php if ($data['jenis_kelamin'] == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
+                                            <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="info-label">Perusahaan</label>
+                                    <div class="info-value editable">
+                                        <input type="text" class="form-control" readonly
+                                            value="<?php
+                                                    $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
+                                                    $perusahaan = mysqli_fetch_assoc($perusahaan_query);
+                                                    echo htmlspecialchars($perusahaan['nama_perusahaan']);
+                                                    ?>"
+                                            style="background-color: #e9ecef;">
+                                    </div>
+                                </div>
+
+                                <!-- Tombol Update Informasi Pembimbing -->
+                                <div class="button-group-info" style="margin-top: 30px;">
+                                    <button type="submit" name="submit_info" class="btn btn-primary">
+                                        Update Informasi
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Right Column -->
-                        <div class="form-col">
-                            <div class="form-group">
-                                <label class="info-label">Jenis Kelamin</label>
-                                <div class="info-value editable">
-                                    <select name="jenis_kelamin" class="form-control select-fixed" required>
-                                        <option value="Laki-laki" <?php if ($data['jenis_kelamin'] == 'Laki-laki') echo 'selected'; ?>>Laki-laki</option>
-                                        <option value="Perempuan" <?php if ($data['jenis_kelamin'] == 'Perempuan') echo 'selected'; ?>>Perempuan</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="info-label">Perusahaan</label>
-                                <div class="info-value editable">
-                                    <input type="text" class="form-control" readonly
-                                        value="<?php
-                                                $perusahaan_query = mysqli_query($coneksi, "SELECT nama_perusahaan FROM perusahaan WHERE id_perusahaan = '" . $data['id_perusahaan'] . "'");
-                                                $perusahaan = mysqli_fetch_assoc($perusahaan_query);
-                                                echo htmlspecialchars($perusahaan['nama_perusahaan']);
-                                                ?>"
-                                        style="background-color: #e9ecef;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </form>
@@ -616,28 +721,16 @@ function getUploadError($errorCode)
             }
         }
 
-        // Fungsi untuk mengaktifkan mode edit
+        // Fungsi untuk mengaktifkan mode edit akun
         function enableEdit() {
             document.getElementById('view-mode').style.display = 'none';
             document.getElementById('edit-mode').style.display = 'block';
-
-            // Ubah semua info-value menjadi editable
-            const infoValues = document.querySelectorAll('.info-value');
-            infoValues.forEach(el => {
-                el.classList.add('editable');
-            });
         }
 
-        // Fungsi untuk menonaktifkan mode edit
+        // Fungsi untuk menonaktifkan mode edit akun
         function disableEdit() {
             document.getElementById('view-mode').style.display = 'block';
             document.getElementById('edit-mode').style.display = 'none';
-
-            // Kembalikan info-value ke mode readonly
-            // const infoValues = document.querySelectorAll('.info-value');
-            // infoValues.forEach(el => {
-            //     el.classList.remove('editable');
-            // });
         }
 
         // Preview gambar saat memilih file
@@ -657,6 +750,67 @@ function getUploadError($errorCode)
         setTimeout(function() {
             $('.alert').alert('close');
         }, 5000);
+
+        function validatePassword() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('konfirmasi_password');
+            const passwordError = document.getElementById('passwordError');
+            const passwordMatch = document.getElementById('passwordMatch');
+
+            const passwordValue = passwordInput.value;
+            const confirmPasswordValue = confirmPasswordInput.value;
+
+            if (passwordValue !== confirmPasswordValue) {
+                passwordError.textContent = 'Konfirmasi password tidak sesuai';
+                passwordMatch.textContent = '';
+                passwordInput.classList.add('is-invalid');
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            } else if (passwordValue.length > 0 && confirmPasswordValue.length > 0) {
+                passwordError.textContent = '';
+                passwordMatch.textContent = 'Password sesuai ✓';
+                passwordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                return true;
+            } else {
+                passwordError.textContent = '';
+                passwordMatch.textContent = '';
+                passwordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.remove('is-invalid');
+                return false;
+            }
+        }
+
+        function validateAccountForm() {
+            const isPasswordValid = validatePassword();
+
+            if (!isPasswordValid) {
+                document.getElementById('konfirmasi_password').focus();
+
+                // Tampilkan pesan error dengan SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validasi Gagal',
+                    text: 'Konfirmasi password tidak sesuai',
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+
+                return false;
+            }
+            return true;
+        }
+
+        // Validasi real-time saat pengguna mengetik
+        document.getElementById('password').addEventListener('input', validatePassword);
+        document.getElementById('konfirmasi_password').addEventListener('input', validatePassword);
+
+        // Jalankan validasi saat halaman dimuat untuk menampilkan error dari server
+        document.addEventListener('DOMContentLoaded', function() {
+            validatePassword();
+        });
     </script>
 </body>
 
