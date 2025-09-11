@@ -8,108 +8,128 @@ if (!isset($_GET['id_guru'])) {
 }
 
 $id_guru = $_GET['id_guru'];
-$select = mysqli_query($coneksi, "SELECT guru.*, sekolah.nama_sekolah 
-                                 FROM guru 
-                                 JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
-                                 WHERE guru.id_guru='$id_guru'")
-    or die(mysqli_error($coneksi));
 
-if (mysqli_num_rows($select) == 0) {
-    echo '<div class="alert alert-warning">ID guru tidak ada dalam database.</div>';
-    exit();
-} else {
-    $data = mysqli_fetch_assoc($select);
+// Fungsi untuk mengambil data guru
+function getGuruData($coneksi, $id_guru) {
+    $select = mysqli_query($coneksi, "SELECT guru.*, sekolah.nama_sekolah 
+                                     FROM guru 
+                                     JOIN sekolah ON guru.id_sekolah = sekolah.id_sekolah 
+                                     WHERE guru.id_guru='$id_guru'")
+        or die(mysqli_error($coneksi));
+
+    if (mysqli_num_rows($select) == 0) {
+        echo '<div class="alert alert-warning">ID guru tidak ada dalam database.</div>';
+        return false;
+    } else {
+        return mysqli_fetch_assoc($select);
+    }
 }
 
-// Handle form submission
-if (isset($_POST['submit'])) {
-    $id_guru = $_GET['id_guru'];
+// Inisialisasi data
+$data = getGuruData($coneksi, $id_guru);
+if (!$data) exit();
+
+// Handle update DATA USER (username, password, profile)
+if (isset($_POST['update_user'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'] ? $_POST['password'] : $data['password'];
+    $profile  = $data['profile'];
+
+    // Upload foto jika ada
+    if ($_FILES['profile']['name']) {
+        $target_dir = "../uploads/profiles/";
+        if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+
+        $imageFileType = strtolower(pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION));
+        $new_filename  = "guru_" . $id_guru . "_" . time() . "." . $imageFileType;
+        $target_file   = $target_dir . $new_filename;
+
+        if (move_uploaded_file($_FILES['profile']['tmp_name'], $target_file)) {
+            if ($data['profile'] && file_exists("../" . $data['profile'])) {
+                unlink("../" . $data['profile']); // hapus lama
+            }
+            $profile = "uploads/profiles/" . $new_filename;
+        }
+    }
+
+    $sql = mysqli_query($coneksi, "UPDATE guru SET 
+        username='$username',
+        password='$password',
+        profile='$profile'
+        WHERE id_guru='$id_guru'");
+    
+    if ($sql) {
+        // Refresh data setelah update
+        $data = getGuruData($coneksi, $id_guru);
+        
+        // Set session untuk SweetAlert
+        $_SESSION['show_alert'] = array(
+            'type' => 'success',
+            'title' => 'Sukses!',
+            'message' => 'User berhasil diupdate'
+        );
+        
+        // Redirect untuk menghindari resubmission form
+        echo "<script>
+            window.location.href = 'index.php?page=editguru&id_guru=$id_guru';
+        </script>";
+        exit();
+    }
+}
+
+// Handle update DATA GURU
+if (isset($_POST['update_guru'])) {
     $nama_guru = $_POST['nama_guru'];
     $nip = $_POST['nip'];
     $jenis_kelamin = $_POST['jenis_kelamin'];
     $alamat = $_POST['alamat'];
     $no_tlp = $_POST['no_tlp'];
     $id_sekolah = $_POST['id_sekolah'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // Handle file upload
-    $profile = $data['profile']; // Default to existing profile picture
-
-    if ($_FILES['profile']['name']) {
-        $target_dir = "../uploads/profiles/";
-        if (!file_exists($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
-
-        $file_name = basename($_FILES['profile']['name']);
-        $target_file = $target_dir . $file_name;
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        // Check if image file is a actual image
-        $check = getimagesize($_FILES['profile']['tmp_name']);
-        if ($check === false) {
-            echo '<script>alert("File yang diupload bukan gambar.");</script>';
-        } else {
-            // Generate unique filename
-            $new_filename = "guru_" . $id_guru . "_" . time() . "." . $imageFileType;
-            $target_file = $target_dir . $new_filename;
-
-            // Check file size (max 2MB)
-            if ($_FILES['profile']['size'] > 9000000) {
-                echo '<script>alert("Ukuran file terlalu besar. Maksimal 2MB.");</script>';
-            } else {
-                // Allow certain file formats
-                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                    echo '<script>alert("Hanya file JPG, JPEG, PNG & GIF yang diizinkan.");</script>';
-                } else {
-                    // Delete old file if exists
-                    if ($data['profile'] && file_exists("../" . $data['profile'])) {
-                        unlink("../" . $data['profile']);
-                    }
-
-                    // Try to upload file
-                    if (move_uploaded_file($_FILES['profile']['tmp_name'], $target_file)) {
-                        $profile = "uploads/profiles/" . $new_filename;
-                    } else {
-                        echo '<script>alert("Terjadi kesalahan saat mengupload file.");</script>';
-                    }
-                }
-            }
-        }
-    }
+    $id_perusahaan = $_POST['id_perusahaan'];
 
     $sql = mysqli_query($coneksi, "UPDATE guru SET 
-        nama_guru='$nama_guru', 
-        nip='$nip', 
-        jenis_kelamin='$jenis_kelamin', 
-        alamat='$alamat', 
-        no_tlp='$no_tlp', 
-        id_sekolah='$id_sekolah', 
-        username='$username', 
-        password='$password',
-        profile='$profile'
-        WHERE id_guru='$id_guru'")
-        or die(mysqli_error($coneksi));
+        nama_guru='$nama_guru',
+        nip='$nip',
+        jenis_kelamin='$jenis_kelamin',
+        alamat='$alamat',
+        no_tlp='$no_tlp',
+        id_sekolah='$id_sekolah',
+        id_perusahaan='$id_perusahaan'
+        WHERE id_guru='$id_guru'");
 
     if ($sql) {
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>
-        Swal.fire({icon:"success",
-        title:"Sukses!",
-        text:"Data guru berhasil diupdate",
-        position:"top",
-        showConfirmButton:false,
-        timer:1200,
-        toast:true}); 
-        setTimeout(function()
-        {window.location.href="index.php?page=editguru&id_guru=' . $id_guru . '&pesan=sukses";},1200);</script>';
+        // Refresh data setelah update
+        $data = getGuruData($coneksi, $id_guru);
+        
+        // Set session untuk SweetAlert
+        $_SESSION['show_alert'] = array(
+            'type' => 'success',
+            'title' => 'Sukses!',
+            'message' => 'Data guru berhasil diupdate'
+        );
+        
+        // Redirect untuk menghindari resubmission form
+        echo "<script>
+            window.location.href = 'index.php?page=editguru&id_guru=$id_guru';
+        </script>";
         exit();
-    } else {
-        $err = htmlspecialchars(mysqli_error($coneksi), ENT_QUOTES);
-        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-        echo '<script>Swal.fire({icon:"error",title:"Gagal!",text:"' . $err . '",position:"top",showConfirmButton:false,timer:3000,toast:true});</script>';
     }
+}
+
+// Periksa apakah ada notifikasi yang harus ditampilkan
+$showAlert = false;
+$alertType = '';
+$alertTitle = '';
+$alertMessage = '';
+
+if (isset($_SESSION['show_alert'])) {
+    $showAlert = true;
+    $alertType = $_SESSION['show_alert']['type'];
+    $alertTitle = $_SESSION['show_alert']['title'];
+    $alertMessage = $_SESSION['show_alert']['message'];
+    
+    // Hapus session setelah digunakan
+    unset($_SESSION['show_alert']);
 }
 ?>
 
@@ -123,6 +143,7 @@ if (isset($_POST['submit'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <style>
+        /* CSS tetap sama seperti sebelumnya */
         body {
             padding-left: 270px;
             background-color: #f8f9fa;
@@ -146,6 +167,9 @@ if (isset($_POST['submit'])) {
             .profile-container {
                 grid-template-columns: 1fr;
             }
+            body {
+                padding-left: 0;
+            }
         }
 
         .profile-card {
@@ -163,12 +187,6 @@ if (isset($_POST['submit'])) {
             object-fit: cover;
             border: 5px solid #3498db;
             margin: 0 auto 15px;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding-left: 0;
-            }
         }
 
         .header {
@@ -193,30 +211,6 @@ if (isset($_POST['submit'])) {
             border-radius: 50%;
             margin-right: 10px;
             object-fit: cover;
-        }
-
-        .profile-container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        .profile-card {
-            background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .profile-picture {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--primary);
-            margin: 0 auto 15px;
-            display: block;
         }
 
         .profile-info {
@@ -268,8 +262,16 @@ if (isset($_POST['submit'])) {
             height: calc(1.5em + .75rem + 2px);
             padding: .375rem .75rem;
         }
+
         .btn-left {
             margin-left: 600px;
+        }
+        
+        @media (max-width: 1200px) {
+            .btn-left {
+                margin-left: 0;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -305,7 +307,6 @@ if (isset($_POST['submit'])) {
                     </div>
 
                     <div id="edit-mode" class="edit-mode">
-
                         <div class="form-group text-left">
                             <label for="username">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
@@ -314,10 +315,10 @@ if (isset($_POST['submit'])) {
 
                         <div class="form-group text-left">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah">
                         </div>
                         <button type="button" class="btn btn-danger" onclick="disableEdit()">Batal</button>
-                        <button type="submit" name="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" name="update_user" class="btn btn-primary">Update</button>
                     </div>
                 </div>
 
@@ -349,7 +350,6 @@ if (isset($_POST['submit'])) {
 
                         <!-- Right Column -->
                         <div class="form-col">
-
                             <div class="form-group">
                                 <label>NIP</label>
                                 <input type="text" name="nip" class="form-control"
@@ -373,8 +373,6 @@ if (isset($_POST['submit'])) {
                                     }
                                     ?>
                                 </select>
-
-                                <!-- Hidden input agar tetap dikirim -->
                                 <input type="hidden" name="id_sekolah" value="<?= $data['id_sekolah'] ?>">
                             </div>
 
@@ -389,13 +387,11 @@ if (isset($_POST['submit'])) {
                                     }
                                     ?>
                                 </select>
-
-                                <!-- Hidden input agar tetap dikirim -->
                                 <input type="hidden" name="id_perusahaan" value="<?= $data['id_perusahaan'] ?>">
                             </div>
                         </div>
                     </div>
-                    <button type="submit" name="submit" class="btn btn-primary btn-left">Update</button>
+                    <button type="submit" name="update_guru" class="btn btn-primary btn-left">Update</button>
                 </div>
             </div>
         </form>
@@ -403,6 +399,22 @@ if (isset($_POST['submit'])) {
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <?php if ($showAlert): ?>
+    <script>
+        // Tampilkan SweetAlert jika ada notifikasi
+        Swal.fire({
+            icon: '<?php echo $alertType; ?>',
+            title: '<?php echo $alertTitle; ?>',
+            text: '<?php echo $alertMessage; ?>',
+            position: 'top',
+            showConfirmButton: false,
+            timer: 1500,
+            toast: true
+        });
+    </script>
+    <?php endif; ?>
+
     <script>
         // Fungsi untuk preview gambar sebelum upload
         document.getElementById('file-input').addEventListener('change', function(e) {
@@ -437,10 +449,15 @@ if (isset($_POST['submit'])) {
         function disableEdit() {
             document.getElementById('view-mode').style.display = 'block';
             document.getElementById('edit-mode').style.display = 'none';
-            document.getElementById('profile-form').reset();
-
+            
+            // Reset nilai password (biarkan kosong)
+            document.getElementById('password').value = '';
+            
             // Reset gambar ke yang sebelumnya
             document.getElementById('profile-picture').src = '<?php echo $data['profile'] ? "../" . $data['profile'] : "../image/default.png"; ?>';
+            
+            // Reset input file
+            document.getElementById('file-input').value = '';
         }
 
         // Auto-hide alert setelah 5 detik
